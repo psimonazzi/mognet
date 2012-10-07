@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="it">
+<!-- Appcache to speed up loading (requires user permission) 
+    <html lang="it" manifest="default.appcache?v=1"> -->
+<head>
+  <meta charset="utf-8"/>
+  <!-- TODO better send as header -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+  <!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+  <meta name="HandheldFriendly" content="True"/>
+  <meta name="MobileOptimized" content="320"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
+  <meta http-equiv="cleartype" content="on"/>
+  
+  <title>Test</title>
+
+  <link rel="stylesheet" href="css/style.css?1" type="text/css" media="screen" />
+</head>
+
+
+<body class="doc">
+
+<!--<header style="position:fixed; top:0pt; width:100%; background:#fff; opacity:0.8;">-->
+<header>
+    <div class="logo"><a href="/">♚</a></div>
+    <nav>
+    <ul>
+      <li><a href="/info">info</a></li>
+      <li><a href="/search">ricerca</a></li>
+      <!--<li><a href="/fav" id="fav">&#x2605;<sup></sup></a></li>-->
+      <li><a href="/colophon">colophon</a></li>
+    </ul>
+  </nav>
+</header>
+
+
+
+<div class="document">
+
+  <!--<h2>Ricerca</h2>-->
+
+  <form action="/" method="get">
+    <div class="searchform">
+      <input type="text" id="q" name="q" /><button>↵</button>
+    </div>
+  </form>
+  
+  <h2>Categorie</h2>
+  <ul class="menu cf">
+    <li><a href="/">Etichetta1</a></li>
+    <li><a href="/">Etichetta 2</a></li>
+    <li><a href="/">www</a></li>
+    <li><a href="/">Etichetta1</a></li>
+    <li><a href="/">Etichetta 2</a></li>
+    <li><a href="/">www</a></li>
+    <li><a href="/">Etichetta1</a></li>
+    <li><a href="/">Etichetta 2</a></li>
+    <li><a href="/">www</a></li>
+    <li><a href="/">Etichetta1</a></li>
+  </ul>
+  
+  <h2>Date</h2>
+  <ul class="menu cf">
+    <li><a href="/">Luglio 2011</a></li>
+    <li><a href="/">Agosto 2011</a></li>
+    <li><a href="/">Settembre 2011</a></li>
+    <li><a href="/">Ottobre 2011</a></li>
+  </ul>
+  
+</div><!-- document -->
+
+
+
+<footer>
+  <nav>
+    <ul>
+      <li><a href="/colophon">colophon</a></li>
+      <li><a href="http://github.com">codice sorgente</a></li>
+    </ul>
+  </nav>
+  <p>&#xa9; <a href="/info">Paolo Simonazzi</a>. <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Licenza</a></p>
+</footer>
+
+
+
+</body>
+
+</html>

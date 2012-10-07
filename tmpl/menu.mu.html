@@ -1,0 +1,19 @@
+<h2>Categorie</h2>
+<ul class="menu cf">
+    {{#tags}}
+    <li><a href="/search/{{href}}">{{name}}</a></li>
+    {{/tags}}
+    {{#tagsOverflow}}
+    <li><a href="/search" class="continue">archivio</a></li>
+    {{/tagsOverflow}}
+</ul>
+          
+<h2>Date</h2>
+<ul class="menu cf">
+    {{#dates}}
+    <li><a href="/search/{{href}}">{{name}}</a></li>
+    {{/dates}}
+    {{#datesOverflow}}
+    <li><a href="/search" class="continue">archivio</a></li>
+    {{/datesOverflow}}
+</ul>

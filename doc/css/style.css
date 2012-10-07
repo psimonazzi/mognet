@@ -1,0 +1,1020 @@
+/*************************************
+* - Resets and element presets
+* - Grid
+* - Typography and layout
+* - Non-semantic elements and tricks
+* - Media queries
+**************************************/
+
+
+
+/************************************/
+/**** Resets and element presets ****/
+/************************************/
+
+html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,address,cite,code,del,dfn,em,img,ins,q,small,strong,sub,sup,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td { border: 0; margin: 0; padding: 0; outline: 0; }
+article,aside,figure,figure img,figcaption,hgroup,footer,header,nav,section,video,object { display: block; }
+a img { border: 0; }
+figure{ position: relative; padding: 0; }
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+
+/* apply a natural box layout model to all elements - http://paulirish.com/2012/box-sizing-border-box-ftw/ */
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+img, object, embed, video {
+    max-width: 100%;
+}
+
+img {
+    height: auto;
+}
+
+abbr[title], dfn[title] {
+    border-bottom: 1px dotted;
+    cursor: help;
+}
+
+ins {
+    text-decoration: none;
+}
+
+cite, dfn {
+    font-style: italic;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* prevent superscripts from affecting line-height */
+sup, sub { 
+    vertical-align: baseline; 
+    position: relative; 
+    top: -0.4em; 
+} 
+
+sub { 
+    top: 0.4em; 
+}
+
+
+
+/**************/
+/**** Grid ****/
+/**************/
+
+body {
+    padding: 0 1em;
+}
+
+header, article, .document, footer {
+    width: 100%;
+    max-width: 34em;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+header .logo, header nav {
+    float: left;
+    min-height: 1px;
+}
+
+
+
+/********************/
+/**** Typography ****/
+/********************/
+
+
+/*** Type ***/
+
+body {
+    font-family: 'Open Sans', Calibri, Arial, sans-serif;
+}
+
+h1, h2, h3, h4, header, footer, .meta, .menu, .rel, figcaption, .blip, input, button, .continue {
+    font-family: 'AauxNext-Light', Calibri, Arial, sans-serif;
+    font-weight: normal;
+}
+
+.logo {
+    font-family: sans-serif;
+    font-weight: normal;
+}
+
+pre, code, kbd, var, samp, tt {
+    font-family: Monaco, Consolas, monospace;
+}
+
+
+/*** Baseline and size ***/
+
+body {
+    font-size: 100%; /* 18 for AauxNextLight on light bg, 16 (=100%) for others */
+    line-height: 1.6875em; /* Baseline height of the grid: 27px (=1.6875 * 16px) */
+    -webkit-text-size-adjust: none; /* Stops the iPhone scaling type up */
+    -ms-text-size-adjust: none;
+}
+
+header {
+    margin-bottom: 3.375em;
+}
+
+article {
+    margin-bottom: 5.0625em;
+}
+
+footer {
+    margin-bottom: 10.125em;
+}
+
+header nav a, footer nav a, .meta, .document .menu a, footer small {
+    font-size: 1.125em;
+}
+
+footer nav {
+    margin-top: 1.6875em;
+}
+
+footer small {
+    display: block;
+    margin-top: 1.043em;/*line-height: 2.618em;*/
+}
+
+footer small em {
+    padding-right: 0.2em;
+}
+
+header nav > ul > li > a, footer nav a {
+    line-height: 3em;
+}
+
+header .logo {
+    font-size: 2.618em;
+    line-height: 1.29em;
+}
+
+h1 {
+    font-size: 2.086em; /*2.73em;*/
+    line-height: 1.236em;
+}
+
+h2, .blip p, .rel a {
+    font-size: 1.618em;
+}
+
+/*p, */ .content ul, .content ol, .rel, blockquote, pre {
+    margin-bottom: 1.6875em;
+}
+
+/* no paragraph margin, but indent - http://artequalswork.com/posts/islands-of-thought.php */
+p + p {
+    margin-bottom: 0;
+    text-indent: 1.618em;
+}
+
+h2 {
+    margin-top: 1.043em;
+    margin-bottom: 1.043em;
+}
+
+pre, blockquote {
+    margin-top: 1.6875em;
+}
+/* end no paragraph margin */
+
+pre {
+    overflow: auto;
+    line-height: 1.215em;
+    padding: 1em 0.618em;
+}
+
+code, kbd, var, samp, tt {    
+    font-size: 0.8125em;
+}
+
+figure {
+    margin: 1.6875em 0;
+}
+
+figure pre {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.rel, ol.footnotes {
+    margin-top: 3.375em;
+}
+
+.rel li {
+    line-height: 1.6875em;
+}
+
+
+
+/*** Layout and style ***/
+
+/*
+ * Colors:
+ * text: #000
+ * background: #f3f2ee
+ * accents A: #c60016
+ * alt background A: #fff
+ * alt background B: #1a1a1a
+ */
+
+
+/** Elements **/
+
+body {
+    color: #000;
+    background: #f3f2ee;
+}
+
+a, a:hover {
+    -webkit-transition: all .2s ease-out;
+    -moz-transition: all .2s ease-out;
+    -o-transition: all .2s ease-out;
+    transition: all .2s ease-out;
+}
+
+.content a, .content a:visited, article a, article a:visited {
+    color: #c60016;
+    text-decoration: none;
+}
+
+.content a:hover, article a:hover, .logo a:hover, h1 a:hover, .menu a:hover {
+    color: #fff;
+    background: #c60016;
+    text-shadow: 1px 1px 2px #5d0e13;
+    text-decoration: none;
+}
+
+.continue {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.continue:hover {
+    padding-left: 0.618em;
+}
+
+h1 a:hover:after, .menu a:hover:after, .rel a:hover:after {
+    content: ' →';
+}
+
+blockquote {
+    padding-left: 2em;
+    border-left: 1px solid #000;
+}
+
+pre, code {
+    color: #f3f2ee;
+    background: #1a1a1a;
+}
+
+blockquote p {
+    text-indent: -0.5em; /* http://csswizardry.com/type-tips/#tip-03 */
+}
+
+kbd {
+    text-transform:uppercase;
+    color: #1a1a1a;
+    border: 1px solid #1a1a1a;
+    border-radius: 3px;
+    padding: 1px 4px;
+    white-space: nowrap;
+}
+
+figcaption {
+    font-style: italic;
+    color: #f3f2ee;
+    background: #1a1a1a;
+}
+
+.rel li {
+    color: #aaa;
+}
+
+
+/** Header and footer **/
+
+header .logo {
+    margin-right: 0.618em;
+}
+
+header .logo, header .logo a, header .logo a:visited {
+    color: #e1d9d1;
+    background-color: #000;
+    text-decoration: none;
+}
+
+header .logo a {
+    display: block;
+    padding: 0 0.2em 0 0.2em;
+}
+
+h1 a {
+    color: #000;
+    text-decoration: none;
+}
+
+header nav li > div {
+    display: none;
+}
+
+header nav > ul > li > a, footer nav a {
+    text-shadow: 1px 1px 2px #ddd;
+}
+
+header li, footer li {
+    display: inline-block;
+    list-style: none;
+}
+
+footer li {
+    padding-right: 1.6875em;
+}
+
+footer li:last-child {
+    padding-right: 0;
+}
+
+header nav > ul > li > a, footer nav a, header nav > ul > li > a:hover, footer nav a:hover, header nav > ul > li > a:visited, footer nav a:visited {
+    font-weight: normal;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000;
+    background: transparent;
+}
+
+header nav > ul > li > a {
+    display: block;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+}
+
+header nav > ul > li:hover > a {
+    color: #f3f2ee;
+    background: rgba(0, 0, 0, 1.0);
+}
+
+footer {
+    text-align: right;
+}
+
+footer small a, footer small a:hover {
+    color: #000;
+    text-decoration: none;
+    border-bottom: 1px solid #aaa;
+}
+
+footer small a:hover {
+    border-bottom: 1px solid #000;
+}
+
+
+/** Meta information **/
+
+.meta {
+    color: #1a1a1a;
+    margin: 0.618em 0 1.6875em 0;
+}
+
+.meta li {
+    list-style: none;
+    display: inline-block;
+}
+
+.meta time em {
+    font-style: normal;
+    display: none;
+}
+
+.meta a, .meta a:hover, .meta a:visited {
+    color: #1a1a1a;
+    background: none;
+    text-decoration: none;
+    text-transform: uppercase;
+    padding-left: 0.618em;
+}
+
+.meta a:hover, footer nav a:hover {
+    padding-right: 0.618em;
+    background: #fff;
+    text-shadow: 1px 1px 2px #f3f2ee;
+    /*box-shadow: 4px 4px 0 #f3f2ee;*/
+}
+
+.meta .☆ a {
+    font-size:24px;
+    padding-left: 0;
+}
+
+.meta .☆ a:hover {
+    padding-right: 0;
+    background: transparent;
+    box-shadow: none;
+    /*-moz-transform: scale(2.0) rotate(360deg);
+    -webkit-transform: scale(2.0) rotate(360deg);
+    transform: scale(2.0) rotate(360deg);*/
+    -moz-transform: scale(1.618);
+    -webkit-transform: scale(1.618);
+    transform: scale(1.618);
+}
+
+
+/** Pagination **/
+
+.pages {
+    width: 100%;
+    margin: 0 auto 3.375em auto;
+    overflow: hidden;
+}
+
+.pages a {
+    display: block;
+    font-size: 2.618em;
+    line-height: 1.29em;
+    padding: 0 0.618em;
+    color: #1a1a1a;
+    background: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid #aaa;
+}
+
+.pages a:hover {
+    color: #fff;
+    background: #c60016;
+    background-image: -moz-linear-gradient(top, #c60016, #900212);
+    background-image: -webkit-gradient(linear, center top, center bottom, from(#c60016), to(#900212));
+}
+
+.pages a kbd {
+    font-size: 0.271em;/*font-size: 0.573em;*/
+    line-height: 1em;
+    padding: 0 1em;
+}
+
+.pages a:hover kbd {
+    color: #fff;
+    border-color: #fff;
+}
+
+.prev {
+    float: left;
+    min-height: 1px;
+    width: 30.75%;
+    margin-right: 3.8%;
+    text-align: left;
+}
+
+.next {
+    float: left;
+    min-height: 1px;
+    width: 65.4%;
+    margin-right: 0;
+    text-align: right;
+}
+
+.prev span, .next span {
+    display: none;
+}
+
+
+/*** Document pages ***/
+
+.document h1 {
+    margin-bottom: 1.236em;
+}
+
+
+
+/*** Menu ***/
+
+.menu {
+    margin-bottom: 3.375em;
+}
+
+.menu li {
+    list-style: none;
+    display: block;
+}
+
+.menu a, .menu a:hover {
+    display: block;
+}
+
+.menu a {
+    color: inherit;
+}
+
+.searchform {
+    margin: 0 auto 3.375em auto;
+    text-align: center;
+}
+
+.searchform input, .searchform button {
+    font-size: 2.618em;
+    height: 1.618em;
+    display: inline-block;
+    color: #000;
+}
+
+.searchform input {
+    width: 6em;
+    padding-left: 8px;
+    -webkit-transition: border-color .3s;
+    -moz-transition: border .3s;
+    -o-transition: border-color .3s;
+    transition: border-color .3s;
+    border: 1px solid #f3f2ee;
+    background: #fff;
+}
+
+.searchform input:focus {
+    border-color: #c60016;
+}
+
+.searchform button {
+    
+}
+
+
+
+/******************************************/
+/**** Non-semantic elements and hacks ****/
+/******************************************/
+
+@font-face {
+    font-family: 'AauxNext-Light';
+    src: url(style_182491.eot); src:url(style_182491.eot?#iefix) format('embedded-opentype'), url(style_182491.woff) format('woff'), url(style_182491.ttf) format('truetype'), url(style_182491.svg#AauxNext-Light) format('svg');
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Open Sans'), local('OpenSans'), url(OpenSans400.woff) format('woff');
+}
+/*@import url(http://fonts.googleapis.com/css?family=Open+Sans);*/
+
+.floating {
+    position: absolute;
+    top: 3.375em; /* = nav height */
+    left: 0;
+    width: 100%;
+    padding: 1.6875em 0;
+    color: #f3f2ee;
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/*.blur {
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+    color: rgba(0,0,0,0);
+}*/
+
+/* These selection declarations have to be separate. No text-shadow: twitter.com/miketaylr/status/12228805301 
+/*::-moz-selection { text-shadow: none; }
+::selection { text-shadow: none; }*/
+a:link { -webkit-tap-highlight-color: #c60016; } /*  j.mp/webkit-tap-highlight-color */
+
+/* always force a scrollbar in non-IE */
+html { overflow-y: scroll; }
+/* Accessible focus treatment: people.opera.com/patrickl/experiments/keyboard/test */
+a:hover, a:active { outline: none; }
+
+/* Hide for both screenreaders and browsers
+   css-discuss.incutio.com/wiki/Screenreader_Visibility */
+.hidden { display: none; visibility: hidden; }
+/* Hide only visually, but have it available for screenreaders
+   www.webaim.org/techniques/css/invisiblecontent/ ; &  j.mp/visuallyhidden ; */
+.visuallyhidden {  
+    position: absolute !important;
+    height: 1px;
+    width: 1px; 
+    overflow: hidden;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px, 1px, 1px, 1px); 
+}
+/* Hide visually and from screenreaders, but maintain layout */
+.invisible { visibility: hidden; }
+
+/* The Magnificent CLEARFIX: Updated to prevent margin-collapsing on child elements - j.mp/bestclearfix */
+.cf:before, .cf:after { content: "\0020"; display: block; height: 0; visibility: hidden; } 
+.cf:after { clear: both; }
+/* Fix clearfix: blueprintcss.lighthouseapp.com/projects/15318/tickets/5-extra-margin-padding-bottom-of-page */
+.cf { zoom: 1; }
+
+
+
+/***********************/
+/**** Media Queries ****/
+/***********************/
+
+/**** Hi-Spec ****/
+
+@media screen and (min-width: 1025px) {
+
+h1 {
+    font-size: 2.73em;
+    line-height: 1.236em;
+}
+
+header, article, .document, footer {
+    max-width: 71em;
+}
+
+header nav > ul > li > a {
+    padding-left: 0.618em;
+    padding-right: 0.618em;
+}
+
+.content {
+    width: 48%;
+    float: left;
+    min-height: 1px;
+    margin-right: 0;
+}
+
+article h1, .document h1, .document .content {
+    width: 48%;
+    margin-left: 25.85%;
+}
+
+.document .content {
+    margin-bottom: 1.6875em;
+}
+
+article h1, .document h1 {
+    margin-bottom: 0.518em;
+}
+
+/* start override for different children widths */
+article .content {
+    width: 74.05%;
+}
+article .content >* {
+    width: 65.4%;
+}
+article .content >pre, article .content >figure {
+    width: 100%;
+}
+article .content >.nostretch {
+    width: 65.4%;
+}
+/* end override */
+
+.meta {
+    width: 22.05%;
+    float: left;
+    min-height: 1px;
+    margin-right: 3.8%;
+    text-align: right;
+}
+
+.meta li, .meta time {
+    display: block;
+}
+
+.meta time {
+    margin-bottom: 1.6875em;
+}
+
+.meta time em {
+    display: block;
+}
+/*.meta .fav {
+    margin-bottom: 27px;
+}*/
+
+
+/** menu **/
+
+.menu li {
+    float: left;
+    width: 22.05%;
+    padding-right: 1.95%;
+}
+
+.menu a {
+    text-decoration: none;
+}
+
+.searchform input, .searchform button {
+    font-size: 3.618em;
+    max-width: 16em;
+}
+
+.searchform input {
+    width: 8em;
+}
+
+
+/** nav **/
+
+.pages a {
+    padding: 0 1.618em;
+}
+
+.pages a:hover {
+    padding: 0 0.618em;
+}
+
+.prev span, .next span {
+    display: inline;
+}
+
+
+/** header nav menu **/
+
+body {
+    position: relative;
+}
+
+header nav li:hover > div {
+    display: block;
+}
+
+.floating > div {
+    margin: 0 auto;
+    max-width: 71em;
+}
+
+
+/** animated **/
+
+header .logo {
+    -moz-animation: in-down 1.618s ease;
+    animation: in-down 1.618s ease;
+}
+
+.document {
+    -moz-animation: fade-in-down 0.618s ease;
+    animation: fade-in-down 0.618s ease;
+}
+
+header nav li #search-menu {
+    -moz-animation: none;
+    animation: none;
+}
+
+header nav li:hover #search-menu {
+    /* 
+    TODO will animate only once. 
+    In order to restart an animation, it must be removed then reapplied. (http://www.w3.org/TR/css3-animations/)
+    Or use transition
+    */
+    -moz-animation: fade-in-down .618s ease;
+    animation: fade-in-down .618s ease;
+}
+
+.floating {
+    background:
+    -moz-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
+     -moz-linear-gradient(0%, rgba(249, 18, 18, 0.4), rgba(249, 18, 181, 0.4), rgba(0, 46, 62, 0.4), rgba(249, 18, 181, 0.4), rgba(249, 18, 18, 0.4)) repeat;
+    -moz-animation: aurora 3s linear;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-direction: alternate;
+    
+    background:
+    linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
+    linear-gradient(0%, rgba(249, 18, 18, 0.4), rgba(249, 18, 181, 0.4), rgba(0, 46, 62, 0.4), rgba(249, 18, 181, 0.4), rgba(249, 18, 18, 0.4)) repeat;
+    background-size: 100%, 200%;
+    animation: aurora 4s linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.7);
+}
+
+
+/** Image Lightbox **/
+
+#modal-overlay {
+    z-index: 99997;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    opacity:.9;
+    cursor: pointer;
+}
+
+#modal {
+    z-index: 99999;
+    /* fixed: centers in current viewport, but disallows overflow if image is bigger than screen
+       absolute: always centers vertically from the top of the page, but allows scrolling if image is bigger than screen.
+       Needs top set by javascript
+       */
+    position: absolute;
+    /*top: 0;*/
+    left: 0;
+    display: table;
+    width: 100%;
+    /*height: 100%;*/
+    cursor: pointer;
+}
+
+#modal-inside {
+    display: table-cell;
+    vertical-align: middle;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#modal-loading {
+    z-index: 99998;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: table;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+#modal-inside-loading {
+    display: table-cell;
+    vertical-align: middle;
+    margin: 0 auto;
+    text-align: center;
+    color: #fff;
+}
+
+.icon-loading {
+    font-family: "Arial Unicode MS", "Lucida Sans Unicode", sans-serif;
+    font-size: 1.618em;
+    font-style: normal;
+    font-weight: normal;
+    display: block;
+    -moz-animation: rotate .618s linear infinite;
+    animation: rotate .618s linear infinite;
+}
+
+.icon-loading:before {
+    content: "↻"; /* &#x21bb; */
+}
+
+}
+
+
+
+/**** Print ****/
+
+@media print {
+    * { background: transparent !important; color: #444 !important; text-shadow: none !important; }
+    a, a:visited { color: #444 !important; text-decoration: underline; }
+    a:after { content: " (" attr(href) ")"; }
+    abbr:after { content: " (" attr(title) ")"; }
+    pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+    thead { display: table-header-group; } /* css-discuss.incutio.com/wiki/Printing_Tables */
+    tr, img { page-break-inside: avoid; }
+    @page { margin: 0.5cm; }
+    p, h1, h2, h3 { orphans: 3; widows: 3; }
+    h1, h2, h3 { page-break-after: avoid; }
+}
+
+
+
+/********************/
+/**** Animations ****/
+/********************/
+
+
+@-moz-keyframes fade-in-down {
+    0% {
+	opacity: 0;
+	-moz-transform: translateY(-20px);
+    }   
+    100% {
+	opacity: 1;
+	-moz-transform: translateY(0);
+    }
+}
+@keyframes fade-in-down {
+    0% {
+	opacity: 0;
+	transform: translateY(-20px);
+    }
+    100% {
+	opacity: 1;
+	transform: translateY(0);
+    }
+}
+
+@-moz-keyframes in-down {
+    0% { -moz-transform: translateY(-27px); }   
+    100% { -moz-transform: translateY(0); }
+}
+@keyframes in-down {
+    0% { transform: translateY(-27px); }
+    100% { transform: translateY(0); }
+}
+
+@-moz-keyframes aurora {
+    0% { background-position: 20% 100%; }
+    100% { background-position: 80% 100%; }
+}
+@keyframes aurora {
+    0% { background-position: 20% 100%; }
+    100% { background-position: 80% 100%; }
+}
+
+@-moz-keyframes rotate {
+  from { -moz-transform: rotate(0deg); }
+  to { -moz-transform: rotate(360deg); }
+}
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
+/************************/
+/**** Code highlight ****/
+/************************/
+
+
+pre .comment {
+    color: #93a1a1;
+}
+
+pre .constant, pre .integer {
+    color: #ff3a6b;
+}
+
+pre .storage {
+    color: #2aa198;
+}
+
+pre .string {
+    color: #ff3a6b;
+}
+
+pre .keyword, pre .selector {
+    color: #f6f080;
+}
+
+pre .parent {
+    font-style: italic;
+}
+
+pre .entity, pre .meta {
+    color: #1e9ae0;
+}
+
+pre .support {
+    color: #ffaa15;
+}
+
+pre .variable.global, pre .variable.class, pre .variable.instance {
+    color: #1e9ae0;
+}
+
+/*
+pre .comment {
+    color: #727272;
+}
+
+pre .constant, pre .integer {
+    color: #D8FA3C;
+}
+
+pre .storage {
+    color: #FBDE2D;
+}
+
+pre .string {
+    color: #61CE3C;
+}
+
+pre .keyword, pre .selector {
+    color: #FBDE2D;
+}
+
+pre .parent {
+    font-style: italic;
+}
+
+pre .entity, pre .meta {
+    color: #FF6400;
+}
+
+pre .support {
+    color: #8DA6CE;
+}
+
+pre .variable.global, pre .variable.class, pre .variable.instance {
+    color: #FF6400;
+}
+*/

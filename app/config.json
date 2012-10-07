@@ -1,0 +1,8 @@
+{
+  "version": "v0.8.1",
+  "port": 3000,
+  "denyDiskRead": false,
+  "verbose": false,
+  "locale": "it",
+  "pageSize": 12
+}
