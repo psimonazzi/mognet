@@ -1,51 +1,49 @@
-// Some useful global stuff
+// Just an epsilon of a Javascript library. For modern browsers
 (function() {
+  if (typeof ε === "undefined" || ε === null) {
+    var ε = {};
+  }
 
-  function on(e, t, f) {
+
+  // Cross-browser event listener
+  ε.on = function(e, t, f) {
     if (e.addEventListener)
       e.addEventListener(t, f, false);
     else if (e.attachEvent)
       e.attachEvent('on' + t, f);
-  }
+  };
 
 
-  function stop(e) {
+  // Cross-browser event bubble prevent
+  ε.stop = function(e) {
     e.preventDefault ? e.preventDefault() : e.returnValue = 0;
-  }
+  };
 
 
-  // Browser
-  if (typeof window != 'undefined') {
-    window.on = on;
-    window.stop = stop;
-  }
+  // A modal box.
+  // When clicking on a <figure> link to an image, shows the full-size image centered on screen and overlayed on the current page.
+  // Inspired by https://github.com/Xeoncross/kb_javascript_framework
+  ε.lightbox = {};
 
-})();
+  ε.lightbox.MODAL_OVERLAY_ID = 'modal-overlay';
+  ε.lightbox.MODAL_ID = 'modal';
+  ε.lightbox.MODAL_INSIDE_ID = 'modal-inside';
+  ε.lightbox.MODAL_LOADING_ID = 'modal-loading';
+  ε.lightbox.MODAL_INSIDE_LOADING_ID = 'modal-inside-loading';
 
-
-// Lightbox v0.2.0
-// Inspired by https://github.com/Xeoncross/kb_javascript_framework
-(function() {
-  var MODAL_OVERLAY_ID = 'modal-overlay';
-  var MODAL_ID = 'modal';
-  var MODAL_INSIDE_ID = 'modal-inside';
-  var MODAL_LOADING_ID = 'modal-loading';
-  var MODAL_INSIDE_LOADING_ID = 'modal-inside-loading';
-
-
-  function modal(e) {
+  ε.lightbox.modal = function modal(e) {
     // dark overlay
     var o = document.createElement('div');
-    o.id = MODAL_OVERLAY_ID;
+    o.id = ε.lightbox.MODAL_OVERLAY_ID;
 
     // loading message
     var o2 = document.createElement('div');
-    o2.id = MODAL_LOADING_ID;
-    o2.innerHTML = '<div id="' + MODAL_INSIDE_LOADING_ID + '"><i class="icon-loading"></i></div>';
+    o2.id = ε.lightbox.MODAL_LOADING_ID;
+    o2.innerHTML = '<div id="' + ε.lightbox.MODAL_INSIDE_LOADING_ID + '"><i class="icon-loading"></i></div>';
 
     // modal content
     var m = document.createElement('div');
-    m.id = MODAL_ID;
+    m.id = ε.lightbox.MODAL_ID;
     e.style ? m.appendChild(e) : m.innerHTML = e;
 
     // set position
@@ -55,12 +53,12 @@
     m.style.height = h >= 0 ? h + 'px' : '100%';
 
     // Allow closing
-    on(o, 'click', closeModal);
-    on(o2, 'click', closeModal);
-    on(m, 'click', closeModal);
-    on(window, 'keydown', function(ev) {
+    ε.on(o, 'click', ε.lightbox.closeModal);
+    ε.on(o2, 'click', ε.lightbox.closeModal);
+    ε.on(m, 'click', ε.lightbox.closeModal);
+    ε.on(window, 'keydown', function(ev) {
       if (ev.keyCode == 27) //ESC
-        closeModal();
+        ε.lightbox.closeModal();
     });
 
     document.body.appendChild(o);
@@ -69,51 +67,57 @@
     setTimeout(function() {
       document.body.appendChild(m);
       /*if (e = document.getElementById('lb-close')) {
-        on(e, 'click', function(ev) {
-        closeModal();
-        return stop(ev);
-        });
-        }*/
+       on(e, 'click', function(ev) {
+       closeModal();
+       return stop(ev);
+       });
+       }*/
     }, 10);
-  }
+  };
 
 
-  function closeModal() {
-    var e = document.getElementById(MODAL_ID);
-    var e2 = document.getElementById(MODAL_LOADING_ID);
-    var e3 = document.getElementById(MODAL_OVERLAY_ID);
+  ε.lightbox.closeModal = function closeModal() {
+    var e = document.getElementById(ε.lightbox.MODAL_ID);
+    var e2 = document.getElementById(ε.lightbox.MODAL_LOADING_ID);
+    var e3 = document.getElementById(ε.lightbox.MODAL_OVERLAY_ID);
     if (e) e.parentNode.removeChild(e);
     if (e2) e2.parentNode.removeChild(e2);
     if (e3) e3.parentNode.removeChild(e3);
-  }
+  };
 
 
-  function lightbox() {
+  ε.lightbox.init = function init() {
     if (document.querySelectorAll) {
       var a = document.querySelectorAll("figure a");
       [].forEach.call(a, function(e) {
-        on(e, 'click', function(ev) {
-          modal('<div id="' + MODAL_INSIDE_ID + '"><img src="' + this.href + '" /></div>'); //onload="modalLoaded();"
-          return stop(ev);
+        ε.on(e, 'click', function(ev) {
+          ε.lightbox.modal('<div id="' + ε.lightbox.MODAL_INSIDE_ID + '"><img src="' + this.href + '" /></div>'); //onload="modalLoaded();"
+          return ε.stop(ev);
         });
       });
     }
+  };
+
+
+  // Set global
+  if (typeof window != 'undefined') {
+    window.ε = ε;
   }
-
-
-  // Enable
-  on(document, "DOMContentLoaded", function() {
-    lightbox();
-  });
-
 })();
 
 
 
-// Keyboard controls
+// Invocations
 (function() {
 
-  on(window, 'keydown', function(e) {
+  // Enable lightbox
+  ε.on(document, "DOMContentLoaded", function() {
+    ε.lightbox.init();
+  });
+
+
+  // Keyboard controls
+  ε.on(window, 'keydown', function(e) {
     switch (e.keyCode) {
     case 32: //space
       // space scrolls down by default, but if we reach end of page loads next page
