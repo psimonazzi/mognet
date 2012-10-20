@@ -23,6 +23,11 @@ describe('crawler', function() {
     it('should handle funny unicode spaces', function() {
       assert.equal("a-b-c", crawler.slug("A" + String.fromCharCode(0x205F) + "B" + String.fromCharCode(0x2000) + "c"));
     });
+
+    it('should handle HTML tags', function() {
+      assert.equal("test-html-tags", crawler.slug("<h1>Test</h1> HTML<br/> Tags"));
+    });
+
   })
 
 

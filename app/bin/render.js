@@ -139,6 +139,7 @@ else if (all) {
 
 
 function printDocumentInfo(id) {
+  //Σ.index['id'][id].modified.toLocaleFormat('%Y/%m/%e %T')
   var d = require('util').format('%s/%s/%s %s:%s:%s.%s',
                                  Σ.index['id'][id].modified.getFullYear(),
                                  utils.pad(Σ.index['id'][id].modified.getMonth() + 1, 2),
@@ -147,18 +148,34 @@ function printDocumentInfo(id) {
                                  utils.pad(Σ.index['id'][id].modified.getMinutes(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getSeconds(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getMilliseconds(), 3));
-  console.log('%d ⋅ '.yellow.bold + '%s ⋅ '.blue + '%s'.bold + ' ⋅ %s'.grey.bold,
+  console.log('%d ⋅ '.green.bold + '%s ⋅ '.blue + '%s'.yellow.bold + ' ⋅ %s'.bold + ' ⋅ %s'.grey,
               Σ.index['id'][id].n,
-              d,//Σ.index['id'][id].modified.toLocaleFormat('%Y/%m/%e %T'),
+              d,
               id,
+              Σ.index['id'][id].title,
               require('path').basename(Σ.index['id'][id].filename));
 }
 
 
 function printInfo() {
   if (Σ.index['id']) {
-    console.log('Indexed documents (%d): ', Object.keys(Σ.index['id']).length);
-    (Σ.index['n'] || Object.keys(Σ.index['id'])).forEach(function(id) {
+    var a = Σ.index['n'] || indexer.publicIds();
+    console.log('Indexed documents: %d', Object.keys(Σ.index['id']).length);
+    console.log();
+    console.log('Public articles (%d)%s: ', a.length, Σ.index['n'] ? '': ' (not sorted)');
+    a.forEach(function(id) {
+      printDocumentInfo(id);
+    });
+    console.log();
+    a = indexer.nonPublicIds();
+    console.log('Non-public articles (%d): ', a.length);
+    a.forEach(function(id) {
+      printDocumentInfo(id);
+    });
+    console.log();
+    a = indexer.documentIds();
+    console.log('Documents (%d): ', a.length);
+    a.forEach(function(id) {
       printDocumentInfo(id);
     });
     console.log();

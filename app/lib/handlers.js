@@ -168,7 +168,7 @@ module.exports = {
     ctx.atomLink = baseUrl + parsedUrl.pathname;
 
     // Select ids to display in the RSS feed
-    if (Σ.index && Σ.index['n']) {
+    if (Σ.index && Σ.index['id'].length > 0 && Σ.index['n']) {
       var indexer = new Indexer();
       var ids = indexer.publicIds();
       ctx.items = ids.slice(ids.length >= MAX_COUNT ? -MAX_COUNT : -ids.length).map(function(id) {

@@ -92,7 +92,7 @@ Indexer.prototype.add = function(doc) {
  * Sort the public articles in the index, creating an array with the ordered document ids in the 'n' attribute of the index.
  * The 'n' attribute of each document is also updated to reflect its position in the index (zero-based).
  * Sort according to modified date and document id.
- * Only public articles are sorted. Secret, ignored, or non-article documents will not have a 'n' attribute.
+ * Only public articles are sorted. Secret, ignored, or non-article documents will not have a 'n' attribute. So the sorted array length may NOT be equal to the total number of documents in the index.
  *
  * @api public
  */
@@ -104,7 +104,7 @@ Indexer.prototype.sort = function() {
   Σ.index['n'] = null;
 
   Σ.index['n'] = this.publicIds().sort(function(a, b) {
-    var aTime = Σ.index['id'][a].modified.UTC, bTime = Σ.index['id'][b].modified.UTC;
+    var aTime = Σ.index['id'][a].modified.getTime(), bTime = Σ.index['id'][b].modified.getTime();
     if (aTime != bTime)
       return aTime - bTime;
     else {
@@ -133,8 +133,59 @@ Indexer.prototype.sort = function() {
 Indexer.prototype.publicIds = function publicIds() {
   if (!Σ.index || !Σ.index['id'])
     return [];
-  var ids = (Σ.index['n'] || Object.keys(Σ.index['id'])).filter(function(element, index, array) {
-    return !Σ.index['id'][element].doc && !Σ.index['id'][element].ignore && !Σ.index['id'][element].secret;
+  var self = this;
+  var ids = (Σ.index['n'] || Object.keys(Σ.index['id'])).filter(function(id, index, array) {
+    return self.isPublicId(id);
+  });
+  return ids;
+};
+
+
+/**
+ * Get the ids of the non-public documents in the index.
+ *
+ * @return {Array} The array of non-public document ids (sorted if the index is sorted), or the empty array if the index is empty
+ *
+ * @api public
+ */
+Indexer.prototype.nonPublicIds = function nonPublicIds() {
+  if (!Σ.index || !Σ.index['id'])
+    return [];
+  var self = this;
+  var ids = (Object.keys(Σ.index['id'])).filter(function(id, index, array) {
+    return !Σ.index['id'][id].doc && (Σ.index['id'][id].ignore || Σ.index['id'][id].secret);
+  });
+  return ids;
+};
+
+
+/**
+ * Determine if the document with the given id is public. Public documents are all articles not flagged 'secret' or 'ignore'.
+ *
+ * @param {string} id The document id
+ *
+ * @return {boolean} Whether the document is public or not
+ *
+ * @api public
+ */
+Indexer.prototype.isPublicId = function isPublicId(id) {
+  return !Σ.index['id'][id].doc && !Σ.index['id'][id].ignore && !Σ.index['id'][id].secret;
+};
+
+
+
+/**
+ * Get the ids of the non-article, non-secret documents in the index.
+ *
+ * @return {Array} The array of non-article document ids (sorted if the index is sorted), or the empty array if the index is empty
+ *
+ * @api public
+ */
+Indexer.prototype.documentIds = function documentIds() {
+  if (!Σ.index || !Σ.index['id'])
+    return [];
+  var ids = Object.keys(Σ.index['id']).filter(function(id, index, array) {
+    return Σ.index['id'][id].doc && !Σ.index['id'][id].secret;
   });
   return ids;
 };
@@ -142,6 +193,9 @@ Indexer.prototype.publicIds = function publicIds() {
 
 /**
  * Reviver function for JSON.parse. Restores Date objects when parsing the json index.
+ *
+ * @param {string} k JSON attribute name
+ * @param {Object} v JSON attribute value
  *
  * @api private
  */

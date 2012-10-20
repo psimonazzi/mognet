@@ -1,14 +1,17 @@
 var assert = require("assert");
 var router = require("../lib/router");
 var Σ = require('../lib/state');
+var Indexer = require('../lib/indexer').Indexer;
 
 
 describe('handlers', function() {
+  beforeEach(function() {
+    Σ.index = new Indexer().EMPTY_INDEX(); // empty index
+  })
+
   describe('index handler', function() {
     it('should handle the \'index\' special resource', function() {
-      var Indexer = require('../lib/indexer').Indexer;
-      var indexer = new Indexer();
-      indexer.loadSync();
+      //indexer.loadSync();
 
       var req1 = {
         'url': '/index',

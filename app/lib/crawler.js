@@ -141,13 +141,14 @@ Crawler.prototype.fetch = function fetch(file, stat) {
  *
  * @param {string} title A document title. The string can contain any Unicode char, including punctuation
  *
- * @return {string} A string suitable to use as part of an URL (the 'slug'), replacing whitespace with dashes and stripping punctuation and non-letter chars except dashes. Any non-ASCII char will be transliterated if possible, otherwise it will be stripped. The slug has a max length of 64 chars.
+ * @return {string} A string suitable to use as part of an URL (the 'slug'), replacing whitespace with dashes and stripping HTML tags, punctuation and non-letter chars except dashes. Any non-ASCII char will be transliterated if possible, otherwise it will be stripped. The slug has a max length of 64 chars.
  *
  * @api private
  */
 Crawler.prototype.slug = function slug(title) {
   return txt
     .transliterate(title)
+    .replace(/<.+?>/g, '')
     .replace(/[^\w\s-]+/g, '')
     .trim()
     .replace(/\s+/g, '-')

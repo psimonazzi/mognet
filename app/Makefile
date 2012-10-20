@@ -1,6 +1,8 @@
 test:
-#	@@mocha --reporter spec
 	@@mocha --reporter dot
+
+test-verbose:
+	@@mocha --reporter spec
 
 deploy:
 # get latest tag or current branch name if none
@@ -21,4 +23,4 @@ min:
 	uglifyjs --unsafe ../doc/js/app.js > ../doc/js/app.min.js
 	sqwish ../doc/css/style.css -o ../doc/css/style.min.css
 
-.PHONY: test deploy install debug lint min
+.PHONY: test test-verbose deploy install debug lint min

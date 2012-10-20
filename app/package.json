@@ -25,9 +25,9 @@
   "dependencies": {
     "connect": "2.x.x",
     "colors": "*",
-    "findit": ">= 0.1.0",
+    "findit": "0.x.x",
     "hogan.js": "2.x.x",
-    "marked": "0.2.x"
+    "marked": "0.x.x"
   },
   "devDependencies": {
     "mocha": "*",
