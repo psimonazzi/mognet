@@ -31,7 +31,7 @@ process.on('SIGPOLL', function() {
   console.log('Got SIGPOLL (29). Reloading index...');
   require('child_process').exec('/usr/bin/env node ' + __dirname + '/bin/update.js', function (error, stdout, stderr) {
     if (!error)
-      indexer.load(function() { console.log('Loaded index.'); });
+      indexer.load(function() { console.log('Reloaded index.'); });
     else
       console.err(error);
   });
@@ -65,7 +65,6 @@ console.log('Server v%s (pid %s)', version, process.pid);
 fs.writeFile(__dirname + '/../../server.pid', process.pid, 'utf8', function(err) {
   if (err) {
     console.error('Cannot write pid file: ' + ex);
-    process.exit(0);
   }
 });
 
@@ -74,26 +73,28 @@ var indexer = new Indexer();
 indexer.loadSync();
 //indexer.sort(); // will be already sorted on disk
 if (Object.keys(Σ.index['id']).length == 0) {
-  console.error('No index found. Create a new index with:\nbin/update.js');
-  process.exit(0);
+  console.error('No index found. Create a new index with: bin/update.js');
+  // do not exit, just serve what we can
 }
 
 try {
   var lastModified = Σ.index['id'][Σ.index['n'][Σ.index['n'].length - 1]].modified;
-} catch (ex) { console.error(ex); }
-console.log('Index contains %d entries. Last modified on %s', Object.keys(Σ.index.id).length, lastModified);
+  console.log('Index contains %d entries. Last modified on %s', Object.keys(Σ.index.id).length, lastModified);
+} catch (ex) {
+  console.error('Cannot determine last modified time for index. ' + ex);
+}
 
 var ONE_YEAR = 31536000000;
 
 // last handler applies to paths not served by the previous (static() by default serves '/' and all filenames under it)
 // so it catches any non-existent url
 var app = connect()
-      //.use(connect.profiler())
       //.use(connect.responseTime())
-      .use(connect.logger('tiny'))
+      //.use(connect.logger('tiny'))
+      .use(connect.timeout(10000))
       .use(connect.compress())
       .use(connect.favicon('/favicon.ico', { 'maxAge': ONE_YEAR }))
-      .use(connect.staticCache({ 'maxObjects': 256, 'maxLength': 1024 * 256 }))
+      //.use(connect.staticCache({ 'maxObjects': 256, 'maxLength': 1024 * 256 }))
       .use(connect.static(path.normalize(__dirname + '/../doc'), { 'maxAge': ONE_YEAR }))
       .use('/static', connect.static(path.normalize(__dirname + '/../../static'), { 'maxAge': ONE_YEAR }))
       .use('/api', function(req, res) {
@@ -120,11 +121,14 @@ var app = connect()
 
         router.getResource(req, function(err, resource, route) {
           if (err) {
-            if (404 === err.status)
+            if (404 === err.status) {
               res.statusCode = 404;
-            else
+              resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + req.url;
+            }
+            else {
               res.statusCode = 500;
-            resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + err.toString();
+              resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + err.toString();
+            }
             res.setHeader('Content-Type', 'text/html; charset=UTF-8');
           }
           else {
@@ -132,18 +136,19 @@ var app = connect()
             res.setHeader('Content-Type', (route.contentType || 'text/html') + '; charset=UTF-8');
           }
           // If content length is not set, chunked encoding will be used automatically (as defined by the HTTP standard)
-          res.setHeader('Content-Length', Buffer.byteLength(resource, 'utf8'));
-          // Cache control
+          var len = Buffer.byteLength(resource, 'utf8');
+          res.setHeader('Content-Length', len);
+          // TODO delegate Cache control to a reverse proxy?
           if (lastModified) {
-            var expires = new Date();
+            /*var expires = new Date();
             expires.setFullYear(expires.getFullYear() + 1);
             res.setHeader('Expires', expires.toUTCString());
-            res.setHeader('Last-Modified', lastModified.toUTCString());
+            res.setHeader('Last-Modified', lastModified.toUTCString());*/
+            // or use Etag?
+            //res.setHeader('Etag', '"' + require('crc').crc32(resource) + '"');
+            res.setHeader('Etag', '"' + len + '-' + lastModified.getTime() + '"');
           }
-          else {
-            //TODO use ETAG???
-            res.setHeader('Expires', '"' + require('crc').crc32(resource) + '"');
-          }
+
           res.end(resource);
         });
       })

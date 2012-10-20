@@ -42,7 +42,7 @@ if (help || (!res && !special && !all && !infoOnly)) {
   console.log('%s -i <document id> ' + 'Print info on the document'.grey, process.argv[1]);
   console.log('%s -s <%s> ' + 'Render a special handler'.grey, process.argv[1], Object.keys(handlers).join('|'));
   console.log('%s --all            ' + 'Render all indexed documents and save them to disk'.grey, process.argv[1]);
-  console.log('%s -h        ' + ' (Display this message)'.grey, process.argv[1]);
+  console.log('%s -h               ' + ' (Display this message)'.grey, process.argv[1]);
   console.log('\nTemplates path:');
   console.log(renderer.path.blue.bold);
   console.log('Rendered documents path:');

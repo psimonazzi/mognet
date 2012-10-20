@@ -1,6 +1,6 @@
 {
   "name": "mognet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "???",
   "homepage": "https://github.com/psimonazzi/mognet",
   "repository": {
@@ -23,7 +23,7 @@
     "email": "p.simonazzi@gmail.com"
   },
   "dependencies": {
-    "connect": "2.x.x",
+    "connect": "2.6.x",
     "colors": "*",
     "findit": "0.x.x",
     "hogan.js": "2.x.x",

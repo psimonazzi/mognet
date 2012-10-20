@@ -179,7 +179,7 @@ Crawler.prototype.slug = function slug(title) {
 Crawler.prototype.fromFile = function(file, stat, doc) {
   doc['filename'] = file;
   // Temp numbering: when index is complete we can order by timestamp relative to ALL documents
-  doc['n'] = count;
+  //doc['n'] = count;
   doc['timestamp'] = stat.mtime;
 
   var name = path.basename(file);
