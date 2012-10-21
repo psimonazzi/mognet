@@ -25,10 +25,11 @@ var Indexer = require(__dirname + '/lib/indexer').Indexer;
 var utils = require(__dirname + '/lib/utils');
 
 // Run with "PORT=3000 node server.js" or "node server.js 3000" (or defined in config file)
-var port = process.env.PORT || process.argv[2] || Σ.cfg.port;
+var port = process.argv[2] || Σ.cfg.port;
 
 process.on('SIGPOLL', function() {
-  console.log('Got SIGPOLL (29). Reloading index...');
+  console.log('Got SIGPOLL (29). Reloading index and config...');
+  Σ.cfg = Σ.loadConfig();
   require('child_process').exec('/usr/bin/env node ' + __dirname + '/bin/update.js', function (error, stdout, stderr) {
     if (!error)
       indexer.load(function() { console.log('Reloaded index.'); });

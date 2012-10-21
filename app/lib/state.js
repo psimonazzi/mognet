@@ -6,8 +6,8 @@ module.exports = {
   'compiled_templates': {}
 };
 
+module.exports.loadConfig = loadConfig;
 module.exports.cfg = loadConfig();
-
 
 function CONFIG_DEFAULTS() {
   return {
@@ -23,32 +23,49 @@ function CONFIG_DEFAULTS() {
 
 /**
  * Load config (sync) from a file in JSON format.
- * Filename is '/config.json'.
+ * Filename is 'config.json'.
  * If the file is not found, it is created with the default values.
  *
- * @return {Object} The parsed config object. If there was an error returns a hardcoded default config (see sources)
+ * Any property found in environment variables will override the value set in the file.
+ * Environment variables are named with prefix 'MOGNET_' and the uppercased property name with '_' instead of camelCase, eg. 'pageSize' becomes 'MOGNET_PAGE_SIZE'.
+ *
+ * @return {Object} The config object. If there was an error returns a hardcoded default config (see sources)
  *
  * @api private
  */
 function loadConfig() {
+  // first get defaults
+  var cfg = CONFIG_DEFAULTS();
+
+  // then try to override with config file
   var filename = require('path').normalize(__dirname + '/../config.json');
   try {
     var raw = require('fs').readFileSync(filename);
-  } catch (err) {
-    //console.error(err);
     try {
-      require('fs').writeFileSync(filename, JSON.stringify(CONFIG_DEFAULTS(), null, '  '), 'utf8');
+      cfg = JSON.parse(raw);
     } catch (err) {
       console.error(err);
     }
-    return CONFIG_DEFAULTS();
+  } catch (err) {
+    //console.error(err);
+    var writeCfgFile = true;
   }
 
-  try {
-    return JSON.parse(raw);
-  } catch (err) {
-    console.error(err);
-    // default config
-    return CONFIG_DEFAULTS();
+  // finally try to override with env vars
+  cfg.port = process.env.MOGNET_PORT || process.env.PORT || cfg.port;
+  cfg.denyDiskRead = process.env.MOGNET_DENY_DISK_READ || cfg.denyDiskRead;
+  cfg.verbose = process.env.MOGNET_VERBOSE || cfg.verbose;
+  cfg.locale = process.env.MOGNET_LOCALE || cfg.locale;
+  cfg.pageSize = process.env.MOGNET_PAGE_SIZE || cfg.pageSize;
+
+  // If thre was no file write it with the current values
+  if (writeCfgFile) {
+    try {
+      require('fs').writeFileSync(filename, JSON.stringify(cfg, null, '  '), 'utf8');
+    } catch (err) {
+      console.error(err);
+    }
   }
+
+  return cfg;
 }

@@ -200,6 +200,13 @@ function mapDateNames(d) {
   var name = d;
   var slashed = d.split('/');
   if (slashed && slashed.length == 2) {
+    // Try to guess which of the supported locales has been set in config.
+    // We do not enforce a specific format for specifying the locale (eg. 'en_EN', 'it'...)
+    var locale;
+    [
+      { lang: 'en', re: /en/i },
+      { lang: 'it', re: /it/i }
+    ].forEach(function(l) { if (l.re.exec(Σ.cfg.locale)) { locale = l.lang; } });
     name = (MONTHS[Σ.cfg.locale][slashed[1].replace(/^0/, '') - 1] || slashed[1]) + ' ' + slashed[0];
   }
   return { 'name': name, 'href': d };
