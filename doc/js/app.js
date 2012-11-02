@@ -129,8 +129,8 @@
       var height = document.body.clientHeight - window.innerHeight;
       if (height - scrolled < 100) {
         var href = document.querySelectorAll("a[rel=" + (dir == "next" ? "next" : "prev") + "]")[0].href;
-        console.log("WOULD LOAD NEXT (" + height + " - " + scrolled + ") (" + href + ")");
-        // window.location = href;
+        //console.log("WOULD LOAD NEXT (" + height + " - " + scrolled + ") (" + href + ")");
+        window.location = href;
       }
     };
 
