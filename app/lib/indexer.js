@@ -6,7 +6,7 @@ require('colors');
 var utils = require('../lib/utils');
 var Σ = require('../lib/state');
 
-exports.Indexer = Indexer;
+module.exports.createIndexer = function createIndexer() { return new Indexer(); };
 
 function Indexer() {
   EventEmitter.call(this);
@@ -33,16 +33,15 @@ Indexer.prototype.file = 'index.json';
 
 /**
  * Index data structure. This holds all the site text contents, indexed by id, tags and publication month.
- * The index attributes are:
+ * The index fields are:
  *
  * id - Map of document ids and data.
  * tag - Map of tags and arrays with the ids having that tag.
  * time - Map of time spans and arrays with the ids having that timestamp. The time spans are in format: 'yyyy/mm'.
- * n - Array of document ids in chronological order. Array index corresponds to document attribute 'n'.
+ * n - Array of document ids in chronological order. Array index corresponds to document field 'n'.
  *
  * @api public
  */
-//Indexer.prototype.index = {
 Indexer.prototype.EMPTY_INDEX = function() {
   return {
     'id': {},
@@ -89,10 +88,10 @@ Indexer.prototype.add = function(doc) {
 
 
 /**
- * Sort the public articles in the index, creating an array with the ordered document ids in the 'n' attribute of the index.
- * The 'n' attribute of each document is also updated to reflect its position in the index (zero-based).
+ * Sort the public articles in the index, creating an array with the ordered document ids in the 'n' field of the index.
+ * The 'n' field of each document is also updated to reflect its position in the index (zero-based).
  * Sort according to modified date and document id.
- * Only public articles are sorted. Secret, ignored, or non-article documents will not have a 'n' attribute. So the sorted array length may NOT be equal to the total number of documents in the index.
+ * Only public articles are sorted. Secret, ignored, or non-article documents will not have a 'n' field. So the sorted array length may NOT be equal to the total number of documents in the index.
  *
  * @api public
  */
@@ -194,16 +193,16 @@ Indexer.prototype.documentIds = function documentIds() {
 /**
  * Reviver function for JSON.parse. Restores Date objects when parsing the json index.
  *
- * @param {string} k JSON attribute name
- * @param {Object} v JSON attribute value
+ * @param {string} k JSON field name
+ * @param {Object} v JSON field value
  *
  * @api private
  */
 function indexReviver(k, v) {
-  if (k === "")
+  if (k === '')
     return v;
   if (typeof v === 'string' &&
-      (k == 'modified' || k == 'timestamp' || k == 'schedule')) {
+      (k === 'modified' || k === 'timestamp' || k === 'schedule')) {
     return new Date(v);
   }
   return v;
@@ -215,7 +214,7 @@ Indexer.prototype.loadSync = function loadSync() {
     Σ.index = utils.loadJSONSync(this.path + this.file, indexReviver);
   }
   catch (err) {
-    console.error(err);
+    if (Σ.cfg.verbose) console.error(err);
     Σ.index = this.EMPTY_INDEX();
   }
 };

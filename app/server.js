@@ -21,7 +21,7 @@ var connect = require('connect');
 //require.paths.unshift(__dirname + '/lib');
 var Σ = require(__dirname + '/lib/state');
 var router = require(__dirname + '/lib/router');
-var Indexer = require(__dirname + '/lib/indexer').Indexer;
+var Indexer = require(__dirname + '/lib/indexer');
 var utils = require(__dirname + '/lib/utils');
 
 // Run with "PORT=3000 node server.js" or "node server.js 3000" (or defined in config file)
@@ -48,6 +48,8 @@ process.on('SIGUSR1', function() {
 
 process.on('SIGUSR2', function() {
   console.log('Got SIGUSR2 (12).');
+  console.log('Config:');
+  console.log(util.inspect(Σ.cfg, false, null, true));
   console.log('%j', process.memoryUsage());
 });
 
@@ -70,19 +72,25 @@ fs.writeFile(__dirname + '/../../server.pid', process.pid, 'utf8', function(err)
 });
 
 console.log('Loading index from disk...');
-var indexer = new Indexer();
-indexer.loadSync();
-//indexer.sort(); // will be already sorted on disk
+var indexer = Indexer.createIndexer();
+try {
+  indexer.loadSync();
+  //indexer.sort(); // will be already sorted on disk
+} catch (ex) {
+  // rethrow if error was not 'file not found'
+  if (ex.code !== 'ENOENT') throw ex;
+}
+
 if (Object.keys(Σ.index['id']).length == 0) {
   console.error('No index found. Create a new index with: bin/update.js');
-  // do not exit, just serve what we can
+  // do not exit, just serve what we can: static files and special routes with dedicated handlers
 }
 
 try {
   var lastModified = Σ.index['id'][Σ.index['n'][Σ.index['n'].length - 1]].modified;
   console.log('Index contains %d entries. Last modified on %s', Object.keys(Σ.index.id).length, lastModified);
 } catch (ex) {
-  console.error('Cannot determine last modified time for index. ' + ex);
+  console.error('Cannot determine last modified time for index.');
 }
 
 var ONE_YEAR = 31536000000;
@@ -91,7 +99,7 @@ var ONE_YEAR = 31536000000;
 // so it catches any non-existent url
 var app = connect()
       //.use(connect.responseTime())
-      //.use(connect.logger('tiny'))
+      .use(connect.logger({ format: 'tiny', buffer: 1000 }))
       .use(connect.timeout(10000))
       .use(connect.compress())
       .use(connect.favicon('/favicon.ico', { 'maxAge': ONE_YEAR }))
@@ -122,8 +130,8 @@ var app = connect()
 
         router.getResource(req, function(err, resource, route) {
           if (err) {
-            if (404 === err.status) {
-              res.statusCode = 404;
+            if (404 === err.status || 403 === err.status) {
+              res.statusCode = 404; // mask 403 (secret document) as 404 (not found)
               resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + req.url;
             }
             else {

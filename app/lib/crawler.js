@@ -19,7 +19,17 @@ var utils = require('../lib/utils');
 var txt = require('../lib/txt');
 var Σ = require('../lib/state');
 
-exports.Crawler = Crawler;
+// Instead of:
+// module.exports.Crawler = Crawler;
+// and instance with:
+// var Crawler = require('../lib/crawler').Crawler;
+// var crawler = new Crawler();
+//
+// use the preferred Node.js style and instance with:
+// var crawler = require('../lib/crawler').createCrawler();
+//
+//module.exports.Crawler = Crawler;
+module.exports.createCrawler = function createCrawler() { return new Crawler(); };
 
 
 /**
@@ -42,6 +52,7 @@ var DEFAULTS = function() {
     'tag': [],
     'rel': [],
     'blip': false,
+    'cite': null,
     'ignore': false,
     'secret': false,
     'doc': false,
@@ -158,8 +169,8 @@ Crawler.prototype.slug = function slug(title) {
 
 
 /**
- * Create a partial document from a file, overriding any existing attribute of the passed document.
- * The following document attributes are set:
+ * Create a partial document from a file, overriding any existing field of the passed document.
+ * The following document fields are set:
  *
  * 'n': counter starting from 1
  *
@@ -203,7 +214,7 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
 
 
 /**
- * Create a partial document from a file content, overriding any existing attribute of the passed document.
+ * Create a partial document from a file content, overriding any existing field of the passed document.
  * Content can be HTML (with or without doctype) or Markdown.
  *
  * Example file contents:
@@ -221,13 +232,13 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
  * <p>Contents<br/>End.
  *
  *
- * The following document attributes are set:
+ * The following document fields are set:
  *
  * 'title': content of the <title> element or first Markdown title
  *
- * 'id': slug created from the title, if undefined. This attribute is NOT overwritten if it was already set
+ * 'id': slug created from the title, if undefined. This field is NOT overwritten if it was already set
  *
- * 'content': file content without doctype, <meta>, <title>, first Markdown title and first <script> element
+ * 'content': file content without doctype, <meta>, <title> and first <script> element
  *
  * @param {string} s File contents as string
  * @param {Object} doc Possibly empty partial document to be overridden
@@ -271,10 +282,10 @@ Crawler.prototype.fromContent = function(s, doc) {
 
 
 /**
- * Create a partial document from a file metadata, overriding any existing attribute of the passed document.
+ * Create a partial document from a file metadata, overriding any existing field of the passed document.
  * Metadata takes precedence over any other way to set attributes.
- * This function returns the final instance of a document. If any attribute is still undefined after parsing metadata, and has no default value, it is set by heuristics if possible.
- * Further modules consuming the document returned by this function should NOT modify it, nor transform or interpret its attributes.
+ * This function returns the final instance of a document. If any field is still undefined after parsing metadata, and has no default value, it is set by heuristics if possible.
+ * Further modules consuming the document returned by this function should not modify it, nor transform or parse its attributes. Please!
  *
  * @param {string} s File contents as string, containing the metadata in the first <script> element
  * @param {Object} doc Possibly empty partial document to be overridden
@@ -295,18 +306,20 @@ Crawler.prototype.fromMeta = function(s, doc) {
     }
   }
   // Transform parsed attributes in the correct format if needed
-  // Dates are specified as strings in format: 'yyyy/mm/dd hh:mm'
+  // Dates are specified as strings in format 'yyyy/mm/dd hh:mm' or in standard JSON serialized format, i.e. 'yyyy-mm-ddThh:mm:ss.sssZ'
   [ 'timestamp', 'schedule', 'modified' ].forEach(function(name) {
     if (meta && meta[name]) {
       var match = /^(\d{4})\/(\d{2})\/(\d{2})\s(\d{2}):(\d{2})$/.exec(meta[name]);
       if (match && match.length == 6)
         meta[name] = new Date(match[1], match[2] - 1, match[3], match[4], match[5], 0);
+      else
+        try { meta[name] = new Date(meta[name]); } catch (ex) { }
     }
   });
 
   doc = utils.extend(doc, meta);
 
-  // Heuristically set any attribute still missing
+  // Heuristically set any field still missing
   // Do this here to keep all document creation logic in one place
   if (!doc['schedule'])
     doc['schedule'] = doc['timestamp'];
@@ -321,7 +334,7 @@ Crawler.prototype.fromMeta = function(s, doc) {
     doc['modified'] = new Date(doc['modified']);
 
   if (!doc['abstract']) {
-    // Use first <br/> instead of first <p> paragraph, so it should work with markdown too
+    // Use first <br/> instead of first <p> paragraph, so it works with markdown too
     var startSecondPar = doc['content'].indexOf('<br/>');
       if (startSecondPar > 0)
         doc['abstract'] = doc['content'].substring(0, startSecondPar);
@@ -332,8 +345,7 @@ Crawler.prototype.fromMeta = function(s, doc) {
         doc['abstract'] = doc['content'].substring(0, startSecondPar);
     }*/
     if (!doc['abstract']) {
-      // TODO null or truncate contents?
-      //doc['abstract'] = doc['content'];
+      // leave null, better than truncate contents?
     }
   }
 

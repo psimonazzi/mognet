@@ -1,6 +1,5 @@
 var assert = require("assert");
-var m = require("../lib/crawler");
-var crawler = new m.Crawler();
+var crawler = require('../lib/crawler').createCrawler();
 
 
 describe('crawler', function() {

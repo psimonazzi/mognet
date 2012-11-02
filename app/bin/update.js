@@ -8,10 +8,8 @@ var util = require('util');
 require('colors');
 
 var Σ = require('../lib/state');
-var Crawler = require('../lib/crawler').Crawler;
-var crawler = new Crawler();
-var Indexer = require('../lib/indexer').Indexer;
-var indexer = new Indexer();
+var crawler = require('../lib/crawler').createCrawler();
+var indexer = require('../lib/indexer').createIndexer();
 
 function usage() {
   console.log("USAGE:");

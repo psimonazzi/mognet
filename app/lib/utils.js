@@ -53,7 +53,7 @@ function timeIt(name, cont) {
 
 /**
  * Extend an object with another.
- * Missing attributes in the object are added, existing ones are overridden.
+ * Missing fields in the object are added, existing ones are overridden.
  *
  * Implemented with a simple flat version: http://groups.google.com/group/nodejs-dev/browse_thread/thread/41cfc3a2d2e4bcd9?pli=1.
  * This is about the same as Connect.merge(). Good enough & Just works.
@@ -106,7 +106,7 @@ exports.pad = function pad(n, len) {
 };
 
 
-/**
+/*
  * Concat a list of files with newline chars.
  *
  * @param {Array} files An array of filenames
@@ -120,7 +120,7 @@ exports.pad = function pad(n, len) {
 };*/
 
 
-/**
+/*
  * Command line prompt.
  *
  * @param {String} msg Message prepended to prompt
@@ -142,8 +142,8 @@ exports.pad = function pad(n, len) {
 
 exports.rangeCheck = function rangeCheck(n, max) {
   if (n < 0)
-    n = 0;
+    n = null;// 0;
   else if (n > max)
-    n = max;
+    n = null;// max;
   return n;
 };

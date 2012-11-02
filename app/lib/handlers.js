@@ -1,5 +1,5 @@
 var Σ = require('../lib/state');
-var Indexer = require('../lib/indexer').Indexer;
+var Indexer = require('../lib/indexer');
 
 module.exports = {
   menu: function(req) {
@@ -12,14 +12,14 @@ module.exports = {
 
     var MAX_COUNT = 20;
     if (Σ.index) {
-      var tags = Object.keys(Σ.index['tag']).sort();
+      var tags = Object.keys(Σ.index.tag).sort();
       if (tags.length > MAX_COUNT) {
         tags = tags.slice(0, MAX_COUNT);
         ctx.tagsOverflow = true;
       }
       ctx.tags = tags.map(mapTagNames);
 
-      var dates = Object.keys(Σ.index['time']).sort();
+      var dates = Object.keys(Σ.index.time).sort();
       if (dates.length > MAX_COUNT) {
         dates = dates.slice(0, MAX_COUNT);
         ctx.datesOverflow = true;
@@ -47,18 +47,18 @@ module.exports = {
 
     // Select ids to display in the current page
     if (Σ.index && Σ.index['n']) {
-      var indexer = new Indexer();
+      var indexer = Indexer.createIndexer();
       var ids = indexer.publicIds();
       var startId = Σ.cfg.pageSize * (ctx.page - 1);
       var endId = Σ.cfg.pageSize * (ctx.page);
       ctx.ids = ids.slice(startId, endId);
 
       ctx.items = ctx.ids.map(function(id) {
-        return Σ.index['id'][id];
+        return Σ.index.id[id];
       });
 
       ctx.nextPage = ctx.page + 1;
-      if (Σ.index['n'].length < Σ.cfg.pageSize * ctx.nextPage)
+      if (Σ.index.n.length < Σ.cfg.pageSize * ctx.nextPage)
         ctx.nextPage = null;
       ctx.prevPage = ctx.page - 1;
       if (ctx.prevPage < 0)
@@ -115,8 +115,8 @@ module.exports = {
 
     if (!ctx.filter) {
       // Search options / archive
-      ctx.tags = Object.keys(Σ.index['tag']).sort().map(mapTagNames);
-      ctx.dates = Object.keys(Σ.index['time']).sort().map(mapDateNames);
+      ctx.tags = Object.keys(Σ.index.tag).sort().map(mapTagNames);
+      ctx.dates = Object.keys(Σ.index.time).sort().map(mapDateNames);
     }
     else {
       // Search results
@@ -132,7 +132,7 @@ module.exports = {
         // TODO Add paging in search results
         if (ids) {
           ctx.items = ids.map(function(id) {
-            var doc = Σ.index['id'][id];
+            var doc = Σ.index.id[id];
             if (doc && !doc.doc && !doc.secret && !doc.ignore)
               return doc;
             else
@@ -169,7 +169,7 @@ module.exports = {
 
     // Select ids to display in the RSS feed
     if (Σ.index && Σ.index['id'].length > 0 && Σ.index['n']) {
-      var indexer = new Indexer();
+      var indexer = Indexer.createIndexer();
       var ids = indexer.publicIds();
       ctx.items = ids.slice(ids.length >= MAX_COUNT ? -MAX_COUNT : -ids.length).map(function(id) {
         var doc = Σ.index['id'][id];
@@ -193,7 +193,7 @@ module.exports = {
 
 
 function mapTagNames(t) {
-  return { 'name': t, 'href': t };
+  return { 'name': t, 'href': encodeURIComponent(t) };
 }
 
 function mapDateNames(d) {

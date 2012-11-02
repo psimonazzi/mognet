@@ -1,4 +1,5 @@
 var util = require('util');
+var url = require('url');
 
 var utils = require('../lib/utils');
 var renderer = require('../lib/renderer');
@@ -10,7 +11,7 @@ var Σ = require('../lib/state');
  * Check if the HTTP request is from a known mobile User Agent.
  * Copy/pasted from http://detectmobilebrowsers.com
  *
- * @param {Object} req HTTP request. Should have an attribute 'headers.user-agent' representing the User Agent string (otherwise returns false)
+ * @param {Object} req HTTP request. Should have a field 'headers.user-agent' representing the User Agent string (otherwise returns false)
  *
  * @return {Boolean} True if the User Agent is mobile, false otherwise
  *
@@ -29,7 +30,7 @@ exports.mobileCheck = function mobileCheck(req) {
  *
  * @param {Object} req Request
  *
- * @return {Object} A route object containing the normalized url of the resource, output type (html or json), medium type (hi or lo spec)
+ * @return {Object} A route object containing the normalized url of the resource, output type (i.e. html or json), medium type (i.e. hi or lo spec)
  *
  * @api public
  */
@@ -40,11 +41,9 @@ exports.parse = function parse(req) {
     'medium': null,
     'contentType': null
   };
-  // TODO rewrite this mess!
-  var legalContentTypes = ['html', 'json', 'xml'];
-  var legalAcceptTypes = {
+  var acceptTypes = {
     'text/html': 'html',
-    'application/javascript': 'json'
+    'application/json': 'json'
   };
   var contentTypes = {
     'html': 'text/html',
@@ -52,7 +51,7 @@ exports.parse = function parse(req) {
     'xml': 'application/xml'
   };
 
-  var parsedUrl = require('url').parse(req.url);
+  var parsedUrl = url.parse(req.url);
   var pathname = parsedUrl.pathname.replace(/^\//, '');
   var idxDot = pathname.lastIndexOf('.');
   if (idxDot < 0)
@@ -65,14 +64,14 @@ exports.parse = function parse(req) {
 
   if (!route.output) {
     var hasExt = /\.(.+?)$/i.exec(parsedUrl.pathname);
-    if (hasExt && hasExt[1] && legalContentTypes[hasExt[1].toLowerCase()]) {
+    if (hasExt && hasExt[1] && Object.keys(contentTypes)[hasExt[1].toLowerCase()]) {
       route.output = hasExt[1].toLowerCase();
     }
   }
   if (!route.output && req.headers && req.headers['accept']) {
-    for (var i in legalAcceptTypes) {
+    for (var i in acceptTypes) {
       if (req.headers['accept'].indexOf(i) > -1) {
-        route.output = legalAcceptTypes[i];
+        route.output = acceptTypes[i];
         break;
       }
     }
@@ -97,7 +96,7 @@ exports.parse = function parse(req) {
  * Do whatever it takes.
  *
  * @param {Object} req Request
- * @param {Function} done Callback
+ * @param {Function} done Callback with signature: error, resource string, route object
  *
  * @api public
  */
@@ -112,7 +111,7 @@ exports.getResource = function getResource(req, done) {
  * Do whatever it takes.
  *
  * @param {Object} route Route
- * @param {Function} done Callback
+ * @param {Function} done Callback with signature: error, resource string, route object
  *
  * @api public
  */
@@ -128,7 +127,7 @@ exports.getRoutedResource = function getRoutedResource(req, route, done) {
     try {
       ctx = exports.context(route, req);
     } catch (err) {
-      // Aaargh! This will be a 500 error
+      // Aaargh! This will bubble up to the client and result in an HTTP error code
       done(err);
       return;
     }
@@ -141,11 +140,17 @@ exports.getRoutedResource = function getRoutedResource(req, route, done) {
 
 /**
  * Get context for this request. Context is extracted mainly from an indexed document, plus global/extra params.
+ * Context fields:
+ * - all the document fields
+ * - all the required handlers fields
+ * - 'menu': the menu handler object, only for HTML rendering
+ * - 'route': the route object
+ * - pagination and related links fields
  *
  * @param {Object} route Route
  * @param {Object} req Request
  *
- * @return {Object} Context for the request. Could be empty. An error is thrown if there was an error getting context. The error.status can be 404 if the document was not found in the index, or 500 otherwise.
+ * @return {Object} Context for the request. Could be empty. An error is thrown if there was an error in getting context. The error.status will be 404 if the document was not found in the index, or 500 otherwise.
  *
  * @api public
  *
@@ -154,17 +159,17 @@ exports.context = function context(route, req) {
   // Get from index
   var ctx, doc, handled;
   try {
-    doc = Σ.index['id'][route.url];
+    doc = Σ.index.id[route.url];
     ctx = doc;
   }
   catch (e) {
 
   }
 
-  // If the document was found but is flagged 'secret', return Not Found anyway
+  // If the document was found but is flagged 'secret', return Forbidden
   if (doc && doc.secret) {
-    var errSecret = new Error('404 Not Found (' + route.url + ')');
-    errSecret.status = 404;
+    var errSecret = new Error();
+    errSecret.status = 403;
     if (Σ.cfg.verbose) console.log('(Router) Denied request %s for secret document %s', route.url, doc.id);
     throw errSecret;
   }
@@ -177,7 +182,8 @@ exports.context = function context(route, req) {
 
   if (!doc && !handled) {
     // No indexed doc and no handlers for this route... sadly we have to give up
-    var err = new Error('404 Not Found (' + route.url + ')');
+    // TODO log '404 Not Found (' + route.url + ')'
+    var err = new Error();
     err.status = 404;
     throw err;
   }
@@ -187,6 +193,8 @@ exports.context = function context(route, req) {
     ctx = {};
   utils.extend(ctx, doc);
   utils.extend(ctx, handled);
+  // Add route
+  ctx.route = route;
 
   // Finally, transform or update the context as necessary for rendering.
   // This involves adding all extra params from request data.
@@ -198,25 +206,52 @@ exports.context = function context(route, req) {
   // Additional data for articles
   if (doc && !doc.doc) {
     if (Σ.index['n']) {
+      // Dates display
+      ctx.timeTag = util.format("%s-%s-%s",
+                                doc.modified.getFullYear(),
+                                utils.pad(doc.modified.getMonth() + 1, 2),
+                                utils.pad(doc.modified.getDay() + 1, 2));
+      ctx.displayDate = util.format("%s / %s /%s",
+                                    utils.pad(doc.modified.getDay() + 1, 2),
+                                    utils.pad(doc.modified.getMonth() + 1, 2),
+                                    doc.modified.getFullYear());
+      ctx.displayTime = util.format("%s:%s:%s.%s",
+                                    utils.pad(doc.modified.getHours(), 2),
+                                    utils.pad(doc.modified.getMinutes(), 2),
+                                    utils.pad(doc.modified.getSeconds(), 2),
+                                    utils.pad(doc.modified.getMilliseconds(), 3));
+
+      // Tags display
+      // Related articles data
+      if (doc.tag.length > 0) {
+        ctx.tag = doc.tag.map(function(t) {
+          return { 'name': t, 'href': encodeURIComponent(t) };
+        });
+      }
+
       // Pagination
-      ctx.nextId = Σ.index['n'][utils.rangeCheck(doc.n + 1, Σ.index['n'].length)];
-      if (ctx.nextId && Σ.index['id'][ctx.nextId])
-        ctx.nextTitle = Σ.index['id'][ctx.nextId].title;
-      ctx.prevId = Σ.index['n'][utils.rangeCheck(doc.n - 1, Σ.index['n'].length)];
-      if (ctx.prevId && Σ.index['id'][ctx.prevId])
-        ctx.prevTitle = Σ.index['id'][ctx.prevId].title;
+      var nextN = utils.rangeCheck(doc.n + 1, Σ.index.n.length);
+      ctx.nextId = nextN != null ? Σ.index.n[nextN] : '';
+      if (ctx.nextId && Σ.index.id[ctx.nextId])
+        ctx.nextTitle = Σ.index.id[ctx.nextId].title;
+      var prevN = utils.rangeCheck(doc.n - 1, Σ.index.n.length);
+      ctx.prevId = prevN != null ? Σ.index.n[prevN] : '';
+      if (ctx.prevId && Σ.index.id[ctx.prevId])
+        ctx.prevTitle = Σ.index.id[ctx.prevId].title;
     }
+
     // Related articles data
-    if (doc.rel) {
-      ctx.rlinks = doc.rel.map(function(id) {
-        if (Σ.index['id'][id]) {
+    if (doc.rel.length > 0) {
+      ctx.rlinks = [{ list: null }]; // TODO ugly mustache hack?!
+      ctx.rlinks[0].list = doc.rel.map(function(id) {
+        if (Σ.index.id[id]) {
           return {
             'href': id,
-            'title': Σ.index['id'][id].title
+            'title': Σ.index.id[id].title
           };
         }
         else {
-          if (Σ.cfg.verbose) console.error('(Crawler) No title found for related id %s', id);
+          if (Σ.cfg.verbose) console.error('(Router) No title found for related id %s in %s', id, doc.id);
           return {
             'href': id,
             'title': ''

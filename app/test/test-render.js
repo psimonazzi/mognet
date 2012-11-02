@@ -142,8 +142,7 @@ describe('renderer', function() {
     it('should render all documents in the index twice (once for lo-spec, one for hi-spec)', function(done) {
       // First build an index
       Σ.index = {};
-      var Indexer = require('../lib/indexer').Indexer;
-      var indexer = new Indexer();
+      var indexer = require('../lib/indexer').createIndexer();
       indexer.add(doc1);
       indexer.add(doc2);
 

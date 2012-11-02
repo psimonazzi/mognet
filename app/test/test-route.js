@@ -18,7 +18,7 @@ var req1 = {
 var req2 = {
   'url': '/search?q=X',
   'headers': {
-    'accept': 'application/javascript',
+    'accept': 'application/json',
     'user-agent': 'Mozilla/5.0 (Linux; U; Android 2.3.6; it-it; GT-I9100 Build/GINGERBREAD) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1'
   },
   'method': 'GET',
@@ -144,8 +144,7 @@ describe('router', function() {
   describe('#resource()', function() {
     it('should do whatever it takes to get the requested resource', function(done) {
       // First build an index
-      var Indexer = require('../lib/indexer').Indexer;
-      var indexer = new Indexer();
+      var indexer = require('../lib/indexer').createIndexer();
       indexer.add(doc1);
 
       // We will get the standard template for this request, and it must already exist.
@@ -173,17 +172,17 @@ describe('router', function() {
       });
     });
 
-    it('should return 404 even for secret documents', function(done) {
+    it('should return 403 for secret documents', function(done) {
+      Σ.cfg.verbose = false; // prevent log messages
       Σ.index['id'] = {};
       Σ.renders = {};
       Σ.compiled_templates = {};
       // First build an index
-      var Indexer = require('../lib/indexer').Indexer;
-      var indexer = new Indexer();
+      var indexer = require('../lib/indexer').createIndexer();
       indexer.add(doc2);
 
       router.getResource(req7, function(err, resource) {
-        assert.equal(404, err.status);
+        assert.equal(403, err.status);
         done();
       });
     });

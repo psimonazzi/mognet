@@ -29,7 +29,7 @@
 
   /**
    * Pretty typography.
-   * Taken from https://gist.github.com/705071
+   * Inspired by https://gist.github.com/705071
    *
    * @param {String} text The text without HTML escapes or tags
    *

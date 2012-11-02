@@ -1,17 +1,238 @@
-{{title}}
-TEST url: {{url}}
-id: {{id}}
-timestamp: {{timestamp}}
-content:
-{{& content}}
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8"/>
+  <!-- TODO better send as header -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 
-related:
-{{#rlinks}}
-* <a href="{{href}}">{{title}}</a>
-{{/rlinks}}
+  <!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
+  <!-- Set in CSS too -->
+  <meta name="HandheldFriendly" content="True"/>
+  <meta name="MobileOptimized" content="320"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
+  <meta http-equiv="cleartype" content="on"/>
+  
+  <title>Paolo Simonazzi</title>
+  <meta name="author" content="Paolo Simonazzi"/>
+  <meta name="keywords" content="" />
+  <meta name="description" content=""/>
+  <meta name="country" content="IT" />
+  <meta name="language" content="it-IT" />
+  
+  <!-- Facebook and others will use the following data to represent your site
+       when it is shared.
+       Facebook documentation (includes info on sharing more specific media types): http://developers.facebook.com/docs/share -->
+  <meta property="og:title" content="" />
+  <meta property="og:description" content="" />
+  <meta property="og:image" content="/img/logo.png" />
+  <meta property="og:url" content="http://..." />
+  <!-- G+ -->
+  <meta itemprop="name" content="" />
+  <meta itemprop="description" content="" />
+  <meta itemprop="image" content="/img/logo.png" />
 
-tags:
-{{#tag}}
-* {{.}}
-{{/tag}}
+  <!-- IE9 Pinned Site Settings
+       http://msdn.microsoft.com/en-ca/library/gg131029(VS.85).aspx -->
+  <meta name="msapplication-tooltip" content="A description of what this site does." />
+  <!-- If the site should go to a specific URL when it is pinned (such as
+       the homepage), enter it here.
+       One idea is to send it to a special URL so you can track # of pinned users,
+       like so: http://www.example.com/index.html?pinned=true -->
+  <meta name="msapplication-starturl" content="" />
+  <!-- IE9 will automatically use the overall color of your site's favicon to
+       shade its browser buttons. UNLESS you give it another color here.
+       Only use named colors ("red") or hex colors ("#f00"). -->
+  <meta name="msapplication-navbutton-color" content=""/>
+  <!-- Define Jump List tasks that will appear when the pinned site's
+       icon gets a right-click. Each "task" goes to the specified URL,
+       and gets its own mini icon (essentially a favicon, a 16x16 .ICO). -->
+  <meta name="msapplication-task" content="name=Info;action-uri=http://.../info;icon-uri=http://host/icon1.ico"/>
+  <meta name="msapplication-task" content="name=Ricerca;action-uri=http://.../search;icon-uri=http://host/icon2.ico"/>
+  <meta name="msapplication-task" content="name=Colophon;action-uri=http://.../colophon;icon-uri=http://host/icon1.ico"/>
+  
+  <link rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/" />
+
+  <!-- Signal to search engines and others "Use this URL for this page!"
+       Useful when URLs are dynamically generated. -->
+  <link rel="canonical" href="/" />
+
+  <link rel="alternate" type="application/atom+xml" href="/atom" />
+  
+  <!-- Sites with search functionality should be strongly considered for a browser search plugin. -->
+  <!--<link rel="search" title="" type="application/opensearchdescription+xml" href="" />-->
+  
+  <!-- Place favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+  <!--<link rel="shortcut icon" href="/favicon.ico?1" />-->
+  <!-- For Opera, iPhone, iPod Touch, and Android 2.1+ devices: -->
+  <!--<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">-->
+    
+  <!--<link rel="stylesheet" href="css/grid.css?1"/>-->
+  <!-- TODO Append to one stylesheet. Put your layout here -->
+  <link rel="stylesheet" href="/css/style.css?1" media="screen" />
+  <!-- DEBUG -->
+  <!--<link rel="stylesheet" href="css/holmes.css" media="screen" />-->
+  
+  <!--[if lt IE 9]>
+  <link rel="stylesheet" href="css/ie.css?1" media="screen" />
+  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  
+  <!-- http://code.google.com/apis/analytics/docs/tracking/asyncTracking.html -->
+  <!--
+  <script>
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-XXXXX-X']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+  -->
+
+</head>
+
+
+
+<body itemscope="itemscope" itemtype="http://schema.org/Article">
+
+<header>
+  <div class="logo"><a href="/" title="Paolo Simonazzi">℘</a></div><!-- ☆ ℘ ∴ ◈ ♚ ✪ ✦ -->
+  <nav>
+    <ul>
+      <li><a href="/info">info</a></li>
+      <li><a href="/search">ricerca</a>
+          <div class="floating">
+          <div id="search-menu">
+          <!--<form action="/" method="get">
+            <div class="searchform">
+              <input type="text" id="q" name="q" /><button>↵</button>
+            </div>
+          </form>-->
+
+          {{#menu}}
+          <h2>Categorie</h2>
+          <ul class="menu cf">
+              {{#tags}}
+              <li><a href="/search/{{href}}">{{name}}</a></li>
+              {{/tags}}
+              {{#tagsOverflow}}
+              <li><a href="/search" class="continue">archivio</a></li>
+              {{/tagsOverflow}}
+          </ul>
+          
+          <h2>Date</h2>
+          <ul class="menu cf">
+              {{#dates}}
+              <li><a href="/search/{{href}}">{{name}}</a></li>
+              {{/dates}}
+              {{#datesOverflow}}
+              <li><a href="/search" class="continue">archivio</a></li>
+              {{/datesOverflow}}
+          </ul>
+          {{/menu}}
+          
+          </div>
+        </div>
+      </li>
+      <!--<li><a href="/fav" id="fav">&#x2605;<sup></sup></a></li>-->
+      <li><a href="/colophon">colophon</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- Itemprop microformat only in single-article pages -->
+<article>
+  <h1 itemprop="name"><a href="/{{id}}">{{{title}}}</a></h1>
+  
+  <div class="meta"><!-- meta -->
+    <ul>
+      <li><time datetime="{{timeTag}}">{{displayDate}} <em>{{displayTime}}</em></time></li>
+      <!--<li class="☆"><a href="" data-fav="0">☆</a></li>-->
+
+      {{#tag}}
+      <li><a href="/search/{{href}}">{{name}}</a></li>
+      {{/tag}}
+    </ul>
+  </div>
+  
+  <div class="content{{#blip?}}blip{{/blip?}}"><!-- content -->
+      {{#blip?}}<blockquote cite="{{cite}}"><p>“{{/blip?}}
+      {{{content}}}
+      {{#blip?}}”</p></blockquote>{{/blip?}}
+
+      {{#rlinks}}
+      <!-- related are in single article view only -->
+      <div class="rel">
+          <h2>Correlati</h2>
+          <ul>
+              {{#list}}
+              <li><a href="/{{href}}">{{{title}}}</a></li>
+              {{/list}}
+          </ul>
+      </div>
+      {{/rlinks}}
+  </div><!-- /content -->
+</article>
+
+
+<footer role="contentinfo">
+  <div class="pages">
+    <div class="prev"><a href="/{{prevId}}" title="precedenti [K all'inizio della pagina]" rel="prev">&lt;</a><span>{{{prevTitle}}}</span></div> 
+    <div class="next"><a href="/{{nextId}}" title="successivi [SPAZIO o J in fondo alla pagina]" rel="next"><kbd>spazio</kbd> &gt;</a><span>{{{nextTitle}}}</span></div>
+  </div><!--<kbd>␣</kbd>-->
+  
+  <nav>
+    <ul>
+      <li><a href="https://github.com/psimonazzi">codice sorgente</a></li>
+    </ul>
+  </nav>
+  
+  <small class="vcard">© <a href="/info" class="fn org url" rel="me">Paolo Simonazzi</a><br/>
+  <a href="https://github.com/psimonazzi">Github</a> · <a href="https://twitter.com/psimonazzi">Twitter</a> · <a href="http://plus.google.com/Paolo%20Simonazzi">Google+</a></small>
+  <small>Contenuti su licenza <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC (Attribuzione — Condividi allo stesso modo)</a></small>
+  <small><em>Fatto in Italia con amore &amp; ossessione.</em></small>
+</footer>
+
+
+
+<!-- Various floating elements, normally hidden -->
+
+<div id="controls-menu" class="hidden floating">
+  <dl>
+    <dt><code>J</code></dt><dd>&mdash; Pagina successiva</dd>
+    <dt><code>K</code></dt><dd>&mdash; Pagina precedente</dd>
+    <dt><code>SPAZIO</code></dt><dd>&mdash; Scorrimento pagina / pagina successiva se in fondo alla pagina corrente</dd>
+    <dt><code>S</code></dt><dd>&mdash; Cerca</dd>
+    <dt><code>H</code></dt><dd>&mdash; Mostra / nascondi questa guida</dd>
+  </dl>
+</div>
+
+<!-- Javascript at the bottom for fast page loading -->
+<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
+<!-- Let's help Mother Nature and link to a local copy of jQuery until our project is ready for launch. -->
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>-->
+<!--<script>//<![CDATA[
+!window.jQuery && document.write(unescape('%3Cscript src="js/jquery-1.4.4.min.js"%3E%3C/script%3E'))
+//]]></script>-->
+<!-- jQuery Lint for the performance-tweaking stages of your project.
+     Notifies of inefficient selectors and other ego-breaking things. -->
+<!--<script src="js/jquery.lint.js"></script>-->
+<!--<script src="js/jquery.hotkeys.js"></script>-->
+<script src="/js/app.js?0.1"></script>
+<script src="/js/rainbow-custom.min.js?0.1"></script>
+
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+<!--<script>
+    var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>-->
+
+</body>
+</html>
+
 

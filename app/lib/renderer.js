@@ -38,7 +38,7 @@ exports.renderNew = function renderNew(route, context, done) {
   }
   else {
     var templateName = exports.templateName(route);
-    // Allow empty context here
+    // Allow empty context
     exports.compileAndRenderFile(templateName, context, function(err, renderedContent) {
       if (err) {
         done(err);
@@ -57,9 +57,11 @@ exports.renderNew = function renderNew(route, context, done) {
 
 
 /**
- * Return the resource body as text. Null if not found.
+ * Return the pre-rendered resource body as text.
  *
- * @return {string}
+ * @param {string} route Route of the resource
+ *
+ * @return {string} Rendered text or null if none found for the given route
  *
  * @api public
  */
@@ -76,7 +78,7 @@ exports.render = function render(route) {
 
 /**
  * Compile mustache template if needed.
- * Run compiled template on context and return the generated content as string.
+ * Run compiled template on context and return the generated content as text.
  *
  * @api public
  */
@@ -92,7 +94,7 @@ exports.compileAndRender = function compileAndRender(template, s, context) {
 
 /**
  * Load template from file and compile, if needed.
- * Run compiled template on context and return the generated content as string.
+ * Run compiled template on context and return the generated content as text.
  *
  * @api public
  */
@@ -101,7 +103,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
   if (!f) {
     // read template file content as string
     if (Σ.cfg && Σ.cfg['denyDiskRead']) {
-      if (Σ.cfg.verbose) console.error('(Renderer) Needed to read %s but was denied by config', templateName);
+      if (Σ.cfg.verbose) console.error('(Renderer) Needed to read %s but was denied by config. Pre-render all resources once before serving them.', templateName);
       done(new Error('Needed to read from disk but was denied by config'));
     }
     fs.readFile(exports.path + templateName, 'utf8', function(err, s) {
@@ -113,7 +115,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
         try {
           f = hogan.compile(s);
           Σ.compiled_templates[templateName] = f;
-          // Empty context is allowed here
+          // Empty context is allowed
           content = f.render(context);
         } catch (ex) {
           err = ex;
@@ -131,8 +133,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
 
 
 /**
- * Render all documents in the index. This is useful for preloading all renders at startup, so that no rendering is necessary
- * at runtime.
+ * Render all documents in the index. If done before server startup, no rendering will be necessary at runtime.
  *
  * @param {Function} done Callback function called on completion.
  * @api public

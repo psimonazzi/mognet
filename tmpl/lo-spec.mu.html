@@ -1,4 +1,16 @@
-LO-SPEC
 {{title}}
+TEST url: {{url}}
 id: {{id}}
+timestamp: {{timestamp}}
+content:
+{{& content}}
 
+related:
+{{#rlinks}}
+* <a href="{{href}}">{{title}}</a>
+{{/rlinks}}
+
+tags:
+{{#tag}}
+* {{.}}
+{{/tag}}

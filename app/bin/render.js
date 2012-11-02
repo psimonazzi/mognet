@@ -5,12 +5,13 @@ var utils = require('../lib/utils');
 var renderer = require('../lib/renderer');
 var router = require('../lib/router');
 var handlers = require('../lib/handlers');
-var Indexer = require('../lib/indexer').Indexer;
+var Indexer = require('../lib/indexer');
 
 require('colors');
 
 
-var indexer = new Indexer();
+//var indexer = new Indexer();
+var indexer = Indexer.createIndexer();
 indexer.loadSync();
 //indexer.sort();
 

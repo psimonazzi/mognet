@@ -1,7 +1,6 @@
 var assert = require("assert");
 var Σ = require('../lib/state');
-var m = require("../lib/indexer");
-var indexer = new m.Indexer();
+var indexer = require('../lib/indexer').createIndexer();
 
 
 var doc1 = {

@@ -1,12 +1,12 @@
 var assert = require("assert");
 var router = require("../lib/router");
 var Σ = require('../lib/state');
-var Indexer = require('../lib/indexer').Indexer;
+var Indexer = require('../lib/indexer');
 
 
 describe('handlers', function() {
   beforeEach(function() {
-    Σ.index = new Indexer().EMPTY_INDEX(); // empty index
+    Σ.index = Indexer.createIndexer().EMPTY_INDEX(); // empty index
   })
 
   describe('index handler', function() {
