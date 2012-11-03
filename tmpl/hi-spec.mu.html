@@ -158,22 +158,22 @@
     </ul>
   </div>
   
-  <div class="content{{#blip?}}blip{{/blip?}}"><!-- content -->
-      {{#blip?}}<blockquote cite="{{cite}}"><p>“{{/blip?}}
+  <div class="content{{#blip}} blip{{/blip}}"><!-- content -->
+      {{#blip}}<blockquote cite="{{cite}}">{{/blip}}
       {{{content}}}
-      {{#blip?}}”</p></blockquote>{{/blip?}}
+      {{#blip}}</blockquote>{{/blip}}
 
-      {{#rlinks}}
+      {{#hasRlinks}}
       <!-- related are in single article view only -->
       <div class="rel">
           <h2>Correlati</h2>
           <ul>
-              {{#list}}
+              {{#rlinks}}
               <li><a href="/{{href}}">{{{title}}}</a></li>
-              {{/list}}
+              {{/rlinks}}
           </ul>
       </div>
-      {{/rlinks}}
+      {{/hasRlinks}}
   </div><!-- /content -->
 </article>
 

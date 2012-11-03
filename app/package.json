@@ -26,7 +26,7 @@
     "connect": "2.6.x",
     "colors": "*",
     "findit": "0.x.x",
-    "hogan.js": "2.x.x",
+    "mustache": "0.x.x",
     "marked": "0.x.x"
   },
   "devDependencies": {

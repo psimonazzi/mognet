@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var hogan = require('hogan.js');
+var mustache = require('mustache');
 
 var utils = require('../lib/utils');
 var Σ = require('../lib/state');
@@ -77,28 +77,13 @@ exports.render = function render(route) {
 
 
 /**
- * Compile mustache template if needed.
- * Run compiled template on context and return the generated content as text.
- *
- * @api public
- */
-exports.compileAndRender = function compileAndRender(template, s, context) {
-  var f = Σ.compiled_templates[template];
-  if (!f) {
-    f = Σ.compiled_templates[template] = hogan.compile(s);
-  }
-  var content = f.render(context);
-  return content;
-};
-
-
-/**
  * Load template from file and compile, if needed.
  * Run compiled template on context and return the generated content as text.
  *
  * @api public
  */
 exports.compileAndRenderFile = function compileAndRenderFile(templateName, context, done) {
+  // mustache module has an internal compile cache, but we want to avoid loading the template from file and so keep our own cache
   var f = Σ.compiled_templates[templateName];
   if (!f) {
     // read template file content as string
@@ -113,10 +98,9 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
       else {
         var content;
         try {
-          f = hogan.compile(s);
-          Σ.compiled_templates[templateName] = f;
+          Σ.compiled_templates[templateName] = f = mustache.compile(s);
           // Empty context is allowed
-          content = f.render(context);
+          content = f(context);
         } catch (ex) {
           err = ex;
         } finally {
@@ -126,7 +110,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
     });
   }
   else {
-    var content = f.render(context);
+    var content = f(context);
     done(null, content);
   }
 };

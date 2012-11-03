@@ -74,13 +74,13 @@ describe('renderer', function() {
     });
   })
 
-  describe('#compileAndRender()', function() {
+  /*describe('#compileAndRender()', function() {
     it('should compile and apply a template to a context', function() {
       assert.equal('Compiled template ' + TEMPLATE_HI + ': ☆',
                    renderer.compileAndRender(TEMPLATE_HI, 'Compiled template ' + TEMPLATE_HI + ': {{foo}}', { 'foo': '☆' }));
       assert.ok(Σ.compiled_templates[TEMPLATE_HI]);
     });
-  })
+  })*/
 
   describe('#renderNew()', function() {
     it('should return the cached template after first compile', function(done) {

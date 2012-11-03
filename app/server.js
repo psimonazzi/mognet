@@ -28,9 +28,11 @@ var utils = require(__dirname + '/lib/utils');
 var port = process.argv[2] || Σ.cfg.port;
 
 process.on('SIGPOLL', function() {
-  console.log('Got SIGPOLL (29). Reloading index and config...');
+  console.log('Got SIGPOLL (29). Reloading index and config, clearing cache...');
+  Σ.compiled_templates = {};
+  Σ.renders = {};
   Σ.cfg = Σ.loadConfig();
-  require('child_process').exec('/usr/bin/env node ' + __dirname + '/bin/update.js', function (error, stdout, stderr) {
+  require('child_process').exec('/usr/bin/env node ' + __dirname + '/bin/update.js', function(error, stdout, stderr) {
     if (!error)
       indexer.load(function() { console.log('Reloaded index.'); });
     else
@@ -67,7 +69,7 @@ try {
 console.log('Server v%s (pid %s)', version, process.pid);
 fs.writeFile(__dirname + '/../../server.pid', process.pid, 'utf8', function(err) {
   if (err) {
-    console.error('Cannot write pid file: ' + ex);
+    console.error('* ERROR: Cannot write pid file: ' + ex);
   }
 });
 
@@ -82,7 +84,7 @@ try {
 }
 
 if (Object.keys(Σ.index['id']).length == 0) {
-  console.error('No index found. Create a new index with: bin/update.js');
+  console.error('* ERROR: No index found. Create a new index with: bin/update.js');
   // do not exit, just serve what we can: static files and special routes with dedicated handlers
 }
 
@@ -90,7 +92,7 @@ try {
   var lastModified = Σ.index['id'][Σ.index['n'][Σ.index['n'].length - 1]].modified;
   console.log('Index contains %d entries. Last modified on %s', Object.keys(Σ.index.id).length, lastModified);
 } catch (ex) {
-  console.error('Cannot determine last modified time for index.');
+  console.error('* ERROR: Cannot determine last modified time for index.');
 }
 
 var ONE_YEAR = 31536000000;

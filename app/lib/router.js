@@ -242,8 +242,8 @@ exports.context = function context(route, req) {
 
     // Related articles data
     if (doc.rel.length > 0) {
-      ctx.rlinks = [{ list: null }]; // TODO ugly mustache hack?!
-      ctx.rlinks[0].list = doc.rel.map(function(id) {
+      ctx.hasRlinks = true;
+      ctx.rlinks = doc.rel.map(function(id) {
         if (Σ.index.id[id]) {
           return {
             'href': id,
