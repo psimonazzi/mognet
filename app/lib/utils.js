@@ -1,9 +1,6 @@
 var fs = require('fs');
 var path = require('path');
 
-// Export all members in 'core'
-// for (var k in core) { exports[k] = core[k]; };
-
 
 exports.loadJSONSync = function loadJSONSync(filename, reviver) {
   var raw = fs.readFileSync(filename);
@@ -42,15 +39,6 @@ exports.saveJSON = function saveJSON(filename, obj, done) {
 };
 
 
-function timeIt(name, cont) {
-  /*if (!options.verbose)
-    return cont();*/
-  var τ0 = new Date().getTime();
-  try { return cont(); }
-  finally { sys.debug("// " + name + ": " + ((new Date().getTime() - τ0) / 1000).toFixed(3) + " sec."); }
-}
-
-
 /**
  * Extend an object with another.
  * Missing fields in the object are added, existing ones are overridden.
@@ -76,7 +64,7 @@ exports.extend = function extend(a, b) {
 
 /**
  * Emulate blocking sleep system call, hopefully for debugging purposes only.
- * As Node is single-threaded, this will block the ENTIRE NODE INSTANCE.
+ * As Node is single-threaded, this will block the ENTIRE NODE PROCESS.
  *
  * @param {Number} seconds Sleep time in seconds
  *
@@ -95,7 +83,7 @@ exports.sleep = function sleep(seconds) {
  * See https://gist.github.com/1180489.
  *
  * @param {Number} n Number to pad
- * @param {Number} len Resulting string length
+ * @param {Number} len Desired string length
  *
  * @return {String} The padded number as a string
  *
@@ -103,47 +91,4 @@ exports.sleep = function sleep(seconds) {
  */
 exports.pad = function pad(n, len) {
   return (1e15 + n + "").slice(-len);
-};
-
-
-/*
- * Concat a list of files with newline chars.
- *
- * @param {Array} files An array of filenames
- * @param {String} distPath Output filename
- */
-/*exports.concat = function concat(files, distPath) {
-  var strings = [];
-    for (var i = 0; i < files.length; i++)
-      strings[i] = fs.readFileSync(files[i], 'utf-8');
-  fs.writeFileSync(distPath, strings.join('\n'), 'utf-8');
-};*/
-
-
-/*
- * Command line prompt.
- *
- * @param {String} msg Message prepended to prompt
- * @param {Function} callback Callback executed on the input text. Input text is passed as the first argument
- *
- * @api public
- *
- */
-/*exports.prompt = function prompt(msg, callback) {
-  process.stdout.write(msg);
-  process.stdin.resume();
-  process.stdin.setEncoding( "utf8" );
-  process.stdin.once("data", function(chunk) {
-    process.stdin.pause();
-    callback(chunk.replace(/\n*$/g, ""));
-  });
-};*/
-
-
-exports.rangeCheck = function rangeCheck(n, max) {
-  if (n < 0)
-    n = null;// 0;
-  else if (n > max)
-    n = null;// max;
-  return n;
 };

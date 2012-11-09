@@ -66,37 +66,17 @@
   <!--<link rel="shortcut icon" href="/favicon.ico?1" />-->
   <!-- For Opera, iPhone, iPod Touch, and Android 2.1+ devices: -->
   <!--<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">-->
-    
-  <!--<link rel="stylesheet" href="css/grid.css?1"/>-->
-  <!-- TODO Append to one stylesheet. Put your layout here -->
+
   <link rel="stylesheet" href="/css/style.css?1" media="screen" />
-  <!-- DEBUG -->
-  <!--<link rel="stylesheet" href="css/holmes.css" media="screen" />-->
-  
   <!--[if lt IE 9]>
   <link rel="stylesheet" href="css/ie.css?1" media="screen" />
   <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
-  
-  <!-- http://code.google.com/apis/analytics/docs/tracking/asyncTracking.html -->
-  <!--
-  <script>
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-XXXXX-X']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script>
-  -->
-
 </head>
 
 
 
-<body itemscope="itemscope" itemtype="http://schema.org/Article">
+<body itemscope="itemscope" itemtype="http://schema.org/Article"{{#doc}} class="doc"{{/doc}}>
 
 <header>
   <div class="logo"><a href="/" title="Paolo Simonazzi">℘</a></div><!-- ☆ ℘ ∴ ◈ ♚ ✪ ✦ -->
@@ -144,9 +124,11 @@
 </header>
 
 <!-- Itemprop microformat only in single-article pages -->
-<article>
+<!-- do not use article for document pages??? -->
+<article{{#doc}} class="doc"{{/doc}}>
   <h1 itemprop="name"><a href="/{{id}}">{{{title}}}</a></h1>
   
+  {{^doc}}
   <div class="meta"><!-- meta -->
     <ul>
       <li><time datetime="{{timeTag}}">{{displayDate}} <em>{{displayTime}}</em></time></li>
@@ -157,6 +139,7 @@
       {{/tag}}
     </ul>
   </div>
+  {{/doc}}
   
   <div class="content{{#blip}} blip{{/blip}}"><!-- content -->
       {{#blip}}<blockquote cite="{{cite}}">{{/blip}}
@@ -179,10 +162,12 @@
 
 
 <footer role="contentinfo">
+  {{^doc}}
   <div class="pages">
-    <div class="prev"><a href="/{{prevId}}" title="precedenti [K all'inizio della pagina]" rel="prev">&lt;</a><span>{{{prevTitle}}}</span></div> 
-    <div class="next"><a href="/{{nextId}}" title="successivi [SPAZIO o J in fondo alla pagina]" rel="next"><kbd>spazio</kbd> &gt;</a><span>{{{nextTitle}}}</span></div>
+    <div class="prev"><a href="/{{prevId}}" title="precedenti [K all'inizio della pagina]" rel="prev">&lt;</a>{{^index}}<span>{{{prevTitle}}}</span>{{/index}}</div> 
+    <div class="next"><a href="/{{nextId}}" title="successivi [SPAZIO o J in fondo alla pagina]" rel="next"><kbd>spazio</kbd> &gt;</a>{{^index}}<span>{{{nextTitle}}}</span>{{/index}}</div>
   </div><!--<kbd>␣</kbd>-->
+  {{/doc}}
   
   <nav>
     <ul>
@@ -191,7 +176,7 @@
   </nav>
   
   <small class="vcard">© <a href="/info" class="fn org url" rel="me">Paolo Simonazzi</a><br/>
-  <a href="https://github.com/psimonazzi">Github</a> · <a href="https://twitter.com/psimonazzi">Twitter</a> · <a href="http://plus.google.com/Paolo%20Simonazzi">Google+</a></small>
+  <a href="https://github.com/psimonazzi">Github</a> · <a href="https://twitter.com/psimonazzi">Twitter</a> · <a href="https://plus.google.com/112937103926951607608">Google+</a></small>
   <small>Contenuti su licenza <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC (Attribuzione — Condividi allo stesso modo)</a></small>
   <small><em>Fatto in Italia con amore &amp; ossessione.</em></small>
 </footer>

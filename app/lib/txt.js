@@ -22,7 +22,7 @@
     '>': '&gt;',
     '<': '&lt;',
     '"': '&quot;',
-    '\'': '&#39;'
+    "'": '&#39;'
   };
 
 
@@ -38,10 +38,10 @@
    * @api public
    */
   txt.smarten = function(text) {
-    return text
-      .replace(/(^|[-\u2014/(\[{"\s])'/g, "$1\u2018") // opening singles
+    return text && text
+      .replace(/(^|[-\u2014/(\[{"\s])'/g, "$1‘") // opening singles
       .replace(/'/g, "’") // closing singles & apostrophes
-      .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, "$1\u201c") // opening doubles
+      .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, "$1“") // opening doubles
       .replace(/"/g, "”") // closing doubles
       //.replace(/\&quot;(.+?)\&quot;/mg, '“$1”')
       .replace(/--/g, "—") // em dash
@@ -842,7 +842,7 @@
   };
 
   // Node.js module
-  if (typeof module != 'undefined' && module.exports) {
+  if (typeof module !== 'undefined' && module.exports) {
     module.exports = txt;
   }
 

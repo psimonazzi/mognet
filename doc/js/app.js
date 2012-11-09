@@ -44,6 +44,7 @@
       // modal content
       var m = document.createElement('div');
       m.id = MODAL_ID;
+      // argument could be an HTML string or a DOM element
       e.style ? m.appendChild(e) : m.innerHTML = e;
 
       // set position
@@ -122,25 +123,31 @@
 
   // Keyboard controls
   ε.on(window, 'keydown', function(e) {
-    function scroll(dir) {
-      // scroll only if we are at the end of page
-      // space scrolls down by default, but if we reach end of page loads next page
+    function changeLocation(dir) {
+      var href = document.querySelectorAll("a[rel=" + (dir === 'prev' ? 'prev' : 'next') + "]")[0].href;
+      //console.log("WOULD LOAD NEXT (" + height + " - " + scrolled + ") (" + href + ")");
+      window.location = href;
+    }
+
+    function ifEndOfPage(fn, arg) {
       var scrolled = window.pageYOffset || document.body.scrollTop || document.documentElement.scrollTop || -1;
       var height = document.body.clientHeight - window.innerHeight;
       if (height - scrolled < 100) {
-        var href = document.querySelectorAll("a[rel=" + (dir == "next" ? "next" : "prev") + "]")[0].href;
-        //console.log("WOULD LOAD NEXT (" + height + " - " + scrolled + ") (" + href + ")");
-        window.location = href;
+        // can't scroll down anymore, we are at the end of the page
+        fn(arg);
       }
     };
 
     switch (e.keyCode) {
     case 32: //space
+      // space scrolls down by default, but if we reach end of page loads next page
+      ifEndOfPage(changeLocation, 'next');
+      break;
     case 74: // J
-      scroll('next');
+      changeLocation('next');
       break;
     case 75: // K
-      scroll('prev');
+      changeLocation('prev');
       break;
     }
   });

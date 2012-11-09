@@ -182,7 +182,7 @@ module.exports = {
       });
 
       // Latest modified document in the index is global last modified date
-      // TODO format as RSS date
+      // TODO format as RSS date: .toISOString()?
       ctx.lastBuildDate = Σ.index['id'][Σ.index['n'].slice(-1)]['modified'];
     }
 

@@ -118,11 +118,13 @@ exports.getResource = function getResource(req, done) {
 exports.getRoutedResource = function getRoutedResource(req, route, done) {
   var resource = renderer.render(route);
   if (resource) {
-    // Cache HIT!
+    // Cache HIT! All requests for the same route after the first should follow this code path
+    // TODO fire event to log
+    if (Σ.cfg.verbose) console.log('✔ (Router) Render cache hit for %s...', route.url);
     done(null, resource, route);
   }
   else {
-    // Oh snap! We need to render this for the first time
+    // Oh snap! We need to load context and render this resource for the first time
     var ctx;
     try {
       ctx = exports.context(route, req);
@@ -132,7 +134,7 @@ exports.getRoutedResource = function getRoutedResource(req, route, done) {
       return;
     }
 
-    // Render this resource for the first time. Maybe read template from disk and/or compile
+    // Read template from disk and compile if this is the first request for this template, otherwise load cached compiled template
     renderer.renderNew(route, ctx, done);
   }
 };
@@ -156,6 +158,9 @@ exports.getRoutedResource = function getRoutedResource(req, route, done) {
  *
  */
 exports.context = function context(route, req) {
+  // TODO fire event to log
+  if (Σ.cfg.verbose) console.log('✔ (Router) Loading context for %s...', route.url);
+
   // Get from index
   var ctx, doc, handled;
   try {
@@ -182,7 +187,7 @@ exports.context = function context(route, req) {
 
   if (!doc && !handled) {
     // No indexed doc and no handlers for this route... sadly we have to give up
-    // TODO log '404 Not Found (' + route.url + ')'
+    // TODO fire event to log '404 Not Found (' + route.url + ')'
     var err = new Error();
     err.status = 404;
     throw err;
@@ -221,8 +226,7 @@ exports.context = function context(route, req) {
                                     utils.pad(doc.modified.getSeconds(), 2),
                                     utils.pad(doc.modified.getMilliseconds(), 3));
 
-      // Tags display
-      // Related articles data
+      // Tags to display
       if (doc.tag.length > 0) {
         ctx.tag = doc.tag.map(function(t) {
           return { 'name': t, 'href': encodeURIComponent(t) };
@@ -230,14 +234,18 @@ exports.context = function context(route, req) {
       }
 
       // Pagination
-      var nextN = utils.rangeCheck(doc.n + 1, Σ.index.n.length);
+      var nextN = doc.n + 1 < 0 || doc.n + 1 > Σ.index.n.length ? null : doc.n + 1;
       ctx.nextId = nextN != null ? Σ.index.n[nextN] : '';
       if (ctx.nextId && Σ.index.id[ctx.nextId])
         ctx.nextTitle = Σ.index.id[ctx.nextId].title;
-      var prevN = utils.rangeCheck(doc.n - 1, Σ.index.n.length);
+      else
+        ctx.nextTitle = '/';
+      var prevN = doc.n - 1 < 0 || doc.n - 1 > Σ.index.n.length ? null : doc.n - 1;
       ctx.prevId = prevN != null ? Σ.index.n[prevN] : '';
       if (ctx.prevId && Σ.index.id[ctx.prevId])
         ctx.prevTitle = Σ.index.id[ctx.prevId].title;
+      else
+        ctx.prevTitle = '/';
     }
 
     // Related articles data

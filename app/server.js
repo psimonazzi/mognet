@@ -18,13 +18,12 @@ var path = require('path');
 var http = require('http');
 var connect = require('connect');
 
-//require.paths.unshift(__dirname + '/lib');
 var Σ = require(__dirname + '/lib/state');
 var router = require(__dirname + '/lib/router');
 var Indexer = require(__dirname + '/lib/indexer');
 var utils = require(__dirname + '/lib/utils');
 
-// Run with "PORT=3000 node server.js" or "node server.js 3000" (or defined in config file)
+// Run with "PORT=3000 node server.js" or "node server.js 3000" (or define in config file)
 var port = process.argv[2] || Σ.cfg.port;
 
 process.on('SIGPOLL', function() {
@@ -78,9 +77,15 @@ var indexer = Indexer.createIndexer();
 try {
   indexer.loadSync();
   //indexer.sort(); // will be already sorted on disk
-} catch (ex) {
+}
+catch (ex) {
   // rethrow if error was not 'file not found'
-  if (ex.code !== 'ENOENT') throw ex;
+  if (ex.code !== 'ENOENT') {
+    throw ex;
+  }
+  else {
+    // TODO run update now?
+  }
 }
 
 if (Object.keys(Σ.index['id']).length == 0) {
