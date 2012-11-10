@@ -110,14 +110,9 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
       }
       else {
         var content;
-        try {
-          Σ.compiled_templates[templateName] = f = mustache.compile(s);
-          content = f(context);
-        } catch (ex) {
-          err = ex;
-        } finally {
-          done(err, content);
-        }
+        Σ.compiled_templates[templateName] = f = mustache.compile(s);
+        content = f(context);
+        done(err, content);
       }
     });
   }

@@ -31,6 +31,7 @@ module.exports = {
 
   index: function(req) {
     var ctx = {
+      index: true,
       page: 1,
       nextPage: 2,
       prevPage: null,
@@ -43,9 +44,11 @@ module.exports = {
       var pageMatch = /\/(\d+)$/.exec(pathname);
       if (pageMatch && pageMatch[1])
         ctx.page = pageMatch[1];
+      else
+        ctx.page = 1;
     }
 
-    // Select ids to display in the current page
+    // Select ids to display in the current page and add their contents
     if (Σ.index && Σ.index['n']) {
       var indexer = Indexer.createIndexer();
       var ids = indexer.publicIds();
@@ -57,12 +60,21 @@ module.exports = {
         return Σ.index.id[id];
       });
 
-      ctx.nextPage = ctx.page + 1;
-      if (Σ.index.n.length < Σ.cfg.pageSize * ctx.nextPage)
+      if (Σ.index.n.length < Σ.cfg.pageSize * (ctx.page + 1)) {
         ctx.nextPage = null;
-      ctx.prevPage = ctx.page - 1;
-      if (ctx.prevPage < 0)
+        ctx.nextTitle = '/';
+      }
+      else {
+        ctx.nextPage = 'index/' + (ctx.page + 1);
+      }
+
+      if (ctx.page - 1 <= 0) {
         ctx.prevPage = null;
+        ctx.prevTitle = '/';
+      }
+      else {
+        ctx.prevPage = 'index/' + (ctx.page - 1);
+      }
     }
 
     return ctx;

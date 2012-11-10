@@ -89,25 +89,16 @@ else if (res) {
 }
 else if (special) {
   // render special template, not from index
-  function onErr() {
-    console.log('Available special handlers: ');
-    for (var t in handlers)
-      console.log(t);
-    process.exit(1);
-  }
-
-  if (special in handlers) {
-    renderer.compileAndRenderFile(special + '.mu.html', handlers[special](), function(err, s) {
-      if (err) {
-        console.error(err);
-        onErr();
-      }
-      console.log(s);
-    });
-  }
-  else {
-    onErr();
-  }
+  router.getResource({ 'url': special }, function(err, resource) {
+    if (err) {
+      console.error(err);
+      console.log('Available special handlers: ');
+      for (var t in handlers)
+        console.log(t);
+      process.exit(1);
+    }
+    console.log(resource);
+  });
 }
 else if (all) {
   // render all documents in index and save them

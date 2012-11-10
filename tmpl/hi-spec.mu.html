@@ -123,6 +123,7 @@
   </nav>
 </header>
 
+{{#items}}
 <!-- Itemprop microformat only in single-article pages -->
 <!-- do not use article for document pages??? -->
 <article{{#doc}} class="doc"{{/doc}}>
@@ -133,7 +134,6 @@
     <ul>
       <li><time datetime="{{timeTag}}">{{displayDate}} <em>{{displayTime}}</em></time></li>
       <!--<li class="☆"><a href="" data-fav="0">☆</a></li>-->
-
       {{#tag}}
       <li><a href="/search/{{href}}">{{name}}</a></li>
       {{/tag}}
@@ -159,13 +159,13 @@
       {{/hasRlinks}}
   </div><!-- /content -->
 </article>
-
+{{/items}}
 
 <footer role="contentinfo">
   {{^doc}}
   <div class="pages">
-    <div class="prev"><a href="/{{prevId}}" title="precedenti [K all'inizio della pagina]" rel="prev">&lt;</a>{{^index}}<span>{{{prevTitle}}}</span>{{/index}}</div> 
-    <div class="next"><a href="/{{nextId}}" title="successivi [SPAZIO o J in fondo alla pagina]" rel="next"><kbd>spazio</kbd> &gt;</a>{{^index}}<span>{{{nextTitle}}}</span>{{/index}}</div>
+    <div class="prev"><a href="/{{{prevPage}}}" title="precedenti [K all'inizio della pagina]" rel="prev">&lt;</a>{{^index}}<span>{{{prevTitle}}}</span>{{/index}}</div> 
+    <div class="next"><a href="/{{{nextPage}}}" title="successivi [SPAZIO o J in fondo alla pagina]" rel="next"><kbd>spazio</kbd> &gt;</a>{{^index}}<span>{{{nextTitle}}}</span>{{/index}}</div>
   </div><!--<kbd>␣</kbd>-->
   {{/doc}}
   
