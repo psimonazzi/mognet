@@ -1,3 +1,5 @@
+var url = require('url');
+
 var Σ = require('../lib/state');
 var Indexer = require('../lib/indexer');
 
@@ -40,7 +42,7 @@ module.exports = {
     };
 
     if (req && req.url) {
-      var pathname = require('url').parse(req.url).pathname.replace(/^\//, '');
+      var pathname = url.parse(req.url).pathname.replace(/^\//, '');
       var pageMatch = /\/(\d+)$/.exec(pathname);
       if (pageMatch && pageMatch[1])
         ctx.page = pageMatch[1];
@@ -82,6 +84,8 @@ module.exports = {
 
   search: function(req) {
     var ctx = {
+      search: true,
+      doc: true,
       filter: null,
       page: 1,
       tags: [],
@@ -92,7 +96,7 @@ module.exports = {
     // Get search filter if set
     var tagFilter, timeFilter;
     if (req && req.url) {
-      var parsedUrl = require('url').parse(req.url);
+      var parsedUrl = url.parse(req.url);
       var pathname = parsedUrl.pathname.replace(/^\//, '');
       var idxSlash = pathname.indexOf('/');
       if (idxSlash >= 0 && pathname.length > idxSlash)
@@ -143,9 +147,10 @@ module.exports = {
         var ids = Σ.index[filterType][ctx.filter];
         // TODO Add paging in search results
         if (ids) {
+          var indexer = Indexer.createIndexer();
           ctx.items = ids.map(function(id) {
             var doc = Σ.index.id[id];
-            if (doc && !doc.doc && !doc.secret && !doc.ignore)
+            if (doc && indexer.isPublicId(id))
               return doc;
             else
               return null;
@@ -170,7 +175,7 @@ module.exports = {
 
     var parsedUrl;
     if (req && req.url)
-      parsedUrl = require('url').parse(req.url);
+      parsedUrl = url.parse(req.url);
     else
       parsedUrl = '';
     var baseUrl = parsedUrl.protocol + '//' + parsedUrl.host;

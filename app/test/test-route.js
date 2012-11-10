@@ -5,6 +5,16 @@ var router = require("../lib/router");
 
 var Σ = require('../lib/state');
 
+var req0 = {
+  'url': '/',
+  'headers': {
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'user-agent': 'Mozilla/5.0 (Windows NT 6.0; rv:12.0) Gecko/20100101 Firefox/12.0'
+  },
+  'method': 'GET',
+  'httpVersion': '1.1'
+};
+
 var req1 = {
   'url': '/info',
   'headers': {
@@ -113,6 +123,12 @@ describe('router', function() {
   describe('#parse()', function() {
     it('should parse an HTTP request', function() {
 
+      var route0 = router.parse(req0);
+      assert.equal("index", route0.url);
+      assert.equal("hi-spec", route0.medium);
+      assert.equal("html", route0.output);
+      assert.equal("text/html", route0.contentType);
+
       var route1 = router.parse(req1);
       assert.equal("info", route1.url);
       assert.equal("hi-spec", route1.medium);
@@ -185,6 +201,23 @@ describe('router', function() {
         assert.equal(403, err.status);
         done();
       });
+    });
+
+    it('should set a unique key for the resource cache', function() {
+      var route0 = router.parse(req0);
+      assert.equal("index", route0.key);
+
+      var route1 = router.parse(req1);
+      assert.equal("info", route1.key);
+
+      var route2 = router.parse(req2);
+      assert.equal("search", route2.key);
+
+      var route3 = router.parse(req3);
+      assert.equal("search/www", route3.key);
+
+      var route4 = router.parse(req4);
+      assert.equal("search/tag/2", route4.key);
     });
 
   })

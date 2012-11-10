@@ -30,29 +30,33 @@ exports.mobileCheck = function mobileCheck(req) {
  *
  * @param {Object} req Request
  *
- * @return {Object} A route object containing the normalized url of the resource, output type (i.e. html or json), medium type (i.e. hi or lo spec)
+ * @return {Object} A route object containing the normalized url of the resource, output type (i.e. html or json), medium type (i.e. hi or lo spec), HTTP Content-type header and the unique key used to lookup the resource from cache.
  *
  * @api public
  */
 exports.parse = function parse(req) {
   var route = {
-    'url': null,
-    'output': null,
-    'medium': null,
-    'contentType': null
+    url: null,
+    output: null,
+    medium: null,
+    contentType: null,
+    key: null
   };
   var acceptTypes = {
     'text/html': 'html',
     'application/json': 'json'
   };
   var contentTypes = {
-    'html': 'text/html',
-    'json': 'application/json',
-    'xml': 'application/xml'
+    html: 'text/html',
+    json: 'application/json',
+    xml: 'application/xml'
   };
 
   var parsedUrl = url.parse(req.url);
-  var pathname = parsedUrl.pathname.replace(/^\//, '');
+  var pathname = parsedUrl.pathname.replace(/^\//, '').replace(/\/$/, '');
+  // Check if it is root path
+  if (pathname == '')
+    pathname = 'index';
   var idxDot = pathname.lastIndexOf('.');
   if (idxDot < 0)
     idxDot = Infinity;
@@ -86,6 +90,9 @@ exports.parse = function parse(req) {
     route.medium = 'lo-spec';
   else
     route.medium = 'hi-spec';
+
+  // Unique key for resource cache lookups. Will be the same as 'url' if there are no path- or query- params, otherwise it will be the full path without extension and final '/'
+  route.key = pathname.replace(/\.(.+?)\//, '/').replace(/\.(.+?)$/, '');
 
   return route;
 };
@@ -194,7 +201,8 @@ exports.context = function context(route, req) {
     ctx = {};
   // global flags
   if (doc && doc.doc)
-    ctx.doc = doc.doc;
+    ctx.doc = true;
+  // single article
   if (!ctx.items && doc)
     ctx.items = [ doc ];
   utils.extend(ctx, handled);
@@ -211,7 +219,7 @@ exports.context = function context(route, req) {
   // Additional data for articles
   ctx.items = ctx.items.map(function(item) {
     if (item && !item.doc) {
-      if (Σ.index['n']) {
+      if (Σ.index.n) {
         // Dates display
         item.timeTag = util.format("%s-%s-%s",
                                    item.modified.getFullYear(),
@@ -229,7 +237,7 @@ exports.context = function context(route, req) {
 
         // Tags to display
         if (item.tag.length > 0) {
-          item.tag = item.tag.map(function(t) {
+          item.displayTags = item.tag.map(function(t) {
             return { 'name': t, 'href': encodeURIComponent(t) };
           });
         }

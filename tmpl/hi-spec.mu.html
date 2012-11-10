@@ -96,7 +96,7 @@
           <h2>Categorie</h2>
           <ul class="menu cf">
               {{#tags}}
-              <li><a href="/search/{{href}}">{{name}}</a></li>
+              <li><a href="/search/{{{href}}}">{{name}}</a></li>
               {{/tags}}
               {{#tagsOverflow}}
               <li><a href="/search" class="continue">archivio</a></li>
@@ -106,7 +106,7 @@
           <h2>Date</h2>
           <ul class="menu cf">
               {{#dates}}
-              <li><a href="/search/{{href}}">{{name}}</a></li>
+              <li><a href="/search/{{{href}}}">{{name}}</a></li>
               {{/dates}}
               {{#datesOverflow}}
               <li><a href="/search" class="continue">archivio</a></li>
@@ -123,20 +123,50 @@
   </nav>
 </header>
 
+{{#search}}
+<div class="document">
+    {{#filter}}
+    <!-- TODO filter headline -->
+    <h2>{{{filter}}}:</h2>
+    {{/filter}}
+    {{^filter}}
+    <!--<form action="/search" method="get">
+        <div class="searchform">
+            <input type="text" id="q" name="q" /><button>↵</button>
+        </div>
+    </form>-->
+
+    <h2>Categorie</h2>
+    <ul class="menu cf">
+        {{#tags}}
+        <li><a href="/search/{{{href}}}">{{name}}</a></li>
+        {{/tags}}
+    </ul>
+    
+    <h2>Date</h2>
+    <ul class="menu cf">
+        {{#dates}}
+        <li><a href="/search/{{{href}}}">{{name}}</a></li>
+        {{/dates}}
+    </ul>
+    {{/filter}}
+</div>
+{{/search}}
+
 {{#items}}
 <!-- Itemprop microformat only in single-article pages -->
-<!-- do not use article for document pages??? -->
-<article{{#doc}} class="doc"{{/doc}}>
+<!-- do not use article for document pages -->
+{{#doc}}<div class="document">{{/doc}}{{^doc}}<article>{{/doc}}
   <h1 itemprop="name"><a href="/{{id}}">{{{title}}}</a></h1>
   
   {{^doc}}
   <div class="meta"><!-- meta -->
     <ul>
-      <li><time datetime="{{timeTag}}">{{displayDate}} <em>{{displayTime}}</em></time></li>
+      <li><time datetime="{{{timeTag}}}">{{displayDate}} <em>{{displayTime}}</em></time></li>
       <!--<li class="☆"><a href="" data-fav="0">☆</a></li>-->
-      {{#tag}}
-      <li><a href="/search/{{href}}">{{name}}</a></li>
-      {{/tag}}
+      {{#displayTags}}
+      <li><a href="/search/{{{href}}}">{{name}}</a></li>
+      {{/displayTags}}
     </ul>
   </div>
   {{/doc}}
@@ -158,7 +188,7 @@
       </div>
       {{/hasRlinks}}
   </div><!-- /content -->
-</article>
+{{#doc}}</div>{{/doc}}{{^doc}}</article>{{/doc}}
 {{/items}}
 
 <footer role="contentinfo">

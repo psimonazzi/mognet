@@ -9,24 +9,28 @@ var TEMPLATE_HI_FILENAME = path.normalize(__dirname + '/../../tmpl/' + TEMPLATE_
 
 var route1 = {
   'url': 'aaa',
+  'key': 'aaa',
   'output': 'html',
   'medium': 'hi-spec_TEST'
 };
 
 var route2 = {
   'url': 'X',
+  'key': 'X',
   'output': 'html',
   'medium': 'lo-spec_TEST'
 };
 
 var route3 = {
   'url': 'test-url',
+  'key': 'test-url',
   'output': 'html',
   'medium': 'hi-spec_TEST'
 };
 
 var route4 = {
   'url': 'test',
+  'key': 'test',
   'output': 'html',
   'medium': 'DUMMY'
 };

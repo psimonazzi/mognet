@@ -48,9 +48,9 @@ exports.renderNew = function renderNew(route, context, done) {
       done(err);
     }
     else {
-      if (!Σ.renders[route.url])
-        Σ.renders[route.url] = {};
-      Σ.renders[route.url][templateName] = renderedContent;
+      if (!Σ.renders[route.key])
+        Σ.renders[route.key] = {};
+      Σ.renders[route.key][templateName] = renderedContent;
       // Also put the route object in the callback, so the response can get HTTP headers from it.
       // If we wanted to send customized headers for each resource (for example in the document metadata or its handler), we would need to save the headers too in the in-memory renders.
       done(null, renderedContent, route);
@@ -72,8 +72,8 @@ exports.render = function render(route) {
   var templateName = exports.templateName(route);
   var resource;
 
-  if (Σ.renders[route.url])
-    resource = Σ.renders[route.url][templateName];
+  if (Σ.renders[route.key])
+    resource = Σ.renders[route.key][templateName];
 
   return resource;
 };
@@ -111,7 +111,11 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
       else {
         var content;
         Σ.compiled_templates[templateName] = f = mustache.compile(s);
-        content = f(context);
+        try {
+          content = f(context);
+        } catch (ex) {
+          err = ex;
+        }
         done(err, content);
       }
     });
@@ -138,15 +142,17 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
 exports.preRender = function preRender(done) {
   var routes = Object.keys(Σ.index['id']).map(function(docId) {
     return {
-      'url': docId,
-      'output': 'html',
-      'medium': 'hi-spec'
+      url: docId,
+      key: docId,
+      output: 'html',
+      medium: 'hi-spec'
     };
   }).concat(Object.keys(Σ.index['id']).map(function(docId) {
     return {
-      'url': docId,
-      'output': 'html',
-      'medium': 'lo-spec'
+      url: docId,
+      key: docId,
+      output: 'html',
+      medium: 'lo-spec'
     };
   }));
 
