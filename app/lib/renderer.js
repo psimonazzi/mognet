@@ -37,7 +37,7 @@ exports.templateName = function templateName(route, version) {
  *
  * @param {Object} route Route of the resource
  * @param {Object} context Context data that will be used to render the template; can be null
- * @param {Function} done Callback with signature: error, rendered text, route
+ * @param {Function} done Callback with signature: error, rendered text
  *
  * @api public
  */
@@ -51,9 +51,8 @@ exports.renderNew = function renderNew(route, context, done) {
       if (!Σ.renders[route.key])
         Σ.renders[route.key] = {};
       Σ.renders[route.key][templateName] = renderedContent;
-      // Also put the route object in the callback, so the response can get HTTP headers from it.
-      // If we wanted to send customized headers for each resource (for example in the document metadata or its handler), we would need to save the headers too in the in-memory renders.
-      done(null, renderedContent, route);
+      // TODO If we wanted to send customized headers for each resource (for example in the document metadata or its handler), we would need to save the headers too in the in-memory renders.
+      done(null, renderedContent);
     }
   });
 };
@@ -71,9 +70,9 @@ exports.renderNew = function renderNew(route, context, done) {
 exports.render = function render(route) {
   var templateName = exports.templateName(route);
   var resource;
-
-  if (Σ.renders[route.key])
-    resource = Σ.renders[route.key][templateName];
+  var routeCache = Σ.renders[route.key];
+  if (routeCache)
+    resource = routeCache[templateName];
 
   return resource;
 };
@@ -98,7 +97,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
   if (!f) {
     // Read template file content as string, then compile and run
     if (Σ.cfg && Σ.cfg['denyDiskRead']) {
-      if (Σ.cfg.verbose) console.error('(Renderer) Needed to read %s but was denied by config. Pre-render all resources once before serving them.', templateName);
+      if (Σ.cfg.verbose) console.error('✖ (Renderer) Needed to read %s but was denied by config. Pre-render all resources once before serving them.', templateName);
       done(new Error('Needed to read from disk but was denied by config'));
     }
 
@@ -109,12 +108,12 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
         done(err);
       }
       else {
-        var content;
-        Σ.compiled_templates[templateName] = f = mustache.compile(s);
         try {
-          content = f(context);
+          Σ.compiled_templates[templateName] = f = mustache.compile(s);
+          var content = f(context);
         } catch (ex) {
           err = ex;
+          if (Σ.cfg.verbose) console.error('✖ (Renderer) Error compiling template %s. %s', templateName, err);
         }
         done(err, content);
       }
@@ -124,7 +123,12 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
     // Cache HIT! Just run the compiled template
     // TODO fire event to log
     if (Σ.cfg.verbose) console.log('✔ (Renderer) Rendering compiled template %s...', templateName);
-    var content = f(context);
+    try {
+      var content = f(context);
+    } catch (err) {
+      if (Σ.cfg.verbose) console.error('✖ (Renderer) Error running compiled template %s. %s', templateName, err);
+      done(err);
+    }
     done(null, content);
   }
 };
@@ -163,10 +167,10 @@ exports.preRender = function preRender(done) {
       done(lastError);
     }
     else {
-      require('../lib/router').getRoutedResource({ 'url': r.url }, r, function(err, resource) {
+      require('../lib/router').getResource({ 'url': r.url }, r, function(err, resource) {
         if (err) {
           lastError = err;
-          if (Σ.cfg.verbose) console.error('(Renderer) Error pre-rendering %s: %s', r.url, err);
+          if (Σ.cfg.verbose) console.error('✖ (Renderer) Error pre-rendering %s: %s', r.url, err);
           // continue
         }
         renderResource();

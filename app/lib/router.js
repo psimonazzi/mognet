@@ -91,7 +91,8 @@ exports.parse = function parse(req) {
   else
     route.medium = 'hi-spec';
 
-  // Unique key for resource cache lookups. Will be the same as 'url' if there are no path- or query- params, otherwise it will be the full path without extension and final '/'
+  // Unique key for resource cache lookups. Will be the same as 'url' if there are no path- params, otherwise it will be the full path without extension and final '/'
+  // TODO setting the path and/or query could result in a lot of duplicated cache entries or DOS attacks. Ex. /{id}/non/existent/path would add a duplicated cache entry for {id}
   route.key = pathname.replace(/\.(.+?)\//, '/').replace(/\.(.+?)$/, '');
 
   return route;
@@ -99,45 +100,29 @@ exports.parse = function parse(req) {
 
 
 /**
- * Return the response body as text and any appropriate HTTP header, based on the request.
+ * Return the response body as text and any appropriate HTTP header, based on the route object created from a request.
  * Do whatever it takes.
  *
- * @param {Object} req Request
- * @param {Function} done Callback with signature: error, resource string, route object
- *
- * @api public
- */
-exports.getResource = function getResource(req, done) {
-  var route = exports.parse(req);
-  exports.getRoutedResource(req, route, done);
-};
-
-
-/**
- * Return the response body as text, based on the route object created from a request.
- * Do whatever it takes.
- *
+ * @param {Object} req HTTP request object
  * @param {Object} route Route
- * @param {Function} done Callback with signature: error, resource string, route object
+ * @param {Function} done Callback with signature: error, resource string
  *
  * @api public
  */
-exports.getRoutedResource = function getRoutedResource(req, route, done) {
+exports.getResource = function getResource(req, route, done) {
   var resource = renderer.render(route);
   if (resource) {
     // Cache HIT! All requests for the same route after the first should follow this code path
     // TODO fire event to log
     if (Σ.cfg.verbose) console.log('✔ (Router) Render cache hit for %s...', route.url);
-    done(null, resource, route);
+    done(null, resource);
   }
   else {
     // Oh snap! We need to load context and render this resource for the first time
-    var ctx;
-    try {
-      ctx = exports.context(route, req);
-    } catch (err) {
+    var ctx = exports.context(route, req);
+    if (!ctx || ctx instanceof Error) {
       // Aaargh! This will bubble up to the client and result in an HTTP error code
-      done(err);
+      done(ctx);
       return;
     }
 
@@ -179,7 +164,7 @@ exports.context = function context(route, req) {
     var errSecret = new Error();
     errSecret.status = 403;
     if (Σ.cfg.verbose) console.log('(Router) Denied request %s for secret document %s', route.url, doc.id);
-    throw errSecret;
+    return errSecret;//throw errSecret;
   }
 
   // Any special data required by the template associated to this route must be provided by a handler.
@@ -193,7 +178,7 @@ exports.context = function context(route, req) {
     // TODO fire event to log '404 Not Found (' + route.url + ')'
     var err = new Error();
     err.status = 404;
-    throw err;
+    return err;//throw err;
   }
 
   // Merge context from index and/or handlers
@@ -243,7 +228,7 @@ exports.context = function context(route, req) {
         }
 
         // Pagination for single article pages
-        if (!ctx.index) {
+        if (!ctx.index && !ctx.search) {
           var nextN = item.n + 1 < 0 || item.n + 1 > Σ.index.n.length ? null : item.n + 1;
           ctx.nextPage = nextN != null ? Σ.index.n[nextN] : '';
           if (ctx.nextPage && Σ.index.id[ctx.nextPage])

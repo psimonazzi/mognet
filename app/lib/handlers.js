@@ -148,12 +148,10 @@ module.exports = {
         // TODO Add paging in search results
         if (ids) {
           var indexer = Indexer.createIndexer();
-          ctx.items = ids.map(function(id) {
+          ids.forEach(function(id) {
             var doc = Σ.index.id[id];
             if (doc && indexer.isPublicId(id))
-              return doc;
-            else
-              return null;
+              ctx.items.push(doc);
           });
         }
       }

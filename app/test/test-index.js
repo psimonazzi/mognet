@@ -118,13 +118,23 @@ describe('indexer', function() {
       indexer.add(doc1);
       indexer.add(doc2);
       indexer.add(doc6);
+      indexer.add(doc7);
 
       //console.log(require('util').inspect(indexer.index, false, null, true));
       assert.equal(doc2, Σ.index.id['title-1']);
       assert.equal(2, Σ.index.tag['www'].length);
-      assert.equal(3, Object.keys(Σ.index.id).length);
+      assert.equal(4, Object.keys(Σ.index.id).length);
       assert.equal("Title 0", Σ.index.id['title-0']['title']);
-      assert.equal(1, Σ.index.time['1981/07'].length);
+      assert.equal(undefined, Σ.index.time['1981/07']);
+      assert.equal(1, Σ.index.time['2012/10'].length);
+    });
+  })
+
+  describe('#add()', function() {
+    it('should not add non-public documents to the tag or time index', function() {
+      indexer.add(doc6);
+
+      assert.equal(undefined, Σ.index.time);
     });
   })
 
@@ -132,13 +142,13 @@ describe('indexer', function() {
   describe('#save()', function() {
     it('should save the index to a json file and reload it correctly', function(done) {
       indexer.add(doc1);
-      indexer.add(doc6);
+      indexer.add(doc7);
 
       indexer.save(function(err) {
         assert.ifError(err);
         indexer.load(function(err) {
           assert.ifError(err);
-          assert.equal(1, Σ.index.time['1981/07'].length);
+          assert.equal(1, Σ.index.time['2012/10'].length);
           done(err);
         });
       });

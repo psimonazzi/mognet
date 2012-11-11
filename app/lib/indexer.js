@@ -68,22 +68,25 @@ Indexer.prototype.add = function(doc) {
     Σ.index['id'] = {};
   Σ.index['id'][doc.id] = doc;
 
-  // by tag
-  if (!Σ.index['tag'])
-    Σ.index['tag'] = {};
-  doc.tag.forEach(function(e) {
-    var tags = Σ.index['tag'][e] || [];
-    tags.push(doc.id);
-    Σ.index['tag'][e] = tags;
-  });
+  // Index by tag and time only if the document is public
+  if (this.isPublicId(doc.id)) {
+    // by tag
+    if (!Σ.index['tag'])
+      Σ.index['tag'] = {};
+    doc.tag.forEach(function(e) {
+      var tags = Σ.index['tag'][e] || [];
+      tags.push(doc.id);
+      Σ.index['tag'][e] = tags;
+    });
 
-  // by time
-  if (!Σ.index['time'])
-    Σ.index['time'] = {};
-  var timeTag = util.format('%d/%s', doc.timestamp.getFullYear(), utils.pad(doc.timestamp.getMonth() + 1, 2));
-  var times = Σ.index['time'][timeTag] || [];
-  times.push(doc.id);
-  Σ.index['time'][timeTag] = times;
+    // by time
+    if (!Σ.index['time'])
+      Σ.index['time'] = {};
+    var timeTag = util.format('%d/%s', doc.timestamp.getFullYear(), utils.pad(doc.timestamp.getMonth() + 1, 2));
+    var times = Σ.index['time'][timeTag] || [];
+    times.push(doc.id);
+    Σ.index['time'][timeTag] = times;
+  }
 };
 
 

@@ -68,7 +68,7 @@ try {
 console.log('Server v%s (pid %s)', version, process.pid);
 fs.writeFile(__dirname + '/../../server.pid', process.pid, 'utf8', function(err) {
   if (err) {
-    console.error('* ERROR: Cannot write pid file: ' + ex);
+    console.error('✖ ERROR: Cannot write pid file: ' + ex);
   }
 });
 
@@ -89,7 +89,7 @@ catch (ex) {
 }
 
 if (Object.keys(Σ.index['id']).length == 0) {
-  console.error('* ERROR: No index found. Create a new index with: bin/update.js');
+  console.error('✖ ERROR: No index found. Create a new index with: bin/update.js');
   // do not exit, just serve what we can: static files and special routes with dedicated handlers
 }
 
@@ -97,7 +97,7 @@ try {
   var lastModified = Σ.index['id'][Σ.index['n'][Σ.index['n'].length - 1]].modified;
   console.log('Index contains %d entries. Last modified on %s', Object.keys(Σ.index.id).length, lastModified);
 } catch (ex) {
-  console.error('* ERROR: Cannot determine last modified time for index.');
+  console.error('✖ ERROR: Cannot determine last modified time for index.');
 }
 
 var ONE_YEAR = 31536000000;
@@ -135,13 +135,16 @@ var app = connect()
           return;
         }
 
-        router.getResource(req, function(err, resource, route) {
+        var route = router.parse(req);
+        router.getResource(req, route, function(err, resource) {
           if (err) {
             if (404 === err.status || 403 === err.status) {
               res.statusCode = 404; // mask 403 (secret document) as 404 (not found)
               resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + req.url;
             }
             else {
+              // TODO log somewhere
+              //console.error("✖ " + err);
               res.statusCode = 500;
               resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + err.toString();
             }

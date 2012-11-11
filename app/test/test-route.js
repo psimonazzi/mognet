@@ -171,7 +171,7 @@ describe('router', function() {
         fs.writeFileSync(tmpfile, 'TEST url: {{url}}', 'utf8');
       }*/
 
-      router.getResource(req6, function(err, resource) {
+      router.getResource(req6, router.parse(req6), function(err, resource) {
         assert.ifError(err);
         assert.notEqual('', resource);
         done(err);
@@ -182,7 +182,7 @@ describe('router', function() {
       Σ.index['id'] = {};
       Σ.renders = {};
       Σ.compiled_templates = {};
-      router.getResource(req6, function(err, resource) {
+      router.getResource(req6, router.parse(req6), function(err, resource) {
         assert.equal(404, err.status);
         done();
       });
@@ -197,7 +197,7 @@ describe('router', function() {
       var indexer = require('../lib/indexer').createIndexer();
       indexer.add(doc2);
 
-      router.getResource(req7, function(err, resource) {
+      router.getResource(req7, router.parse(req7), function(err, resource) {
         assert.equal(403, err.status);
         done();
       });

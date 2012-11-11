@@ -20,7 +20,7 @@ if (process.argv.length > 2) {
   if (process.argv[2] == '-h')
     help = true;
   if (process.argv[2] == '-s' && process.argv[3])
-    special = process.argv[3];
+    res = process.argv[3];
   else if (process.argv[2] == '--all')
     all = true;
   else if (process.argv[2] == '-c' && process.argv.length > 3) {
@@ -38,10 +38,9 @@ if (process.argv.length > 2) {
 
 if (help || (!res && !special && !all && !infoOnly)) {
   console.log('USAGE:');
-  console.log('%s <document id>    ' + 'Render the document to stdout'.grey, process.argv[1]);
-  console.log('%s -c <document id> ' + 'Print only the document context'.grey, process.argv[1]);
+  console.log('%s <document id>    ' + 'Render the document or handler to stdout'.grey, process.argv[1]);
+  console.log('%s -c <document id> ' + 'Print only the document or handler context'.grey, process.argv[1]);
   console.log('%s -i <document id> ' + 'Print info on the document'.grey, process.argv[1]);
-  console.log('%s -s <%s> ' + 'Render a special handler'.grey, process.argv[1], Object.keys(handlers).join('|'));
   console.log('%s --all            ' + 'Render all indexed documents and save them to disk'.grey, process.argv[1]);
   console.log('%s -h               ' + ' (Display this message)'.grey, process.argv[1]);
   console.log('\nTemplates path:');
@@ -56,9 +55,11 @@ if (help || (!res && !special && !all && !infoOnly)) {
 
 //Σ.cfg.denyDiskRead = true;
 
+var req = { 'url': res };
+
 if (infoOnly) {
   if (res) {
-    var id = router.context(router.parse({ 'url': res }), { 'url': res }).id;
+    var id = router.context(router.parse(req), req).id;
     printDocumentInfo(id);
   }
   else {
@@ -68,37 +69,26 @@ if (infoOnly) {
 else if (res) {
   if (contextOnly) {
     // do not render, show only context object passed to template
-    var route = router.parse({ 'url': res });
-    var ctx = router.context(route, { 'url': res });
+    var ctx = router.context(router.parse(req), req);
     console.log(require('util').inspect(ctx, false, null, true));
   }
   else {
     // render resource from an index document
-    router.getResource({ 'url': res }, function(err, resource) {
+    router.getResource(req, router.parse(req), function(err, resource) {
       if (err) {
         console.error(err);
         console.log('Available documents in the index (%d): ', Object.keys(Σ.index['id']).length);
         Object.keys(Σ.index['id']).forEach(function(id) {
           console.log(Σ.index['id'][id].n + '. ' + id);
         });
+        console.log('Available special handlers: ');
+        for (var t in handlers)
+          console.log(t);
         process.exit(1);
       }
       console.log(resource);
     });
   }
-}
-else if (special) {
-  // render special template, not from index
-  router.getResource({ 'url': special }, function(err, resource) {
-    if (err) {
-      console.error(err);
-      console.log('Available special handlers: ');
-      for (var t in handlers)
-        console.log(t);
-      process.exit(1);
-    }
-    console.log(resource);
-  });
 }
 else if (all) {
   // render all documents in index and save them
@@ -108,7 +98,8 @@ else if (all) {
     var id = ids.shift();
     if (!id)
       return;
-    router.getResource({ 'url': id }, function(err, resource) {
+    req = { 'url': id };
+    router.getResource(req, router.parse(req), function(err, resource) {
       if (err) {
         console.error(err);
         process.exit(1);
@@ -170,6 +161,9 @@ function printInfo() {
     a.forEach(function(id) {
       printDocumentInfo(id);
     });
+    console.log('Special handlers: ');
+    for (var h in handlers)
+      console.log(h);
     console.log();
     console.log('Tags (%d):', Object.keys(Σ.index['tag']).length);
     Object.keys(Σ.index['tag']).sort()
