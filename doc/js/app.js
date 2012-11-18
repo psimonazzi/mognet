@@ -115,40 +115,42 @@
 // Invocations
 (function() {
 
-  // Enable lightbox
   ε.on(document, "DOMContentLoaded", function() {
+    // Enable lightbox
     ε.lightbox.init();
-  });
 
+    // Keyboard controls
+    // Enable only if there are prev/next links
+    if (document.querySelectorAll("a[rel=prev]").length > 0 || document.querySelectorAll("a[rel=next]").length > 0) {
+      ε.on(window, 'keydown', function(e) {
+        function changeLocation(dir) {
+          var href = document.querySelectorAll("a[rel=" + (dir === 'prev' ? 'prev' : 'next') + "]")[0].href;
+          //console.log("WOULD LOAD NEXT (" + height + " - " + scrolled + ") (" + href + ")");
+          window.location = href;
+        }
 
-  // Keyboard controls
-  ε.on(window, 'keydown', function(e) {
-    function changeLocation(dir) {
-      var href = document.querySelectorAll("a[rel=" + (dir === 'prev' ? 'prev' : 'next') + "]")[0].href;
-      //console.log("WOULD LOAD NEXT (" + height + " - " + scrolled + ") (" + href + ")");
-      window.location = href;
-    }
+        function ifEndOfPage(fn, arg) {
+          var scrolled = window.pageYOffset || document.body.scrollTop || document.documentElement.scrollTop || -1;
+          var height = document.body.clientHeight - window.innerHeight;
+          if (height - scrolled < 100) {
+            // can't scroll down anymore, we are at the end of the page
+            fn(arg);
+          }
+        };
 
-    function ifEndOfPage(fn, arg) {
-      var scrolled = window.pageYOffset || document.body.scrollTop || document.documentElement.scrollTop || -1;
-      var height = document.body.clientHeight - window.innerHeight;
-      if (height - scrolled < 100) {
-        // can't scroll down anymore, we are at the end of the page
-        fn(arg);
-      }
-    };
-
-    switch (e.keyCode) {
-    case 32: //space
-      // space scrolls down by default, but if we reach end of page loads next page
-      ifEndOfPage(changeLocation, 'next');
-      break;
-    case 74: // J
-      changeLocation('next');
-      break;
-    case 75: // K
-      changeLocation('prev');
-      break;
+        switch (e.keyCode) {
+        case 32: //space
+          // space scrolls down by default, but if we reach end of page loads next page
+          ifEndOfPage(changeLocation, 'next');
+          break;
+        case 74: // J
+          changeLocation('next');
+          break;
+        case 75: // K
+          changeLocation('prev');
+          break;
+        }
+      });
     }
   });
 
