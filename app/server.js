@@ -148,28 +148,23 @@ var app = connect()
           }
           // If content length is not set, chunked encoding will be used automatically (as defined by the HTTP standard)
           var len = Buffer.byteLength(resource, 'utf8');
-          res.setHeader('Content-Length', len);
           // TODO delegate Cache control to a reverse proxy?
           if (lastModified) {
-            /*var expires = new Date();
-            expires.setFullYear(expires.getFullYear() + 1);
-            res.setHeader('Expires', expires.toUTCString());
-            res.setHeader('Last-Modified', lastModified.toUTCString());*/
-            // or use Etag?
-            //res.setHeader('Etag', '"' + connect.utils.md5(resource) + '"');
-            var etag = '"' + len + '-' + Number(lastModified.getTime()) + '"';
+            // Use a hash based Etag so if the template (but not the document) has changed it will be reflected in the Etag
+            //var etag = '"' + len + '-' + Number(lastModified.getTime()) + '"';
+            var etag = '"' + connect.utils.md5(resource) + '"';
             res.setHeader('Etag', etag);
             // Check if we need to return the content or just Not Modified
-            // Could reuse VisionMedia node-fresh
+            // Could reuse VisionMedia node-fresh, but we don't really need it
             if (etag === req.headers['if-none-match']) {
               res.statusCode = 304;
               res.removeHeader('Content-Type');
               res.removeHeader('Content-Length');
               res.end();
+              return;
             }
-
           }
-
+          res.setHeader('Content-Length', len);
           res.end(resource);
         });
       })

@@ -93,6 +93,7 @@ exports.parse = function parse(req) {
 
   // Unique key for resource cache lookups. Will be the same as 'url' if there are no path- params, otherwise it will be the full path without extension and final '/'
   // TODO setting the path and/or query could result in a lot of duplicated cache entries or DOS attacks. Ex. /{id}/non/existent/path would add a duplicated cache entry for {id}
+  // URL-parsing by handlers should be done here instead; need to understand url semantics here to generate a normalized key
   route.key = pathname.replace(/\.(.+?)\//, '/').replace(/\.(.+?)$/, '');
 
   return route;
