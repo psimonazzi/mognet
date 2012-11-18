@@ -20,7 +20,8 @@ lint:
 	@@find lib -name "*.js" -print0 | xargs -0 jslint
 
 min:
-	uglifyjs --unsafe ../doc/js/app.js > ../doc/js/app.min.js
+	cat ../doc/js/app.js ../doc/js/rainbow-custom.min.js > ../doc/js/app.min.js
+	uglifyjs --unsafe ../doc/js/app.min.js > ../doc/js/app.min.js
 	sqwish ../doc/css/style.css -o ../doc/css/style.min.css
 
 .PHONY: test test-verbose deploy install debug lint min

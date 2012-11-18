@@ -87,6 +87,7 @@ module.exports = {
       search: true,
       doc: true,
       filter: null,
+      count: 0,
       page: 1,
       tags: [],
       dates: [],
@@ -135,6 +136,10 @@ module.exports = {
       ctx.dates = Object.keys(Σ.index.time).sort().map(mapDateNames);
     }
     else {
+      try {
+        ctx.filter = decodeURIComponent(ctx.filter);
+      } catch (ex) { }
+
       // Search results
       var filterType;
       if (tagFilter)
@@ -153,6 +158,8 @@ module.exports = {
             if (doc && indexer.isPublicId(id))
               ctx.items.push(doc);
           });
+          if (ctx.items.length > 0)
+            ctx.count = ctx.items.length;
         }
       }
     }

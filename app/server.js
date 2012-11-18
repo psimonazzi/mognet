@@ -109,21 +109,13 @@ var app = connect()
       .use(connect.logger({ format: 'tiny', buffer: 1000 }))
       .use(connect.timeout(10000))
       .use(connect.compress())
-      .use(connect.favicon('/favicon.ico', { 'maxAge': ONE_YEAR }))
+      .use(connect.favicon(__dirname + '/../doc/favicon.ico', { 'maxAge': ONE_YEAR }))
       //.use(connect.staticCache({ 'maxObjects': 256, 'maxLength': 1024 * 256 }))
       .use(connect.static(path.normalize(__dirname + '/../doc'), { 'maxAge': ONE_YEAR }))
       .use('/static', connect.static(path.normalize(__dirname + '/../../static'), { 'maxAge': ONE_YEAR }))
       .use('/api', function(req, res) {
         res.setHeader('Content-Type', 'text/html; charset=UTF-8');
         res.end('DEBUG: ' + req.url);
-      })
-      .use('/500', function(req, res) {
-        // Generate a 500 error for testing
-        res.statusCode = 500;
-        var body = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n';
-        res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-        res.setHeader('Content-Length', Buffer.byteLength(body, 'utf8'));
-        res.end(body);
       })
       .use(function(req, res) {
         if (req.method != 'GET' && req.method != 'HEAD') {
@@ -164,8 +156,18 @@ var app = connect()
             res.setHeader('Expires', expires.toUTCString());
             res.setHeader('Last-Modified', lastModified.toUTCString());*/
             // or use Etag?
-            //res.setHeader('Etag', '"' + require('crc').crc32(resource) + '"');
-            res.setHeader('Etag', '"' + len + '-' + lastModified.getTime() + '"');
+            //res.setHeader('Etag', '"' + connect.utils.md5(resource) + '"');
+            var etag = '"' + len + '-' + Number(lastModified.getTime()) + '"';
+            res.setHeader('Etag', etag);
+            // Check if we need to return the content or just Not Modified
+            // Could reuse VisionMedia node-fresh
+            if (etag === req.headers['if-none-match']) {
+              res.statusCode = 304;
+              res.removeHeader('Content-Type');
+              res.removeHeader('Content-Length');
+              res.end();
+            }
+
           }
 
           res.end(resource);
