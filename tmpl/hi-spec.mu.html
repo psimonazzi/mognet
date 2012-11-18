@@ -2,16 +2,20 @@
 <html lang="it">
 <head>
   <meta charset="utf-8"/>
-  <!-- TODO better send as header -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 
-  <!-- Mobile viewport optimization http://goo.gl/b9SaQ -->
-  <!-- Set in CSS too -->
+  <!-- Mobile viewport optimization - http://goo.gl/b9SaQ -->
   <meta name="HandheldFriendly" content="True"/>
   <meta name="MobileOptimized" content="320"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
   <meta http-equiv="cleartype" content="on"/>
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+  <!--
+      Greetings, Source Viewer.
+      Full source code for this website is available at https://github.com/psimonazzi/mognet
+  -->
   
   <title>Paolo Simonazzi</title>
   <meta name="author" content="Paolo Simonazzi"/>
@@ -23,23 +27,16 @@
   <!-- Facebook and others will use the following data to represent your site
        when it is shared.
        Facebook documentation (includes info on sharing more specific media types): http://developers.facebook.com/docs/share -->
-  <meta property="og:title" content="" />
+  <meta property="og:title" content="{{title}}" />
   <meta property="og:description" content="" />
   <meta property="og:image" content="/img/logo.png" />
-  <meta property="og:url" content="http://..." />
   <!-- G+ -->
-  <meta itemprop="name" content="" />
+  <meta itemprop="name" content="{{title}}" />
   <meta itemprop="description" content="" />
   <meta itemprop="image" content="/img/logo.png" />
 
-  <!-- IE9 Pinned Site Settings
-       http://msdn.microsoft.com/en-ca/library/gg131029(VS.85).aspx -->
+  <!-- IE9 Pinned Site Settings: http://msdn.microsoft.com/en-ca/library/gg131029(VS.85).aspx -->
   <meta name="msapplication-tooltip" content="A description of what this site does." />
-  <!-- If the site should go to a specific URL when it is pinned (such as
-       the homepage), enter it here.
-       One idea is to send it to a special URL so you can track # of pinned users,
-       like so: http://www.example.com/index.html?pinned=true -->
-  <meta name="msapplication-starturl" content="" />
   <!-- IE9 will automatically use the overall color of your site's favicon to
        shade its browser buttons. UNLESS you give it another color here.
        Only use named colors ("red") or hex colors ("#f00"). -->
@@ -55,17 +52,14 @@
 
   <!-- Signal to search engines and others "Use this URL for this page!"
        Useful when URLs are dynamically generated. -->
-  <link rel="canonical" href="/" />
+  <!--<link rel="canonical" href="/" />-->
 
   <link rel="alternate" type="application/atom+xml" href="/atom" />
   
-  <!-- Sites with search functionality should be strongly considered for a browser search plugin. -->
-  <!--<link rel="search" title="" type="application/opensearchdescription+xml" href="" />-->
-  
   <!-- Place favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
-  <!--<link rel="shortcut icon" href="/favicon.ico?1" />-->
+  <link rel="shortcut icon" href="/favicon.ico?1" />
   <!-- For Opera, iPhone, iPod Touch, and Android 2.1+ devices: -->
-  <!--<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">-->
+  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
 
   <link rel="stylesheet" href="/css/style.css?1" media="screen" />
   <!--[if lt IE 9]>
@@ -76,7 +70,7 @@
 
 
 
-<body itemscope="itemscope" itemtype="http://schema.org/Article"{{#doc}} class="doc"{{/doc}}>
+<body{{#doc}} class="doc"{{/doc}}>
 
 <header>
   <div class="logo"><a href="/" title="Paolo Simonazzi">℘</a></div><!-- ☆ ℘ ∴ ◈ ♚ ✪ ✦ -->
@@ -126,8 +120,7 @@
 {{#search}}
 <div class="document">
     {{#filter}}
-    <!-- TODO filter headline -->
-    <h2>{{{filter}}}:</h2>
+    <div class="filter">{{{filter}}}{{#count}} <sup title="Numero di voci">({{count}})</sup>{{/count}}</div>
     {{/filter}}
     {{^filter}}
     <!--<form action="/search" method="get">
@@ -157,7 +150,7 @@
 <!-- Itemprop microformat only in single-article pages -->
 <!-- do not use article for document pages -->
 {{#doc}}<div class="document">{{/doc}}{{^doc}}<article>{{/doc}}
-  <h1 itemprop="name"><a href="/{{id}}">{{{title}}}</a></h1>
+  <h1><a href="/{{id}}">{{{title}}}</a></h1>
   
   {{^doc}}
   <div class="meta"><!-- meta -->
@@ -236,8 +229,8 @@
      Notifies of inefficient selectors and other ego-breaking things. -->
 <!--<script src="js/jquery.lint.js"></script>-->
 <!--<script src="js/jquery.hotkeys.js"></script>-->
-<script src="/js/app.js?0.1"></script>
-<script src="/js/rainbow-custom.min.js?0.1"></script>
+<script src="/js/app.js?1"></script>
+<script src="/js/rainbow-custom.min.js?1"></script>
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 <!--<script>

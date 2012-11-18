@@ -102,7 +102,7 @@ body {
     font-family: 'Open Sans', Calibri, Arial, sans-serif;
 }
 
-h1, h2, h3, h4, header, footer, .meta, .menu, .rel, figcaption, .blip, input, button, .continue {
+h1, h2, h3, h4, header, footer, .meta, .menu, .rel, figcaption, .blip, input, button, .continue, .filter {
     font-family: 'AauxNext-Light', Calibri, Arial, sans-serif;
     font-weight: normal;
 }
@@ -169,7 +169,7 @@ h1 {
     line-height: 1.236em;
 }
 
-h2, .blip p, .rel a {
+h2, .blip p, .rel a, .filter {
     font-size: 1.618em;
 }
 
@@ -183,7 +183,7 @@ p + p {
     text-indent: 1.618em;
 }
 
-h2 {
+h2, .filter {
     margin-top: 1.043em;
     margin-bottom: 1.043em;
 }
@@ -253,6 +253,11 @@ a, a:hover {
     text-decoration: none;
 }
 
+h1 a, h1 a:visited {
+    color: #000;
+    text-decoration: none;
+}
+
 .content a:hover, article a:hover, .logo a:hover, h1 a:hover, .menu a:hover {
     color: #fff;
     background: #c60016;
@@ -272,6 +277,13 @@ a, a:hover {
 h1 a:hover:after, .menu a:hover:after, .rel a:hover:after {
     content: ' →';
 }
+
+.filter small {
+}
+.filter:before {
+    content: '→ ';
+}
+
 
 blockquote {
     padding-left: 2em;
@@ -322,11 +334,6 @@ header .logo, header .logo a, header .logo a:visited {
 header .logo a {
     display: block;
     padding: 0 0.2em 0 0.2em;
-}
-
-h1 a, h1 a:visited {
-    color: #000;
-    text-decoration: none;
 }
 
 header nav li > div {
