@@ -4,7 +4,7 @@ var Σ = require('../lib/state');
 var Indexer = require('../lib/indexer');
 
 module.exports = {
-  menu: function(req) {
+  menu: function(route) {
     var ctx = {
       tags: [],
       tagsOverflow: false,
@@ -31,125 +31,116 @@ module.exports = {
     return ctx;
   },
 
-  index: function(req) {
+  index: function(route) {
     var ctx = {
       index: true,
-      page: 1,
       nextPage: 2,
       prevPage: null,
       ids: [],
       items: []
     };
 
-    if (req && req.url) {
-      var pathname = url.parse(req.url).pathname.replace(/^\//, '');
-      var pageMatch = /\/(\d+)$/.exec(pathname);
-      if (pageMatch && pageMatch[1])
-        ctx.page = pageMatch[1];
-      else
-        ctx.page = 1;
-    }
+    // if (req && req.url) {
+    //   var pathname = url.parse(req.url).pathname.replace(/^\//, '');
+    //   var pageMatch = /\/(\d+)$/.exec(pathname);
+    //   if (pageMatch && pageMatch[1])
+    //     ctx.page = pageMatch[1];
+    //   else
+    //     ctx.page = 1;
+    // }
 
     // Select ids to display in the current page and add their contents
     if (Σ.index && Σ.index['n']) {
       var indexer = Indexer.createIndexer();
       var ids = indexer.publicIds();
-      var startId = Σ.cfg.pageSize * (ctx.page - 1);
-      var endId = Σ.cfg.pageSize * (ctx.page);
+      var startId = Σ.cfg.pageSize * (route.page - 1);
+      var endId = Σ.cfg.pageSize * (route.page);
       ctx.ids = ids.slice(startId, endId);
 
       ctx.items = ctx.ids.map(function(id) {
         return Σ.index.id[id];
       });
 
-      if (Σ.index.n.length < Σ.cfg.pageSize * (ctx.page + 1)) {
+      if (Σ.index.n.length < Σ.cfg.pageSize * (route.page + 1)) {
         ctx.nextPage = null;
         ctx.nextTitle = '/';
       }
       else {
-        ctx.nextPage = 'index/' + (ctx.page + 1);
+        ctx.nextPage = 'index/' + (route.page + 1);
       }
 
-      if (ctx.page - 1 <= 0) {
+      if (route.page - 1 <= 0) {
         ctx.prevPage = null;
         ctx.prevTitle = '/';
       }
       else {
-        ctx.prevPage = 'index/' + (ctx.page - 1);
+        ctx.prevPage = 'index/' + (route.page - 1);
       }
     }
 
     return ctx;
   },
 
-  search: function(req) {
+  search: function(route) {
     var ctx = {
       search: true,
       doc: true,
-      filter: null,
       count: 0,
-      page: 1,
       tags: [],
       dates: [],
       items: []
     };
 
     // Get search filter if set
-    var tagFilter, timeFilter;
-    if (req && req.url) {
-      var parsedUrl = url.parse(req.url);
-      var pathname = parsedUrl.pathname.replace(/^\//, '');
-      var idxSlash = pathname.indexOf('/');
-      if (idxSlash >= 0 && pathname.length > idxSlash)
-        var params = pathname.substring(idxSlash + 1);
-      if (params) {
-        var slashed = params.split('/');
-        if (slashed) {
-          if (slashed.length == 1) {
-            ctx.filter = slashed[0];
-            tagFilter = true;
-          }
-          else if (slashed.length == 2) {
-            // Tags cannot be pure numbers, as they are interpreted as dates
-            if (!slashed[0].match(/^\d+$/)) {
-              ctx.filter = slashed[0];
-              ctx.page = slashed[1];
-              tagFilter = true;
-            }
-            else {
-              ctx.filter = slashed[0] + '/' + slashed[1];
-              timeFilter = true;
-            }
-          }
-          else if (slashed.length == 3) {
-            ctx.filter = slashed[0] + '/' + slashed[1];
-            ctx.page = slashed[2];
-            timeFilter = true;
-          }
-        }
-      }
-    }
+    // var tagFilter, timeFilter;
+    // if (req && req.url) {
+    //   var parsedUrl = url.parse(req.url);
+    //   var pathname = parsedUrl.pathname.replace(/^\//, '');
+    //   var idxSlash = pathname.indexOf('/');
+    //   if (idxSlash >= 0 && pathname.length > idxSlash)
+    //     var params = pathname.substring(idxSlash + 1);
+    //   if (params) {
+    //     var slashed = params.split('/');
+    //     if (slashed) {
+    //       if (slashed.length == 1) {
+    //         ctx.filter = slashed[0];
+    //         tagFilter = true;
+    //       }
+    //       else if (slashed.length == 2) {
+    //         // Tags cannot be pure numbers, as they are interpreted as dates
+    //         if (!slashed[0].match(/^\d+$/)) {
+    //           ctx.filter = slashed[0];
+    //           ctx.page = slashed[1];
+    //           tagFilter = true;
+    //         }
+    //         else {
+    //           ctx.filter = slashed[0] + '/' + slashed[1];
+    //           timeFilter = true;
+    //         }
+    //       }
+    //       else if (slashed.length == 3) {
+    //         ctx.filter = slashed[0] + '/' + slashed[1];
+    //         ctx.page = slashed[2];
+    //         timeFilter = true;
+    //       }
+    //     }
+    //   }
+    // }
 
-    if (!ctx.filter) {
+    if (!route.filter) {
       // Search options / archive
       ctx.tags = Object.keys(Σ.index.tag).sort().map(mapTagNames);
       ctx.dates = Object.keys(Σ.index.time).sort().map(mapDateNames);
     }
     else {
       try {
-        ctx.filter = decodeURIComponent(ctx.filter);
+        route.filter = decodeURIComponent(route.filter);
       } catch (ex) { }
 
       // Search results
-      var filterType;
-      if (tagFilter)
-        filterType = 'tag';
-      else if (timeFilter)
-        filterType = 'time';
-
-      if (filterType && Σ.index && Σ.index[filterType]) {
+      if (route.filterType && Σ.index && Σ.index[route.filterType]) {
         // Select ids to display in the current page
-        var ids = Σ.index[filterType][ctx.filter];
+        var ids = Σ.index[route.filterType][route.filter];
         // TODO Add paging in search results
         if (ids) {
           var indexer = Indexer.createIndexer();
@@ -167,7 +158,7 @@ module.exports = {
     return ctx;
   },
 
-  rss: function(req) {
+  rss: function(route) {
     var ctx = {
       language: null,
       lastBuildDate: null,
@@ -178,16 +169,11 @@ module.exports = {
 
     var MAX_COUNT = 12;
 
-    var parsedUrl;
-    if (req && req.url)
-      parsedUrl = url.parse(req.url);
-    else
-      parsedUrl = '';
-    var baseUrl = parsedUrl.protocol + '//' + parsedUrl.host;
+    var baseUrl = route.parsedUrl.protocol + '//' + route.parsedUrl.host;
 
     ctx.language = Σ.cfg.locale;
     ctx.ttl = 'TODO';
-    ctx.atomLink = baseUrl + parsedUrl.pathname;
+    ctx.atomLink = baseUrl + route.pathname;
 
     // Select ids to display in the RSS feed
     if (Σ.index && Σ.index['id'].length > 0 && Σ.index['n']) {

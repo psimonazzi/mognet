@@ -40,7 +40,12 @@ exports.parse = function parse(req) {
     output: null,
     medium: null,
     contentType: null,
-    key: null
+    key: null,
+    parsedUrl: null,
+    pathname: null,
+    page: null,
+    filter: null,
+    filterType: null
   };
   var acceptTypes = {
     'text/html': 'html',
@@ -52,22 +57,10 @@ exports.parse = function parse(req) {
     xml: 'application/xml'
   };
 
-  var parsedUrl = url.parse(req.url);
-  var pathname = parsedUrl.pathname.replace(/^\//, '').replace(/\/$/, '');
-  // Check if it is root path
-  if (pathname == '')
-    pathname = 'index';
-  var idxDot = pathname.lastIndexOf('.');
-  if (idxDot < 0)
-    idxDot = Infinity;
-  var idxSlash = pathname.indexOf('/');
-  if (idxSlash < 0)
-    idxSlash = Infinity;
-  var idx = Math.min(idxDot, idxSlash);
-  route.url = idx > 0 && idx <= pathname.length ? pathname.substring(0, idx) : pathname;
+  exports.canonicalize(req, route);
 
   if (!route.output) {
-    var hasExt = /\.(.+?)$/i.exec(parsedUrl.pathname);
+    var hasExt = /\.(.+?)$/i.exec(route.parsedUrl.pathname);
     if (hasExt && hasExt[1] && Object.keys(contentTypes)[hasExt[1].toLowerCase()]) {
       route.output = hasExt[1].toLowerCase();
     }
@@ -91,12 +84,94 @@ exports.parse = function parse(req) {
   else
     route.medium = 'hi-spec';
 
-  // Unique key for resource cache lookups. Will be the same as 'url' if there are no path- params, otherwise it will be the full path without extension and final '/'
-  // TODO setting the path and/or query could result in a lot of duplicated cache entries or DOS attacks. Ex. /{id}/non/existent/path would add a duplicated cache entry for {id}
-  // URL-parsing by handlers should be done here instead; need to understand url semantics here to generate a normalized key
-  route.key = pathname.replace(/\.(.+?)\//, '/').replace(/\.(.+?)$/, '');
-
   return route;
+};
+
+
+/**
+ * Adds to the passed route object the canonical form of the given url, discarding unneeded url elements. Setting a fake path and/or query could result in a lot of duplicated cache entries or DOS attacks. Ex. /{id}/non/existent/path would add a duplicated cache entry for {id}. This function is aware of the semantic value of the given url. The canonical url can be used as a unique key to identify the resource the url points to, and for resource cache lookups.
+ * The canonical url will still be encoded as a url.
+ * This function also adds to the passed route object any context-specific params that can be parsed from the url.
+ *
+ * @param {Object} req HTTP request
+ * @param {Object} route Route object which will be modified
+ *
+ * @api public
+ */
+exports.canonicalize = function canonicalize(req, route) {
+  if (req && req.url)
+    route.parsedUrl = url.parse(req.url);
+  else
+    route.parsedUrl = '';
+  route.pathname = route.parsedUrl.pathname.replace(/^\//, '').replace(/\/$/, '');
+  var idxDot = route.pathname.lastIndexOf('.');
+  if (idxDot < 0)
+    idxDot = Infinity;
+  var idxSlash = route.pathname.indexOf('/');
+  if (idxSlash < 0)
+    idxSlash = Infinity;
+  var idx = Math.min(idxDot, idxSlash);
+  route.url = idx > 0 && idx <= route.pathname.length ? route.pathname.substring(0, idx) : route.pathname;
+
+
+  // Check if it is root path
+  if (route.url == '')
+    route.url = 'index';
+
+  switch (route.url) {
+  case 'index':
+    //canonical url for index pages
+    var pageMatch = /\/(\d+)$/.exec(route.pathname);
+    if (pageMatch && pageMatch[1])
+      route.page = pageMatch[1];
+    else
+      route.page = 1;
+
+    route.key = route.url + (route.page > 1 ? '/' + route.page : '');
+    break;
+
+  case 'search':
+    // canonical url for search/archive pages
+    // Get search filter if set
+    if (idxSlash >= 0 && route.pathname.length > idxSlash)
+      var params = route.pathname.substring(idxSlash + 1);
+    if (params) {
+      var slashed = params.split('/');
+      if (slashed) {
+        if (slashed.length == 1) {
+          route.filter = slashed[0];
+          route.filterType = 'tag';
+        }
+        else if (slashed.length == 2) {
+          // Tags cannot be pure numbers, as they are interpreted as dates
+          if (!slashed[0].match(/^\d+$/)) {
+            route.filter = slashed[0];
+            route.page = slashed[1];
+            route.filterType = 'tag';
+          }
+          else {
+            route.filter = slashed[0] + '/' + slashed[1];
+            route.filterType = 'time';
+          }
+        }
+        else if (slashed.length == 3) {
+          route.filter = slashed[0] + '/' + slashed[1];
+          route.page = slashed[2];
+          route.filterType = 'time';
+        }
+      }
+      if (!route.page)
+        route.page = 1;
+    }
+
+    route.key = route.url + (route.filter ? '/' + route.filter : '') + (route.page > 1 ? '/' + route.page : '');
+    break;
+
+  default:
+    // canonical url for an indexed document (or maybe a non-existent resource)
+    route.key = route.url;
+    break;
+  }
 };
 
 
@@ -172,7 +247,7 @@ exports.context = function context(route, req) {
   // This includes any context not provided by the doc itself (if any), such as dynamic content.
   // In case there is no indexed doc for this route, any necessary context will be provided by the handler.
   if (handlers[route.url])
-    handled = handlers[route.url](req);
+    handled = handlers[route.url](route);
 
   if (!doc && !handled) {
     // No indexed doc and no handlers for this route... sadly we have to give up
@@ -193,7 +268,7 @@ exports.context = function context(route, req) {
     ctx.items = [ doc ];
   utils.extend(ctx, handled);
   // Add route
-  ctx.route = route;
+  utils.extend(ctx, route);
 
   // Finally, transform or update the context as necessary for rendering.
   // This involves adding all extra params from request data.

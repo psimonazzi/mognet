@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
+<head{{^index}}{{^search}} prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#"{{/search}}{{/index}}>
   <meta charset="utf-8"/>
 
   <!-- Mobile viewport optimization - http://goo.gl/b9SaQ -->
@@ -24,11 +24,13 @@
   <meta name="country" content="IT" />
   <meta name="language" content="it-IT" />
   
+  <!-- TODO: only for single articles -->
   <!-- Facebook and others will use the following data to represent your site
        when it is shared.
-       Facebook documentation (includes info on sharing more specific media types): http://developers.facebook.com/docs/share -->
+       Facebook documentation (includes info on sharing more specific media types): https://developers.facebook.com/docs/technical-guides/opengraph/built-in-objects/ -->
   <meta property="og:title" content="{{title}}" />
   <meta property="og:description" content="" />
+  <meta property="og:type" content="article"> 
   <meta property="og:image" content="/img/logo.png" />
   <!-- G+ -->
   <meta itemprop="name" content="{{title}}" />
@@ -52,7 +54,7 @@
 
   <!-- Signal to search engines and others "Use this URL for this page!"
        Useful when URLs are dynamically generated. -->
-  <!--<link rel="canonical" href="/" />-->
+  <link rel="canonical" href="/{{key}}" />
 
   <link rel="alternate" type="application/atom+xml" href="/atom" />
   

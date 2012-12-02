@@ -66,7 +66,7 @@ var req5 = {
 };
 
 var req6 = {
-  'url': '/title-0',
+  'url': '/title-0/dummypath',
   'headers': {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'user-agent': 'Mozilla/5.0 (Windows NT 6.0; rv:12.0) Gecko/20100101 Firefox/12.0'
@@ -77,6 +77,16 @@ var req6 = {
 
 var req7 = {
   'url': '/secret-0',
+  'headers': {
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'user-agent': 'Mozilla/5.0 (Windows NT 6.0; rv:12.0) Gecko/20100101 Firefox/12.0'
+  },
+  'method': 'GET',
+  'httpVersion': '1.1'
+};
+
+var req8 = {
+  'url': '/index/42',
   'headers': {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'user-agent': 'Mozilla/5.0 (Windows NT 6.0; rv:12.0) Gecko/20100101 Firefox/12.0'
@@ -218,6 +228,12 @@ describe('router', function() {
 
       var route4 = router.parse(req4);
       assert.equal("search/tag/2", route4.key);
+
+      var route6 = router.parse(req6);
+      assert.equal("title-0", route6.key);
+
+      var route8 = router.parse(req8);
+      assert.equal("index/42", route8.key);
     });
 
   })

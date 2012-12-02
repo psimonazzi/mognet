@@ -21,7 +21,7 @@
 
 
   // A modal box.
-  // When clicking on a <figure> link to an image, shows the full-size image centered on screen and overlayed on the current page.
+  // When clicking on a link to an image in a <figure> element, shows the full-size image centered on screen and overlayed on the current page.
   // Inspired by https://github.com/Xeoncross/kb_javascript_framework
   ε.lightbox = (function() {
     var me = {};
@@ -32,7 +32,7 @@
     var MODAL_INSIDE_LOADING_ID = 'modal-inside-loading';
 
     function modal(e) {
-      // dark overlay
+      // background overlay
       var o = document.createElement('div');
       o.id = MODAL_OVERLAY_ID;
 

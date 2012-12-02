@@ -114,15 +114,15 @@ var app = connect()
       .use(connect.static(path.normalize(__dirname + '/../doc'), { 'maxAge': ONE_YEAR }))
       .use('/static', connect.static(path.normalize(__dirname + '/../../static'), { 'maxAge': ONE_YEAR }))
       .use('/api', function(req, res) {
-        res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+        res.setHeader('content-type', 'text/html; charset=UTF-8');
         res.end('DEBUG: ' + req.url);
       })
       .use(function(req, res) {
         if (req.method != 'GET' && req.method != 'HEAD') {
           res.statusCode = 405;
           var body = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n';
-          res.setHeader('Content-Type', 'text/html; charset=UTF-8');
-          res.setHeader('Content-Length', Buffer.byteLength(body, 'utf8'));
+          res.setHeader('content-type', 'text/html; charset=UTF-8');
+          res.setHeader('content-length', Buffer.byteLength(body, 'utf8'));
           res.end(body);
           return;
         }
@@ -140,11 +140,11 @@ var app = connect()
               res.statusCode = 500;
               resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + err.toString();
             }
-            res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+            res.setHeader('content-type', 'text/html; charset=UTF-8');
           }
           else {
             res.statusCode = 200;
-            res.setHeader('Content-Type', (route.contentType || 'text/html') + '; charset=UTF-8');
+            res.setHeader('content-type', (route.contentType || 'text/html') + '; charset=UTF-8');
           }
           // If content length is not set, chunked encoding will be used automatically (as defined by the HTTP standard)
           var len = Buffer.byteLength(resource, 'utf8');
@@ -158,13 +158,13 @@ var app = connect()
             // Could reuse VisionMedia node-fresh, but we don't really need it
             if (etag === req.headers['if-none-match']) {
               res.statusCode = 304;
-              res.removeHeader('Content-Type');
-              res.removeHeader('Content-Length');
+              res.removeHeader('content-type');
+              res.removeHeader('content-length');
               res.end();
               return;
             }
           }
-          res.setHeader('Content-Length', len);
+          res.setHeader('content-length', len);
           res.end(resource);
         });
       })
