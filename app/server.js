@@ -105,12 +105,12 @@ var ONE_YEAR = 31536000000;
 // last handler applies to paths not served by the previous (static() by default serves '/' and all filenames under it)
 // so it catches any non-existent url
 var app = connect()
-      //.use(connect.responseTime())
+//.use(connect.responseTime())
       .use(connect.logger({ format: 'tiny', buffer: 1000 }))
       .use(connect.timeout(10000))
       .use(connect.compress())
       .use(connect.favicon(__dirname + '/../doc/favicon.ico', { 'maxAge': ONE_YEAR }))
-      //.use(connect.staticCache({ 'maxObjects': 256, 'maxLength': 1024 * 256 }))
+//.use(connect.staticCache({ 'maxObjects': 256, 'maxLength': 1024 * 256 }))
       .use(connect.static(path.normalize(__dirname + '/../doc'), { 'maxAge': ONE_YEAR }))
       .use('/static', connect.static(path.normalize(__dirname + '/../../static'), { 'maxAge': ONE_YEAR }))
       .use('/api', function(req, res) {
@@ -169,6 +169,16 @@ var app = connect()
         });
       })
       .listen(port, function() {
+	// drop root privileges if we have them
+	if (process && process.getuid() == 0 && process.getgid() == 0) {
+	  try {
+	    process.setgid(process.env.MOGNET_GROUP);
+	    process.setuid(process.env.MOGNET_USER);
+	  } catch (ex) {
+	    console.error('✖ ERROR: Cannot drop privileges, running as ROOT...! ' + ex);
+	  }
+	}
+
         // notify Naught
         if (process.send)
           process.send('online');
