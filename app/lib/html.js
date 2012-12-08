@@ -12,7 +12,11 @@
 
 
     function entity(str) {
-      return str.replace('"', '&quot;');
+      // apply some heuristics here to guess if the attribute value is already entity-escaped
+      if (str.indexOf('&amp;') < 0 && str.indexOf('&quot;') < 0)
+        return str.replace('&', '&amp;').replace('"', '&quot;');
+      else
+        return str;
     }
 
     printer.tabstop = 2;

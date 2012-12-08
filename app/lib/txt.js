@@ -44,8 +44,8 @@
       .replace(/(^|[-\u2014/(\[{\u2018\s])"/g, "$1“") // opening doubles
       .replace(/"/g, "”") // closing doubles
       //.replace(/\&quot;(.+?)\&quot;/mg, '“$1”')
-      .replace(/--/g, "—") // em dash
-      .replace(/\.\.\.[^.]/g, '…') // ellipsis
+      .replace(/(^|-)--(^|-)/g, "$1—$2") // em dash
+      .replace(/\.\.\.(^|.)/g, '…$1') // ellipsis
       //.replace(new RegExp("\\.\\.\\.(" + txt.spaces + ")", 'g'), '…$1')
       ;
   };
@@ -97,7 +97,9 @@
     String.fromCharCode(0x200A)
   ];
 
-  txt.spaces = new RegExp("[" + UNICODE_SPACES.join("") + "]", 'g');
+  txt.spaces_class = "[" + UNICODE_SPACES.join("") + "]";
+  txt.spaces = new RegExp(txt.spaces_class, 'g');
+
 
 
   /**
