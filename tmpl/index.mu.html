@@ -79,10 +79,10 @@
   <nav>
     <ul>
       <li><a href="/info">info</a></li>
-      <li><a href="/search">ricerca</a>
-          <div class="floating" id="search-menu">
+      <li><a href="/search">ricerca</a>{{#hiSpec}}
+      <div class="floating" id="search-menu">
           <div>
-          <!--<form action="/" method="get">
+              <!--<form action="/" method="get">
             <div class="searchform">
               <input type="text" id="q" name="q" /><button>↵</button>
             </div>
@@ -111,8 +111,8 @@
           {{/menu}}
           
           </div>
-        </div>
-      </li>
+      </div>
+      {{/hiSpec}}</li>
       <!--<li><a href="/fav" id="fav">&#x2605;<sup></sup></a></li>-->
       <li><a href="/colophon">colophon</a></li>
     </ul>
@@ -231,8 +231,10 @@
      Notifies of inefficient selectors and other ego-breaking things. -->
 <!--<script src="js/jquery.lint.js"></script>-->
 <!--<script src="js/jquery.hotkeys.js"></script>-->
+{{#hiSpec}}
 <script src="/js/app.js?1"></script>
 <script src="/js/rainbow-custom.min.js?1"></script>
+{{/hiSpec}}
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 <!--<script>

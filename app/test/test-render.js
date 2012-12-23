@@ -7,6 +7,12 @@ var renderer = require("../lib/renderer");
 var TEMPLATE_HI = 'hi-spec_TEST.mu.html';
 var TEMPLATE_HI_FILENAME = path.normalize(__dirname + '/../../tmpl/' + TEMPLATE_HI);
 
+var route0 = {
+  'url': 'test0',
+  'key': 'test0',
+  'output': 'html'
+};
+
 var route1 = {
   'url': 'aaa',
   'key': 'aaa',
@@ -73,6 +79,7 @@ describe('renderer', function() {
 
   describe('#templateName()', function() {
     it('should create the template filename for a given resource', function() {
+      assert.equal('index.mu.html', renderer.templateName(route0));
       assert.equal(TEMPLATE_HI, renderer.templateName(route1));
       assert.equal('lo-spec_TEST.1.mu.html', renderer.templateName(route2, '1'));
     });

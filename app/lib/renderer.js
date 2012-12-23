@@ -14,6 +14,7 @@ var Σ = require('../lib/state');
  */
 exports.path = path.normalize(__dirname + '/../../tmpl/');
 
+
 /**
  * Create the template filename for the resource designated by the given routing info, using a template version if specified.
  *
@@ -25,7 +26,25 @@ exports.path = path.normalize(__dirname + '/../../tmpl/');
  * @api public
  */
 exports.templateName = function templateName(route, version) {
-  return route.medium + '.' + (version ? version + '.' : '') + 'mu.' + route.output;
+  return (route.medium ? route.medium : 'index') + '.' + (version ? version + '.' : '') + 'mu.' + route.output;
+};
+
+
+/**
+ * Create the cache key for the given template filename.
+ * The key will be equal to the template name if the route defines a specific medium type.
+ *
+ * @param {Object} route Route of the resource
+ * @param {string} templateName Template filename
+ *
+ * @return {string}
+ *
+ * @api public
+ */
+exports.templateKey = function templateKey(route, templateName) {
+  if (typeof route.hiSpec === 'undefined' || route.medium)
+    return templateName;
+  return (route.hiSpec ? 'hi-spec.' : 'lo-spec.') + templateName;
 };
 
 
@@ -44,6 +63,7 @@ exports.templateName = function templateName(route, version) {
  */
 exports.renderNew = function renderNew(route, context, done) {
   var templateName = exports.templateName(route);
+  var templateKey = exports.templateKey(route, templateName);
   exports.compileAndRenderFile(templateName, context, function(err, renderedContent) {
     if (err) {
       done(err);
@@ -51,7 +71,7 @@ exports.renderNew = function renderNew(route, context, done) {
     else {
       if (!Σ.renders[route.key])
         Σ.renders[route.key] = {};
-      Σ.renders[route.key][templateName] = renderedContent;
+      Σ.renders[route.key][templateKey] = renderedContent;
       // TODO If we wanted to send customized headers for each resource (for example in the document metadata or its handler), we would need to save the headers too in the in-memory renders.
       done(null, renderedContent);
     }
@@ -70,10 +90,11 @@ exports.renderNew = function renderNew(route, context, done) {
  */
 exports.render = function render(route) {
   var templateName = exports.templateName(route);
+  var templateKey = exports.templateKey(route, templateName);
   var resource;
-  var routeCache = Σ.renders[route.key];
-  if (routeCache)
-    resource = routeCache[templateName];
+  var renderCache = Σ.renders[route.key];
+  if (renderCache)
+    resource = renderCache[templateKey];
 
   return resource;
 };
@@ -148,14 +169,14 @@ exports.preRender = function preRender(done) {
       url: docId,
       key: docId,
       output: 'html',
-      medium: 'hi-spec'
+      hiSpec: true
     };
   }).concat(Object.keys(Σ.index['id']).map(function(docId) {
     return {
       url: docId,
       key: docId,
       output: 'html',
-      medium: 'lo-spec'
+      hiSpec: false
     };
   }));
 

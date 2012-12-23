@@ -39,7 +39,7 @@ exports.parse = function parse(req) {
   var route = {
     url: null,
     output: null,
-    medium: null,
+    hiSpec: null,
     contentType: null,
     key: null,
     parsedUrl: null,
@@ -81,9 +81,9 @@ exports.parse = function parse(req) {
   route.contentType = contentTypes[route.output];
 
   if (exports.mobileCheck(req))
-    route.medium = 'lo-spec';
+    route.hiSpec = false;
   else
-    route.medium = 'hi-spec';
+    route.hiSpec = true;
 
   return route;
 };

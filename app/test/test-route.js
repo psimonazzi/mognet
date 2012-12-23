@@ -135,34 +135,34 @@ describe('router', function() {
 
       var route0 = router.parse(req0);
       assert.equal("index", route0.url);
-      assert.equal("hi-spec", route0.medium);
+      assert.equal(true, route0.hiSpec);
       assert.equal("html", route0.output);
       assert.equal("text/html", route0.contentType);
 
       var route1 = router.parse(req1);
       assert.equal("info", route1.url);
-      assert.equal("hi-spec", route1.medium);
+      assert.equal(true, route1.hiSpec);
       assert.equal("html", route1.output);
       assert.equal("text/html", route1.contentType);
 
       var route2 = router.parse(req2);
       assert.equal("search", route2.url);
-      assert.equal("lo-spec", route2.medium);
+      assert.equal(false, route2.hiSpec);
       assert.equal("json", route2.output);
 
       var route3 = router.parse(req3);
       assert.equal("search", route3.url);
-      assert.equal("lo-spec", route3.medium);
+      assert.equal(false, route3.hiSpec);
       assert.equal("html", route3.output);
 
       var route4 = router.parse(req4);
       assert.equal("search", route4.url);
-      assert.equal("lo-spec", route4.medium);
+      assert.equal(false, route4.hiSpec);
       assert.equal("html", route4.output);
 
       var route5 = router.parse(req5);
       assert.equal("42", route5.url);
-      assert.equal("lo-spec", route5.medium);
+      assert.equal(false, route5.hiSpec);
       assert.equal("html", route5.output);
     });
   })
