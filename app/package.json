@@ -1,6 +1,6 @@
 {
   "name": "mognet",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "???",
   "homepage": "https://github.com/psimonazzi/mognet",
   "repository": {
@@ -14,7 +14,6 @@
   },
   "license": "MIT",
   "keywords": [
-    "mognet",
     "web",
     "framework"
   ],
@@ -30,8 +29,7 @@
     "marked": "0.x.x"
   },
   "devDependencies": {
-    "mocha": "*",
-    "sqwish": "*"
+    "mocha": "*"
   },
   "engines": { "node": ">= 0.6.11" },
   "os" : [ "!win32" ],
