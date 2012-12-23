@@ -17,6 +17,7 @@ var fs = require('fs');
 var path = require('path');
 var http = require('http');
 var connect = require('connect');
+var child_process = require('child_process');
 
 var Σ = require(__dirname + '/lib/state');
 var router = require(__dirname + '/lib/router');
@@ -31,11 +32,11 @@ process.on('SIGPOLL', function() {
   Σ.compiled_templates = {};
   Σ.renders = {};
   Σ.cfg = Σ.loadConfig();
-  require('child_process').exec('/usr/bin/env node ' + __dirname + '/bin/update.js', function(error, stdout, stderr) {
+  child_process.exec('/usr/bin/env node ' + __dirname + '/bin/update.js', function(error, stdout, stderr) {
     if (!error)
       indexer.load(function() { console.log('Reloaded index.'); });
     else
-      console.err(error);
+      console.error('✖ ERROR: Cannot update index. ' + error);
   });
 });
 
@@ -68,28 +69,17 @@ try {
 console.log('Server v%s (pid %s)', version, process.pid);
 fs.writeFile(__dirname + '/../../server.pid', process.pid, 'utf8', function(err) {
   if (err) {
-    console.error('✖ ERROR: Cannot write pid file: ' + ex);
+    console.error('✖ ERROR: Cannot write pid file: ' + err);
   }
 });
 
 console.log('Loading index from disk...');
 var indexer = Indexer.createIndexer();
-try {
-  indexer.loadSync();
-  //indexer.sort(); // will be already sorted on disk
-}
-catch (ex) {
-  // rethrow if error was not 'file not found'
-  if (ex.code !== 'ENOENT') {
-    throw ex;
-  }
-  else {
-    // TODO run update now?
-  }
-}
+indexer.loadSync();
+//indexer.sort(); // will be already sorted on disk
 
 if (Object.keys(Σ.index['id']).length == 0) {
-  console.error('✖ ERROR: No index found. Create a new index with: bin/update.js');
+  console.error('✖ ERROR: No index found. Maybe create a new index with: bin/update.js');
   // do not exit, just serve what we can: static files and special routes with dedicated handlers
 }
 
@@ -105,12 +95,10 @@ var ONE_YEAR = 31536000000;
 // last handler applies to paths not served by the previous (static() by default serves '/' and all filenames under it)
 // so it catches any non-existent url
 var app = connect()
-//.use(connect.responseTime())
       .use(connect.logger({ format: 'tiny', buffer: 1000 }))
       .use(connect.timeout(10000))
       .use(connect.compress())
       .use(connect.favicon(__dirname + '/../doc/favicon.ico', { 'maxAge': ONE_YEAR }))
-//.use(connect.staticCache({ 'maxObjects': 256, 'maxLength': 1024 * 256 }))
       .use(connect.static(path.normalize(__dirname + '/../doc'), { 'maxAge': ONE_YEAR }))
       .use('/static', connect.static(path.normalize(__dirname + '/../../static'), { 'maxAge': ONE_YEAR }))
       .use('/api', function(req, res) {
@@ -148,38 +136,35 @@ var app = connect()
           }
           // If content length is not set, chunked encoding will be used automatically (as defined by the HTTP standard)
           var len = Buffer.byteLength(resource, 'utf8');
-          // TODO delegate Cache control to a reverse proxy?
-          if (lastModified) {
-            // Use a hash based Etag so if the template (but not the document) has changed it will be reflected in the Etag
-            //var etag = '"' + len + '-' + Number(lastModified.getTime()) + '"';
-            var etag = '"' + connect.utils.md5(resource) + '"';
-            res.setHeader('Etag', etag);
-            // Check if we need to return the content or just Not Modified
-            // Could reuse VisionMedia node-fresh, but we don't really need it
-            if (etag === req.headers['if-none-match']) {
-              res.statusCode = 304;
-              res.removeHeader('content-type');
-              res.removeHeader('content-length');
-              res.end();
-              return;
-            }
+          // Use a hash based Etag so if the template (but not the document) has changed it will be reflected in the Etag
+          //var etag = '"' + len + '-' + Number(lastModified.getTime()) + '"';
+          var etag = '"' + connect.utils.md5(resource) + '"';
+          res.setHeader('Etag', etag);
+          // Check if we need to return the content or just Not Modified
+          // Could reuse VisionMedia node-fresh, but we don't really need it
+          if (etag === req.headers['if-none-match']) {
+            res.statusCode = 304;
+            res.removeHeader('content-type');
+            res.removeHeader('content-length');
+            res.end();
+            return;
           }
           res.setHeader('content-length', len);
           res.end(resource);
         });
       })
       .listen(port, function() {
-	// drop root privileges if we have them
-	if (process && process.getuid() == 0 && process.getgid() == 0) {
-	  try {
-	    process.setgid(process.env.MOGNET_GROUP);
-	    process.setuid(process.env.MOGNET_USER);
-	  } catch (ex) {
-	    console.error('✖ ERROR: Cannot drop privileges, running as ROOT...! ' + ex);
-	  }
-	}
+        // drop root privileges if we have them
+        if (process && process.getuid() == 0 && process.getgid() == 0) {
+          try {
+            process.setgid(process.env.MOGNET_GROUP);
+            process.setuid(process.env.MOGNET_USER);
+          } catch (ex) {
+            console.error('✖ ERROR: Cannot drop privileges, running as ROOT...! ' + ex);
+          }
+        }
 
-        // notify Naught
+        // notify Naught if we are using it
         if (process.send)
           process.send('online');
       });

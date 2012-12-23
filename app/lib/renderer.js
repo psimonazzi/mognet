@@ -2,6 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var mustache = require('mustache');
 
+var logger = require('../lib/logger');
 var utils = require('../lib/utils');
 var Σ = require('../lib/state');
 
@@ -97,12 +98,11 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
   if (!f) {
     // Read template file content as string, then compile and run
     if (Σ.cfg && Σ.cfg['denyDiskRead']) {
-      if (Σ.cfg.verbose) console.error('✖ (Renderer) Needed to read %s but was denied by config. Pre-render all resources once before serving them.', templateName);
+      logger.e('✖ (Renderer) Needed to read %s but was denied by config. Pre-render all resources once before serving them.', templateName);
       done(new Error('Needed to read from disk but was denied by config'));
     }
 
-    // TODO fire event to log
-    if (Σ.cfg.verbose) console.log('✔ (Renderer) Reading %s...', templateName);
+    logger.i('✔ (Renderer) Reading %s...', templateName);
     fs.readFile(exports.path + templateName, 'utf8', function(err, s) {
       if (err) {
         done(err);
@@ -113,7 +113,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
           var content = f(context);
         } catch (ex) {
           err = ex;
-          if (Σ.cfg.verbose) console.error('✖ (Renderer) Error compiling template %s. %s', templateName, err);
+          logger.e('✖ (Renderer) Error compiling template %s. %s', templateName, err);
         }
         done(err, content);
       }
@@ -121,12 +121,11 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
   }
   else {
     // Cache HIT! Just run the compiled template
-    // TODO fire event to log
-    if (Σ.cfg.verbose) console.log('✔ (Renderer) Rendering compiled template %s...', templateName);
+    logger.i('✔ (Renderer) Rendering compiled template %s...', templateName);
     try {
       var content = f(context);
     } catch (err) {
-      if (Σ.cfg.verbose) console.error('✖ (Renderer) Error running compiled template %s. %s', templateName, err);
+      logger.e('✖ (Renderer) Error running compiled template %s. %s', templateName, err);
       done(err);
     }
     done(null, content);
@@ -170,7 +169,7 @@ exports.preRender = function preRender(done) {
       require('../lib/router').getResource({ 'url': r.url }, r, function(err, resource) {
         if (err) {
           lastError = err;
-          if (Σ.cfg.verbose) console.error('✖ (Renderer) Error pre-rendering %s: %s', r.url, err);
+          logger.e('✖ (Renderer) Error pre-rendering %s: %s', r.url, err);
           // continue
         }
         renderResource();

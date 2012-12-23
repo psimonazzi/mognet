@@ -41,14 +41,15 @@ function loadConfig() {
   var filename = require('path').normalize(__dirname + '/../config.json');
   try {
     var raw = require('fs').readFileSync(filename);
+  } catch (err) {
+    var writeCfgFile = true;
+  }
+  if (!writeCfgFile) {
     try {
       cfg = JSON.parse(raw);
     } catch (err) {
       console.error(err);
     }
-  } catch (err) {
-    //console.error(err);
-    var writeCfgFile = true;
   }
 
   // finally try to override with env vars
@@ -58,7 +59,7 @@ function loadConfig() {
   cfg.locale = process.env.MOGNET_LOCALE || cfg.locale;
   cfg.pageSize = process.env.MOGNET_PAGE_SIZE || cfg.pageSize;
 
-  // If thre was no file write it with the current values
+  // If there was no file write it with the current values
   if (writeCfgFile) {
     try {
       require('fs').writeFileSync(filename, JSON.stringify(cfg, null, '  '), 'utf8');

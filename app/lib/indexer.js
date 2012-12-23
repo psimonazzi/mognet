@@ -217,7 +217,6 @@ Indexer.prototype.loadSync = function loadSync() {
     Σ.index = utils.loadJSONSync(this.path + this.file, indexReviver);
   }
   catch (err) {
-    if (Σ.cfg.verbose) console.error(err);
     Σ.index = this.EMPTY_INDEX();
   }
 };

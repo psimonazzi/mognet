@@ -1,6 +1,7 @@
 var util = require('util');
 var url = require('url');
 
+var logger = require('../lib/logger');
 var utils = require('../lib/utils');
 var renderer = require('../lib/renderer');
 var handlers = require('../lib/handlers');
@@ -189,8 +190,7 @@ exports.getResource = function getResource(req, route, done) {
   var resource = renderer.render(route);
   if (resource) {
     // Cache HIT! All requests for the same route after the first should follow this code path
-    // TODO fire event to log
-    if (Σ.cfg.verbose) console.log('✔ (Router) Render cache hit for %s...', route.url);
+    logger.i('✔ (Router) Render cache hit for %s...', route.url);
     done(null, resource);
   }
   else {
@@ -226,8 +226,7 @@ exports.getResource = function getResource(req, route, done) {
  *
  */
 exports.context = function context(route, req) {
-  // TODO fire event to log
-  if (Σ.cfg.verbose) console.log('✔ (Router) Loading context for %s...', route.url);
+  logger.i('✔ (Router) Loading context for %s...', route.url);
 
   var ctx, doc, handled;
   // Try to get document from index
@@ -239,7 +238,7 @@ exports.context = function context(route, req) {
   if (doc && doc.secret) {
     var errSecret = new Error();
     errSecret.status = 403;
-    if (Σ.cfg.verbose) console.log('(Router) Denied request %s for secret document %s', route.url, doc.id);
+    logger.i('(Router) Denied request %s for secret document %s', route.url, doc.id);
     return errSecret;//throw errSecret;
   }
 
@@ -331,7 +330,7 @@ exports.context = function context(route, req) {
             };
           }
           else {
-            if (Σ.cfg.verbose) console.error('(Router) No title found for related id %s in %s', id, item.id);
+            logger.e('(Router) No title found for related id %s in %s', id, item.id);
             return {
               'href': id,
               'title': ''
