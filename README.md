@@ -11,9 +11,9 @@ Mognet is an in-memory, single-threaded tiny demon of Speed, designed to run on 
 
 - The Node.js server app. This is Mognet itself.
 
-- A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. This design is currently used at [my personal site](http://ps.info).
+- A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. This design is currently used at [the Author's personal site](http://ps.info).
 
-- A collection of command-line tools to manage the site contents (list documents, add new ones, etc). You don't strictly need them, they are just for fun: Mognet is smart enough to update itself automagically when it senses new contents.
+- A collection of command-line tools to manage the site contents (list documents, prettify typography, etc). You don't strictly need them, they are just for fun: Mognet is smart enough to update itself automagically when it senses new contents.
 
 - Deployment scripts. Used to deploy Mognet to the live server, start and stop it. They require [Naught](https://github.com/indabamusic/naught) and a Debian-like Linux system; you should easily be able to adapt them to other environments.
 
@@ -57,11 +57,11 @@ So you have to create the ``log``, ``res`` and ``static`` dirs at the same level
 
 - ``res/`` is where the site content will be. Posts and articles need to be in this directory so Mognet can discover them. This could be a separate repository, if you want to put under version control your content too. This directory is NOT exposed for public access from the internet, it's used just by Mognet internally.
 
-- ``static/`` is the only place in the filesystem that will be exposed for public access from the internet. That's it: ANYTHING IN THIS DIRECTORY WILL BE ACCESSIBLE FROM THE INTERNET (if one knows the filename). This is where static files for the site will be: images, PDF documents, binary files and so on. You can leave this empty if you have no files, or you prefer to use a remote storage service instead (like Google Drive, Amazon S3, Dropbox...).
+- ``static/`` is the only place in the filesystem that will be exposed for public access from the internet. Just to be clear: ANYTHING IN THIS DIRECTORY WILL BE ACCESSIBLE FROM THE INTERNET (if one knows the filename). This is where static files for the site will be: images, PDF documents, binary files and so on. You can leave this empty if you have no files, or you prefer to use a remote storage service instead (like Google Drive, Amazon S3, Dropbox...).
 
 Once you are ready, ensure you have write access to the ``/var`` dir on your server and run this command from the ``mognet`` dir:
 
-    make deploy
+    ./deploy.sh
 
 After this you will have the following structure on your filesystem:
 
@@ -71,7 +71,9 @@ After this you will have the following structure on your filesystem:
     |
     \-- mognet/ (a symlink to one of the code revisions in mognet-X.Y.Z)
     |
-    \-- mognet-X.Y.Z/ (the server code at the revision tagged X.Y.Z, without any Git repository data, tests, scripts etc.)
+    \-- mognet-X.Y.Z/ (the server code at the revision tagged X.Y.Z)
+    |   (This will contain the source files only, without any Git repository data
+    |   All Node.js modules needed to run the server will be copied here too)
     |
     \-- res/ (a symlink to your project res/ dir)
     |
@@ -98,7 +100,7 @@ To run in production (with features like running as daemon, restarting on crash,
 
     sudo npm install -g naught
 
-After deploying the desired version, start the server with:
+After deploying, start the server with:
 
     npm start
 

@@ -1,17 +1,15 @@
-test:
-	@@mocha --reporter dot
-
-test-verbose:
-	@@mocha --reporter spec
-
-deploy:
+deploy: min
 # get latest tag or current branch name if none
 	TAG=$(git describe --exact-match --abbrev=0)
-	[[ $(echo $TAG | grep fatal) != "" ]] && TAG=$(git branch | grep "*" | sed "s/* //")
+ifeq ($(echo $TAG | grep fatal),"")
+	TAG=$(git branch | grep "*" | sed "s/* //")
 	git archive --format=tar HEAD | (mkdir /var/www/mognet-$TAG && cd /var/www/mognet-$TAG && tar xf -)
-
-install:
-	@@npm install
+	rm -f /var/www/mognet
+	ln -s /var/www/mognet-$TAG /var/www/mognet
+	cd /var/www/mognet
+else
+	@@echo "No tag matches current HEAD. Create a tag to deploy."
+endif
 
 debug:
 	@@node debug server.js
@@ -21,7 +19,7 @@ lint:
 
 min:
 	cat ../doc/js/app.js ../doc/js/rainbow-custom.min.js > ../doc/js/app.min.js
-	uglifyjs --unsafe ../doc/js/app.min.js > ../doc/js/app.min.js
-	sqwish ../doc/css/style.css -o ../doc/css/style.min.css
+# uglifyjs --unsafe ../doc/js/app.min.js > ../doc/js/app.min.js
+# sqwish ../doc/css/style.css -o ../doc/css/style.min.css
 
-.PHONY: test test-verbose deploy install debug lint min
+.PHONY: test test-verbose deploy debug lint min
