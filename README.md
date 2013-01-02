@@ -111,6 +111,11 @@ And to stop:
 To run at system boot and stop on shutdown, configure a service with these start and stop commands (this distribution already includes an Upstart configuration).
 
 
+## Examples
+
+    ./deploy.sh && cd /var/www/mognet/app && sudo npm start
+
+
 ## License
 
 Mognet is released under the MIT License. See the ``LICENSE`` file.

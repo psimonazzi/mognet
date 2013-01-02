@@ -8,23 +8,31 @@ if [[ `echo $TAG | grep fatal` != "" ]]; then
     exit 1
 fi
 
-TAG=$(git branch | grep "*" | sed "s/* //")
+# This requires checking out the tag first
+#TAG=$(git branch | grep "*" | sed "s/* //")
 echo "Deploying $TAG..."
 
 ./minify.sh
 
-git archive --format=tar HEAD | (mkdir /var/www/mognet-$TAG && tar -xf - -C /var/www/mognet-$TAG)
+git archive --format=tar HEAD | (mkdir -p /var/www/mognet-$TAG && tar -xf - -C /var/www/mognet-$TAG)
 rm -f /var/www/mognet && ln -s /var/www/mognet-$TAG /var/www/mognet
-if [ -f ../static ]; then
-    ln -s ../static /var/www/static
+cd ..
+if [ ! -e /var/www/static ]; then
+    ln -s "$(pwd)/static" /var/www/static  
 fi
-if [ -f ../res ]; then
-    ln -s ../res /var/www/res
+if [ ! -e /var/www/res ]; then
+    ln -s "$(pwd)/res" /var/www/res 
 fi
-mkdir /var/www/log
-cp -R app/node_modules /var/www/mognet/app
+cd - >/dev/null
+mkdir -p /var/www/log
+mkdir -p /var/www/mognet/data
+if [ -e app/node_modules ]; then
+    cp -R app/node_modules /var/www/mognet/app
+fi
+chmod +x /var/www/mognet/app/bin/*.js
 
 echo "Updating index..."
 /var/www/mognet/app/bin/update.js >/dev/null
 
-echo "Deployed to /var/www/mognet-$TAG. Start server with: npm start"
+echo "Deployed to /var/www/mognet-$TAG."
+echo "Start server with: npm start"

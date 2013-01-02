@@ -50,8 +50,13 @@ process.on('SIGUSR1', function() {
 
 process.on('SIGUSR2', function() {
   console.log('Got SIGUSR2 (12).');
+  try {
+    var version = utils.loadJSONSync(__dirname + '/package.json').version;
+  } catch (err) { }
+  console.log('Mognet v' + version);
+  console.log('Running from ' + __dirname + ' as user ' + process.getuid() + ' and group ' + process.getgid());
   console.log('Config:');
-  console.log(util.inspect(Σ.cfg, false, null, true));
+  console.log(util.inspect(Σ.cfg, false, null, false));
   console.log('%j', process.memoryUsage());
 });
 
