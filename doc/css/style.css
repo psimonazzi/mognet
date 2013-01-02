@@ -75,6 +75,14 @@ p {
     hyphens: auto;
 }
 
+.blip p {
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    -o-hyphens: none;
+    hyphens: none;
+}
+
 
 /**************/
 /**** Grid ****/
@@ -155,7 +163,7 @@ footer nav {
 
 footer small {
     display: block;
-    margin-top: 1.043em;/*line-height: 2.618em;*/
+    margin-top: 1.043em;
 }
 
 footer small em {
@@ -180,15 +188,23 @@ h2, .blip p, .rel a, .filter {
     font-size: 1.618em;
 }
 
-/*p, */ .content ul, .content ol, .rel, blockquote, pre {
+h3 {
+    font-size: 1.412em;
+}
+
+.content ul, .content ol, .rel, blockquote, pre {
     margin-bottom: 1.6875em;
 }
 
+/* paragraph margin */
+p {
+    margin-bottom: 1.043em;
+}
 /* no paragraph margin, but indent - http://artequalswork.com/posts/islands-of-thought.php */
-p + p {
+/*p + p {
     margin-bottom: 0;
     text-indent: 1.618em;
-}
+}*/
 
 h2, .filter {
     margin-top: 1.043em;
@@ -403,7 +419,7 @@ footer small a:hover {
 
 .meta {
     color: #1a1a1a;
-    margin: 0.618em 0 1.6875em 0;
+    margin: 0 0 1.043em 0;
 }
 
 .meta li {
@@ -428,10 +444,9 @@ footer small a:hover {
     padding-right: 0.618em;
     background: #fff;
     text-shadow: 1px 1px 2px #f3f2ee;
-    /*box-shadow: 4px 4px 0 #f3f2ee;*/
 }
 
-.meta .☆ a {
+/*.meta .☆ a {
     font-size:24px;
     padding-left: 0;
 }
@@ -440,13 +455,12 @@ footer small a:hover {
     padding-right: 0;
     background: transparent;
     box-shadow: none;
-    /*-moz-transform: scale(2.0) rotate(360deg);
-    -webkit-transform: scale(2.0) rotate(360deg);
-    transform: scale(2.0) rotate(360deg);*/
     -moz-transform: scale(1.618);
     -webkit-transform: scale(1.618);
+    -ms-transform: scale(1.618);
+    -o-transform: scale(1.618);
     transform: scale(1.618);
-}
+}*/
 
 
 /** Pagination **/
@@ -473,7 +487,10 @@ footer small a:hover {
     color: #fff;
     background: #c60016;
     background-image: -moz-linear-gradient(top, #c60016, #900212);
-    background-image: -webkit-gradient(linear, center top, center bottom, from(#c60016), to(#900212));
+    background-image: -o-linear-gradient(top, #c60016, #900212);
+    background-image: -webkit-linear-gradient(top, #c60016, #900212);
+    /*background-image: -webkit-gradient(linear, center top, center bottom, from(#c60016), to(#900212));*/
+    background-image: linear-gradient(to bottom, #c60016, #900212);
 }
 
 .pages a kbd {
@@ -786,7 +803,13 @@ header nav li #search-menu {
 header nav li:hover #search-menu {
     background:
     -moz-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
-     -moz-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
+    -moz-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
+    background:
+    -webkit-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
+    -webkit-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
+    background:
+    -o-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
+    -o-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
     background:
     linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
     linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
@@ -859,7 +882,8 @@ header nav li:hover #search-menu {
     font-style: normal;
     font-weight: normal;
     display: block;
-    -moz-animation: rotate .618s linear infinite;
+    -webkit-animation: rotate .618s linear infinite;
+    -o-animation: rotate .618s linear infinite;
     animation: rotate .618s linear infinite;
 }
 
@@ -903,6 +927,26 @@ header nav li:hover #search-menu {
 	-moz-transform: translateY(0);
     }
 }
+@-webkit-keyframes fade-in-down {
+    0% {
+	opacity: 0;
+	-webkit-transform: translateY(-20px);
+    }   
+    100% {
+	opacity: 1;
+	-webkit-transform: translateY(0);
+    }
+}
+@-o-keyframes fade-in-down {
+    0% {
+	opacity: 0;
+	-o-transform: translateY(-20px);
+    }   
+    100% {
+	opacity: 1;
+	-o-transform: translateY(0);
+    }
+}
 @keyframes fade-in-down {
     0% {
 	opacity: 0;
@@ -918,12 +962,28 @@ header nav li:hover #search-menu {
     0% { -moz-transform: translateY(-27px); }   
     100% { -moz-transform: translateY(0); }
 }
+@-webkit-keyframes in-down {
+    0% { -webkit-transform: translateY(-27px); }   
+    100% { -webkit-transform: translateY(0); }
+}
+@-o-keyframes in-down {
+    0% { -o-transform: translateY(-27px); }   
+    100% { -o-transform: translateY(0); }
+}
 @keyframes in-down {
     0% { transform: translateY(-27px); }
     100% { transform: translateY(0); }
 }
 
 @-moz-keyframes aurora {
+    0% { background-position: 20% 100%; }
+    100% { background-position: 80% 100%; }
+}
+@-webkit-keyframes aurora {
+    0% { background-position: 20% 100%; }
+    100% { background-position: 80% 100%; }
+}
+@-o-keyframes aurora {
     0% { background-position: 20% 100%; }
     100% { background-position: 80% 100%; }
 }
@@ -935,6 +995,14 @@ header nav li:hover #search-menu {
 @-moz-keyframes rotate {
   from { -moz-transform: rotate(0deg); }
   to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes rotate {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+@-o-keyframes rotate {
+  from { -o-transform: rotate(0deg); }
+  to { -o-transform: rotate(360deg); }
 }
 @keyframes rotate {
   0% { transform: rotate(0deg); }
@@ -984,41 +1052,3 @@ pre .support {
 pre .variable.global, pre .variable.class, pre .variable.instance {
     color: #bdae9d;
 }
-
-/*
-pre .comment {
-    color: #727272;
-}
-
-pre .constant, pre .integer {
-    color: #D8FA3C;
-}
-
-pre .storage {
-    color: #FBDE2D;
-}
-
-pre .string {
-    color: #61CE3C;
-}
-
-pre .keyword, pre .selector {
-    color: #FBDE2D;
-}
-
-pre .parent {
-    font-style: italic;
-}
-
-pre .entity, pre .meta {
-    color: #FF6400;
-}
-
-pre .support {
-    color: #8DA6CE;
-}
-
-pre .variable.global, pre .variable.class, pre .variable.instance {
-    color: #FF6400;
-}
-*/

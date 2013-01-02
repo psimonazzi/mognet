@@ -169,11 +169,9 @@ module.exports = {
 
     var MAX_COUNT = 12;
 
-    var baseUrl = route.parsedUrl.protocol + '//' + route.parsedUrl.host;
-
     ctx.language = Σ.cfg.locale;
     ctx.ttl = 'TODO';
-    ctx.atomLink = baseUrl + route.pathname;
+    ctx.atomLink = Σ.cfg.baseUrl + '/' + route.key;
 
     // Select ids to display in the RSS feed
     if (Σ.index && Σ.index['id'].length > 0 && Σ.index['n']) {
@@ -183,7 +181,7 @@ module.exports = {
         var doc = Σ.index['id'][id];
         return {
           'title': doc['title'],
-          'link': baseUrl + '/' + id,
+          'link': Σ.cfg.baseUrl + '/' + id,
           'pubDate': doc['modified'],
           'description': doc['abstract']
         };

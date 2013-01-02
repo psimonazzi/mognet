@@ -46,7 +46,8 @@ exports.parse = function parse(req) {
     pathname: null,
     page: null,
     filter: null,
-    filterType: null
+    filterType: null,
+    baseUrl: null
   };
   var acceptTypes = {
     'text/html': 'html',
@@ -118,6 +119,12 @@ exports.canonicalize = function canonicalize(req, route) {
   // Check if it is root path
   if (route.url == '')
     route.url = 'index';
+
+  // Check if it is the special value 'menu', which is a handler for a page fragment and not a complete page, and redirect to 'search'
+  // this handler may only be called programmatically and not by a client
+  // Disable this check to let the client get an empty article page
+  if (route.url == 'menu')
+    route.url = 'search';
 
   switch (route.url) {
   case 'index':
@@ -268,6 +275,8 @@ exports.context = function context(route, req) {
   utils.extend(ctx, handled);
   // Add route
   utils.extend(ctx, route);
+  // Add config in its own namespace
+  ctx.cfg = Σ.cfg;
 
   // Finally, transform or update the context as necessary for rendering.
   // This involves adding all extra params from request data.
@@ -277,32 +286,39 @@ exports.context = function context(route, req) {
   }
 
   // Additional data for articles
+  if (!ctx.items)
+    ctx.items = [];
   ctx.items = ctx.items.map(function(item) {
+    if (item) {
+      // safe title representation for metadata (without HTML tags)
+      item.titleSafe = item.title.replace(/<.+?>/g, '').trim();
+    }
+
     if (item && !item.doc) {
+      // Dates display
+      item.timeTag = util.format("%s-%s-%s",
+                                 item.modified.getFullYear(),
+                                 utils.pad(item.modified.getMonth() + 1, 2),
+                                 utils.pad(item.modified.getDay() + 1, 2));
+      item.displayDate = util.format("%s/%s/%s",
+                                     utils.pad(item.modified.getDay() + 1, 2),
+                                     utils.pad(item.modified.getMonth() + 1, 2),
+                                     item.modified.getFullYear());
+      item.displayTime = util.format("%s:%s:%s.%s",
+                                     utils.pad(item.modified.getHours(), 2),
+                                     utils.pad(item.modified.getMinutes(), 2),
+                                     utils.pad(item.modified.getSeconds(), 2),
+                                     utils.pad(item.modified.getMilliseconds(), 3));
+
+      // Tags to display
+      if (item.tag.length > 0) {
+        item.displayTags = item.tag.map(function(t) {
+          return { 'name': t, 'href': encodeURIComponent(t) };
+        });
+      }
+
+      // Pagination for single article pages
       if (Σ.index.n) {
-        // Dates display
-        item.timeTag = util.format("%s-%s-%s",
-                                   item.modified.getFullYear(),
-                                   utils.pad(item.modified.getMonth() + 1, 2),
-                                   utils.pad(item.modified.getDay() + 1, 2));
-        item.displayDate = util.format("%s/%s/%s",
-                                       utils.pad(item.modified.getDay() + 1, 2),
-                                       utils.pad(item.modified.getMonth() + 1, 2),
-                                       item.modified.getFullYear());
-        item.displayTime = util.format("%s:%s:%s.%s",
-                                       utils.pad(item.modified.getHours(), 2),
-                                       utils.pad(item.modified.getMinutes(), 2),
-                                       utils.pad(item.modified.getSeconds(), 2),
-                                       utils.pad(item.modified.getMilliseconds(), 3));
-
-        // Tags to display
-        if (item.tag.length > 0) {
-          item.displayTags = item.tag.map(function(t) {
-            return { 'name': t, 'href': encodeURIComponent(t) };
-          });
-        }
-
-        // Pagination for single article pages
         if (!ctx.index && !ctx.search) {
           var nextN = item.n + 1 < 0 || item.n + 1 > Σ.index.n.length ? null : item.n + 1;
           ctx.nextPage = nextN != null ? Σ.index.n[nextN] : '';
@@ -318,26 +334,26 @@ exports.context = function context(route, req) {
             ctx.prevTitle = '/';
         }
       }
+    }
 
-      // Related articles data, only in single article pages
-      if (item.rel.length > 0 && !ctx.index) {
-        item.hasRlinks = true;
-        item.rlinks = item.rel.map(function(id) {
-          if (Σ.index.id[id]) {
-            return {
-              'href': id,
-              'title': Σ.index.id[id].title
-            };
-          }
-          else {
-            logger.e('(Router) No title found for related id %s in %s', id, item.id);
-            return {
-              'href': id,
-              'title': ''
-            };
-          }
-        });
-      }
+    // Related articles data, only in single article pages
+    if (item.rel.length > 0 && !ctx.index) {
+      item.hasRlinks = true;
+      item.rlinks = item.rel.map(function(id) {
+        if (Σ.index.id[id]) {
+          return {
+            'href': id,
+            'title': Σ.index.id[id].title
+          };
+        }
+        else {
+          logger.e('(Router) No title found for related id %s in %s', id, item.id);
+          return {
+            'href': id,
+            'title': ''
+          };
+        }
+      });
     }
     return item;
   });

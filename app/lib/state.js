@@ -16,7 +16,10 @@ function CONFIG_DEFAULTS() {
     "denyDiskRead": false,
     "verbose": false,
     "locale": "en",
-    "pageSize": 12
+    "pageSize": 12,
+    "baseUrl": null,
+    "googleAnalyticsAccount": null,
+    "readmillKey": null
   };
 }
 
@@ -58,6 +61,9 @@ function loadConfig() {
   cfg.verbose = process.env.MOGNET_VERBOSE || cfg.verbose;
   cfg.locale = process.env.MOGNET_LOCALE || cfg.locale;
   cfg.pageSize = process.env.MOGNET_PAGE_SIZE || cfg.pageSize;
+  cfg.baseUrl = process.env.MOGNET_BASE_URL || cfg.baseUrl;
+  cfg.googleAnalyticsAccount = process.env.MOGNET_GOOGLE_ANALYTICS_ACCOUNT || cfg.googleAnalyticsAccount;
+  cfg.readmillKey = process.env.MOGNET_READMILL_KEY || cfg.readmillKey;
 
   // If there was no file write it with the current values
   if (writeCfgFile) {

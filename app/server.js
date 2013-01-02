@@ -27,14 +27,14 @@ var utils = require(__dirname + '/lib/utils');
 // Run with "PORT=3000 node server.js" or "node server.js 3000" (or define in config file)
 var port = process.argv[2] || Σ.cfg.port;
 
-process.on('SIGPOLL', function() {
-  console.log('Got SIGPOLL (29). Reloading index and config, clearing cache...');
+process.on('SIGHUP', function() {
+  console.log('Got SIGHUP (1). Rebuilding/reloading index and config & clearing cache...');
   Σ.compiled_templates = {};
   Σ.renders = {};
   Σ.cfg = Σ.loadConfig();
   child_process.exec('/usr/bin/env node ' + __dirname + '/bin/update.js', function(error, stdout, stderr) {
     if (!error)
-      indexer.load(function() { console.log('Reloaded index.'); });
+      indexer.load(function() { console.log('Reloaded.'); });
     else
       console.error('✖ ERROR: Cannot update index. ' + error);
   });

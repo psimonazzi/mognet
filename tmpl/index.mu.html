@@ -1,15 +1,11 @@
 <!DOCTYPE html>
 <html lang="it">
-<head{{^index}}{{^search}} prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#"{{/search}}{{/index}}>
+  <head{{^index}}{{^search}} prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#"{{/search}}{{/index}}>
   <meta charset="utf-8"/>
-
-  <!-- Mobile viewport optimization - http://goo.gl/b9SaQ -->
   <meta name="HandheldFriendly" content="True"/>
   <meta name="MobileOptimized" content="320"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <!-- Mobile IE allows us to activate ClearType technology for smoothing fonts for easy reading -->
-  <meta http-equiv="cleartype" content="on"/>
-  
+  <meta http-equiv="cleartype" content="on"/>  
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 
   <!--
@@ -17,57 +13,58 @@
       Full source code for this website is available at https://github.com/psimonazzi/mognet
   -->
   
-  <title>Paolo Simonazzi</title>
+  <title>{{#items}}{{#titleSafe}}{{{titleSafe}}} - {{/titleSafe}}{{/items}}Paolo Simonazzi</title>
+  <meta name="country" content="IT"/>
+  <meta name="language" content="it-IT"/>
   <meta name="author" content="Paolo Simonazzi"/>
-  <meta name="keywords" content="" />
-  <meta name="description" content=""/>
-  <meta name="country" content="IT" />
-  <meta name="language" content="it-IT" />
+  {{#index}}
+  <meta name="description" content="Sito personale di Paolo Simonazzi. Fatto in Italia con amore &amp; ossessione."/>
+  <!-- Facebook (https://developers.facebook.com/docs/technical-guides/opengraph/built-in-objects) -->
+  <meta property="og:title" content="Paolo Simonazzi"/>
+  <meta property="og:description" content="Sito personale di Paolo Simonazzi. Fatto in Italia con amore &amp; ossessione."/>
+  <meta property="og:type" content="article"/>
+  <!-- G+ (https://developers.google.com/+/plugins/snippet/) -->
+  <meta itemprop="name" content="Paolo Simonazzi"/>
+  <meta itemprop="description" content="Sito personale di Paolo Simonazzi. Fatto in Italia con amore &amp; ossessione."/>
+  <!-- Twitter (https://dev.twitter.com/docs/cards) -->
+  <meta name="twitter:title" content="Paolo Simonazzi"/>
+  <meta name="twitter:description" content="Sito personale di Paolo Simonazzi. Fatto in Italia con amore &amp; ossessione."/>
+  <meta name="twitter:url" content="{{{cfg.baseUrl}}}/{{key}}"/>
+  <meta name="twitter:creator" content="@psimonazzi"/>
+  {{/index}}
+  {{#search}}
+  <meta name="description" content="Sito personale di Paolo Simonazzi. Fatto in Italia con amore &amp; ossessione."/>
+  {{/search}}
+  {{^index}}{{^search}}
+  <meta name="description" content="{{#items}}{{abstract}}{{/items}}"/>
+  <!-- Facebook (https://developers.facebook.com/docs/technical-guides/opengraph/built-in-objects) -->
+  <meta property="og:title" content="{{#items}}{{{titleSafe}}}{{/items}}"/>
+  <meta property="og:description" content="{{#items}}{{abstract}}{{/items}}"/>
+  <meta property="og:type" content="article"/>
+  <!-- G+ (https://developers.google.com/+/plugins/snippet/) -->
+  <meta itemprop="name" content="{{#items}}{{{titleSafe}}}{{/items}}"/>
+  <meta itemprop="description" content="{{#items}}{{abstract}}{{/items}}"/>
+  <!-- Twitter (https://dev.twitter.com/docs/cards) -->
+  <meta name="twitter:title" content="{{#items}}{{{titleSafe}}}{{/items}}"/>
+  <meta name="twitter:description" content="{{#items}}{{abstract}}{{/items}}"/>
+  <meta name="twitter:url" content="{{{cfg.baseUrl}}}/{{key}}"/>
+  <meta name="twitter:creator" content="@psimonazzi"/>
+  {{/search}}{{/index}}
   
-  <!-- TODO: only for single articles -->
-  <!-- Facebook and others will use the following data to represent your site
-       when it is shared.
-       Facebook documentation (includes info on sharing more specific media types): https://developers.facebook.com/docs/technical-guides/opengraph/built-in-objects/ -->
-  <meta property="og:title" content="{{title}}" />
-  <meta property="og:description" content="" />
-  <meta property="og:type" content="article"> 
-  <meta property="og:image" content="/img/logo.png" />
-  <!-- G+ -->
-  <meta itemprop="name" content="{{title}}" />
-  <meta itemprop="description" content="" />
-  <meta itemprop="image" content="/img/logo.png" />
-
-  <!-- IE9 Pinned Site Settings: http://msdn.microsoft.com/en-ca/library/gg131029(VS.85).aspx -->
-  <meta name="msapplication-tooltip" content="A description of what this site does." />
-  <!-- IE9 will automatically use the overall color of your site's favicon to
-       shade its browser buttons. UNLESS you give it another color here.
-       Only use named colors ("red") or hex colors ("#f00"). -->
-  <meta name="msapplication-navbutton-color" content=""/>
-  <!-- Define Jump List tasks that will appear when the pinned site's
-       icon gets a right-click. Each "task" goes to the specified URL,
-       and gets its own mini icon (essentially a favicon, a 16x16 .ICO). -->
-  <meta name="msapplication-task" content="name=Info;action-uri=http://.../info;icon-uri=http://host/icon1.ico"/>
-  <meta name="msapplication-task" content="name=Ricerca;action-uri=http://.../search;icon-uri=http://host/icon2.ico"/>
-  <meta name="msapplication-task" content="name=Colophon;action-uri=http://.../colophon;icon-uri=http://host/icon1.ico"/>
-  
-  <link rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/" />
-
-  <!-- Signal to search engines and others "Use this URL for this page!"
-       Useful when URLs are dynamically generated. -->
-  <link rel="canonical" href="/{{key}}" />
-
-  <link rel="alternate" type="application/atom+xml" href="/atom" />
-  
-  <!-- Place favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
-  <link rel="shortcut icon" href="/favicon.ico?1" />
+  <link rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"/>
+  <link rel="canonical" href="{{{cfg.baseUrl}}}/{{key}}"/>
+  <link rel="alternate" type="application/atom+xml" href="/atom"/>
+  <link rel="shortcut icon" href="/favicon.ico?1"/>
   <!-- For Opera, iPhone, iPod Touch, and Android 2.1+ devices: -->
-  <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
-
-  <link rel="stylesheet" href="/css/style.css?1" media="screen" />
+  <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png"/>
+  <meta name="msapplication-TileImage" content="/apple-touch-icon-precomposed.png"/>
+  <meta name="msapplication-TileColor" content="#f3f2ee"/>
+  
+  <link rel="stylesheet" href="/css/style.css" media="screen"/>
   <!--[if lt IE 9]>
-  <link rel="stylesheet" href="css/ie.css?1" media="screen" />
-  <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" href="/css/ie.css" media="screen" />
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
 </head>
 
 
@@ -75,42 +72,42 @@
 <body{{#doc}} class="doc"{{/doc}}>
 
 <header>
-  <div class="logo"><a href="/" title="Paolo Simonazzi">℘</a></div><!-- ☆ ℘ ∴ ◈ ♚ ✪ ✦ -->
+  <div class="logo"><a href="/" title="Paolo Simonazzi">℘</a></div><!-- ☆ ℘ ∴ ◈ , ♚ ✪ ✦ -->
   <nav>
     <ul>
       <li><a href="/info">info</a></li>
       <li><a href="/search">ricerca</a>{{#hiSpec}}
       <div class="floating" id="search-menu">
-          <div>
-              <!--<form action="/" method="get">
-            <div class="searchform">
+        <div>
+          <!--<form action="/" method="get">
+              <div class="searchform">
               <input type="text" id="q" name="q" /><button>↵</button>
-            </div>
-          </form>-->
+              </div>
+              </form>-->
 
           {{#menu}}
           <h2>Categorie</h2>
           <ul class="menu cf">
-              {{#tags}}
-              <li><a href="/search/{{{href}}}">{{name}}</a></li>
-              {{/tags}}
-              {{#tagsOverflow}}
-              <li><a href="/search" class="continue">archivio</a></li>
-              {{/tagsOverflow}}
+            {{#tags}}
+            <li><a href="/search/{{{href}}}">{{name}}</a></li>
+            {{/tags}}
+            {{#tagsOverflow}}
+            <li><a href="/search" class="continue">archivio</a></li>
+            {{/tagsOverflow}}
           </ul>
           
           <h2>Date</h2>
           <ul class="menu cf">
-              {{#dates}}
-              <li><a href="/search/{{{href}}}">{{name}}</a></li>
-              {{/dates}}
-              {{#datesOverflow}}
-              <li><a href="/search" class="continue">archivio</a></li>
-              {{/datesOverflow}}
+            {{#dates}}
+            <li><a href="/search/{{{href}}}">{{name}}</a></li>
+            {{/dates}}
+            {{#datesOverflow}}
+            <li><a href="/search" class="continue">archivio</a></li>
+            {{/datesOverflow}}
           </ul>
           {{/menu}}
           
-          </div>
+        </div>
       </div>
       {{/hiSpec}}</li>
       <!--<li><a href="/fav" id="fav">&#x2605;<sup></sup></a></li>-->
@@ -121,68 +118,65 @@
 
 {{#search}}
 <div class="document">
-    {{#filter}}
-    <div class="filter">{{{filter}}}{{#count}} <sup title="Numero di voci">({{count}})</sup>{{/count}}</div>
-    {{/filter}}
-    {{^filter}}
-    <!--<form action="/search" method="get">
-        <div class="searchform">
-            <input type="text" id="q" name="q" /><button>↵</button>
-        </div>
-    </form>-->
+  {{#filter}}
+  <div class="filter">{{{filter}}}{{#count}} <sup title="Numero di voci">({{count}})</sup>{{/count}}</div>
+  {{/filter}}
+  {{^filter}}
+  <!--<form action="/search" method="get">
+      <div class="searchform">
+      <input type="text" id="q" name="q" /><button>↵</button>
+      </div>
+      </form>-->
 
-    <h2>Categorie</h2>
-    <ul class="menu cf">
-        {{#tags}}
-        <li><a href="/search/{{{href}}}">{{name}}</a></li>
-        {{/tags}}
-    </ul>
-    
-    <h2>Date</h2>
-    <ul class="menu cf">
-        {{#dates}}
-        <li><a href="/search/{{{href}}}">{{name}}</a></li>
-        {{/dates}}
-    </ul>
-    {{/filter}}
+  <h2>Categorie</h2>
+  <ul class="menu cf">
+    {{#tags}}
+    <li><a href="/search/{{{href}}}">{{name}}</a></li>
+    {{/tags}}
+  </ul>
+  
+  <h2>Date</h2>
+  <ul class="menu cf">
+    {{#dates}}
+    <li><a href="/search/{{{href}}}">{{name}}</a></li>
+    {{/dates}}
+  </ul>
+  {{/filter}}
 </div>
 {{/search}}
 
 {{#items}}
-<!-- Itemprop microformat only in single-article pages -->
-<!-- do not use article for document pages -->
 {{#doc}}<div class="document">{{/doc}}{{^doc}}<article>{{/doc}}
-  <h1><a href="/{{id}}">{{{title}}}</a></h1>
-  
-  {{^doc}}
-  <div class="meta"><!-- meta -->
+<h1>{{^blip}}<a href="/{{id}}">{{{title}}}</a>{{/blip}}</h1>
+
+{{^doc}}
+<div class="meta">
+  <ul>
+    <li><time datetime="{{{timeTag}}}">{{displayDate}} <em>{{displayTime}}</em></time></li>
+    <!--<li class="☆"><a href="" data-fav="0">☆</a></li>-->
+    {{#displayTags}}
+    <li><a href="/search/{{{href}}}">{{name}}</a></li>
+    {{/displayTags}}
+  </ul>
+</div>
+{{/doc}}
+
+<div class="content{{#blip}} blip{{/blip}}">
+  {{#blip}}<blockquote cite="{{{cite}}}">{{/blip}}
+  {{{content}}}
+  {{#blip}}</blockquote>{{/blip}}
+
+  {{#hasRlinks}}
+  <div class="rel">
+    <h2>Correlati</h2>
     <ul>
-      <li><time datetime="{{{timeTag}}}">{{displayDate}} <em>{{displayTime}}</em></time></li>
-      <!--<li class="☆"><a href="" data-fav="0">☆</a></li>-->
-      {{#displayTags}}
-      <li><a href="/search/{{{href}}}">{{name}}</a></li>
-      {{/displayTags}}
+      {{#rlinks}}
+      <li><a href="/{{{href}}}">{{{title}}}</a></li>
+      {{/rlinks}}
     </ul>
   </div>
-  {{/doc}}
-  
-  <div class="content{{#blip}} blip{{/blip}}"><!-- content -->
-      {{#blip}}<blockquote cite="{{cite}}">{{/blip}}
-      {{{content}}}
-      {{#blip}}</blockquote>{{/blip}}
-
-      {{#hasRlinks}}
-      <!-- related are in single article view only -->
-      <div class="rel">
-          <h2>Correlati</h2>
-          <ul>
-              {{#rlinks}}
-              <li><a href="/{{href}}">{{{title}}}</a></li>
-              {{/rlinks}}
-          </ul>
-      </div>
-      {{/hasRlinks}}
-  </div><!-- /content -->
+  {{/hasRlinks}}
+</div><!-- /content -->
 {{#doc}}</div>{{/doc}}{{^doc}}</article>{{/doc}}
 {{/items}}
 
@@ -209,40 +203,31 @@
 
 
 <!-- Various floating elements, normally hidden -->
+<!--
+    <div id="controls-menu" class="hidden floating">
+    <dl>
+    <dt><code>J</code></dt><dd>— Pagina successiva</dd>
+    <dt><code>K</code></dt><dd>— Pagina precedente</dd>
+    <dt><code>SPAZIO</code></dt><dd>— Scorrimento pagina / pagina successiva se in fondo alla pagina corrente</dd>
+    <dt><code>S</code></dt><dd>— Cerca</dd>
+    <dt><code>H</code></dt><dd>— Mostra / nascondi questa guida</dd>
+    </dl>
+    </div>
+-->
 
-<div id="controls-menu" class="hidden floating">
-  <dl>
-    <dt><code>J</code></dt><dd>&mdash; Pagina successiva</dd>
-    <dt><code>K</code></dt><dd>&mdash; Pagina precedente</dd>
-    <dt><code>SPAZIO</code></dt><dd>&mdash; Scorrimento pagina / pagina successiva se in fondo alla pagina corrente</dd>
-    <dt><code>S</code></dt><dd>&mdash; Cerca</dd>
-    <dt><code>H</code></dt><dd>&mdash; Mostra / nascondi questa guida</dd>
-  </dl>
-</div>
-
-<!-- Javascript at the bottom for fast page loading -->
-<!-- Grab Google CDN's jQuery. fall back to local if necessary -->
-<!-- Let's help Mother Nature and link to a local copy of jQuery until our project is ready for launch. -->
-<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>-->
-<!--<script>//<![CDATA[
-!window.jQuery && document.write(unescape('%3Cscript src="js/jquery-1.4.4.min.js"%3E%3C/script%3E'))
-//]]></script>-->
-<!-- jQuery Lint for the performance-tweaking stages of your project.
-     Notifies of inefficient selectors and other ego-breaking things. -->
-<!--<script src="js/jquery.lint.js"></script>-->
-<!--<script src="js/jquery.hotkeys.js"></script>-->
 {{#hiSpec}}
-<script src="/js/app.js?1"></script>
-<script src="/js/rainbow-custom.min.js?1"></script>
+<script src="/js/app.min.js?1"></script>
 {{/hiSpec}}
 
+{{#cfg.googleAnalyticsAccount}}
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-<!--<script>
-    var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-    s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>-->
+<script>
+  var _gaq=[['_setAccount','{{{cfg.googleAnalyticsAccount}}}'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+{{/cfg.googleAnalyticsAccount}}
 
 </body>
 </html>

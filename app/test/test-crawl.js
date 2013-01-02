@@ -60,7 +60,8 @@ describe('crawler', function() {
             "\n" +
             "<script>\n" +
             "{\n" +
-            "\"id\": \"" + ID + "\"\n" +
+            "\"id\": \"" + ID + "\",\n" +
+            "\"blip\": true\n" +
             "}\n" +
             "</script>\n" +
             "\n" +
@@ -74,11 +75,12 @@ describe('crawler', function() {
       fs.writeFileSync(filename, CONTENT, 'utf8');
       var stats = fs.statSync(filename);
 
-      crawler.on('found', function(doc) {
+      crawler.once('found', function(doc) {
         assert.equal(filename, doc['filename']);
         assert.equal(stats.mtime, doc['timestamp']);
         assert.equal(TITLE, doc['title']);
         assert.equal(ID, doc['id']);
+        assert.equal(true, doc['blip']);
         // Preserve <script> tags after the first one
         assert.equal(true, doc['content'].indexOf("<script>") > 0);
 
@@ -152,11 +154,42 @@ describe('crawler', function() {
 
       var S2 = "# " + TITLE + "\n" +
             "\n" +
-            "AAA\n";
+            "_AAA_\n";
       var marked = require('marked');
       S2 = marked(S2);
       var doc2 = crawler.fromContent(S2, {});
       assert.equal(TITLE, doc2['title']);
+    });
+
+    it('should extract a document metadata from a file contents in Markdown', function(done) {
+      var TITLE = "Hello, World";
+      var CONTENT = "<script>\n" +
+            "{\n" +
+            "\"id\": \"test-markdown\",\n" +
+            "\"doc\": true,\n" +
+            "\"tag\": [ \"www\",\"tag2\" ],\n" +
+            "\"rel\": [ \"title-0\" ]\n" +
+            "}\n" +
+            "</script>\n" +
+            "\n" +
+            "# " + TITLE + "\n" +
+            "\n" +
+            "_AAA_\n";
+      var fs = require('fs');
+      var path = require('path');
+      var filename = path.normalize(__dirname + '/test-markdown.md');
+      fs.writeFileSync(filename, CONTENT, 'utf8');
+      var stats = fs.statSync(filename);
+
+      crawler.once('found', function(doc) {
+        assert.equal("test-markdown", doc.id);
+        assert.equal(TITLE, doc.title);
+        assert.equal(true, doc.doc);
+        assert.equal("tag2", doc.tag[1]);
+        fs.unlinkSync(filename);
+        done();
+      });
+      crawler.fetch(filename, stats);
     });
 
   })

@@ -137,11 +137,11 @@ Crawler.prototype.fetch = function fetch(file, stat) {
   // handle markdown
   if (file.match(/\.(md|markdown)$/i)) {
     var marked = require('marked');
+    var orig = s; // preserve original content for metadata parsing, as <script> element will be escaped
     s = marked(s);
   }
-
   doc = this.fromContent(s, doc);
-  doc = this.fromMeta(s, doc);
+  doc = this.fromMeta(orig || s, doc);
 
   this.emit('found', doc);
 };
@@ -250,7 +250,7 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
 Crawler.prototype.fromContent = function(s, doc) {
   var title;
   var startTitle = s.indexOf('<title>'), endTitle = s.indexOf('</title>');
-  if (startTitle > 0 && endTitle > 0) {
+  if (startTitle >= 0 && endTitle > 0) {
     title = s.substring(startTitle + '<title>'.length, endTitle).trim();
     if (title)
       doc['title'] = title;
@@ -296,7 +296,7 @@ Crawler.prototype.fromContent = function(s, doc) {
  */
 Crawler.prototype.fromMeta = function(s, doc) {
   var startMeta = s.indexOf('<script>'), endMeta = s.indexOf('</script>');
-  if (startMeta > 0 && endMeta > 0) {
+  if (startMeta >= 0 && endMeta > 0) {
     var js = s.substring(startMeta + '<script>'.length, endMeta);
     try {
       var meta = JSON.parse(js);
@@ -333,11 +333,26 @@ Crawler.prototype.fromMeta = function(s, doc) {
   if (!doc['modified'] instanceof Date)
     doc['modified'] = new Date(doc['modified']);
 
+  if (!doc['title']) {
+    // set first content chars as title, stripping any tags
+    doc['title'] = doc['content']
+      .replace(/<.+?>/g, '')
+      .substring(0, 30) + '…';
+  }
+
   if (!doc['abstract']) {
     // Use first <br/> instead of first <p> paragraph, so it works with markdown too
     var startSecondPar = doc['content'].indexOf('<br/>');
-      if (startSecondPar > 0)
-        doc['abstract'] = doc['content'].substring(0, startSecondPar);
+      if (startSecondPar > 0) {
+        doc['abstract'] = doc['content']
+          .substring(0, startSecondPar)
+          .replace(/<.+?>/g, '')
+          .replace(/\n+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (doc['abstract'].length > 140)
+          doc['abstract'] = doc['abstract'].substring(0, 140) + '…';
+      }
     /*var startFirstPar = doc['content'].indexOf('<p>');
     if (startFirstPar > 0) {
       var startSecondPar = doc['content'].indexOf('<p>', startFirstPar);
@@ -345,7 +360,13 @@ Crawler.prototype.fromMeta = function(s, doc) {
         doc['abstract'] = doc['content'].substring(0, startSecondPar);
     }*/
     if (!doc['abstract']) {
-      // leave null, better than truncate contents?
+      doc['abstract'] = doc['content']
+        .replace(/<.+?>/g, '')
+        .replace(/\n+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (doc['abstract'].length > 140)
+          doc['abstract'] = doc['abstract'].substring(0, 140) + '…';
     }
   }
 

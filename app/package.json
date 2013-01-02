@@ -36,7 +36,7 @@
   "scripts": {
     "start": "naught start --log ../../log/naught.log --stdout ../../log/stdout.log --stderr ../../log/stderr.log --ipc-file ../../naught.ipc server.js",
     "stop": "naught stop --ipc-file ../../naught.ipc",
-    "test": "make test"
+    "test": "mocha --reporter dot"
   }
 }
 
