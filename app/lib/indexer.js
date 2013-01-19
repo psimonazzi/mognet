@@ -133,6 +133,7 @@ Indexer.prototype.sort = function() {
  * @api public
  */
 Indexer.prototype.publicIds = function publicIds() {
+  // TODO memoize candidate?
   if (!Σ.index || !Σ.index['id'])
     return [];
   var self = this;
@@ -151,6 +152,7 @@ Indexer.prototype.publicIds = function publicIds() {
  * @api public
  */
 Indexer.prototype.nonPublicIds = function nonPublicIds() {
+  // TODO memoize candidate?
   if (!Σ.index || !Σ.index['id'])
     return [];
   var self = this;
@@ -184,6 +186,7 @@ Indexer.prototype.isPublicId = function isPublicId(id) {
  * @api public
  */
 Indexer.prototype.documentIds = function documentIds() {
+  // TODO memoize candidate?
   if (!Σ.index || !Σ.index['id'])
     return [];
   var ids = Object.keys(Σ.index['id']).filter(function(id, index, array) {

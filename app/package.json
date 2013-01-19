@@ -1,7 +1,7 @@
 {
   "name": "mognet",
   "version": "0.3.0",
-  "description": "Obsessively minimal, opinionated web framework",
+  "description": "Obsessively minimal, opinionated web framework and static site generator",
   "homepage": "https://github.com/psimonazzi/mognet",
   "repository": {
     "type": "git",

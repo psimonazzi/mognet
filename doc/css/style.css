@@ -200,20 +200,21 @@ h3 {
 p {
     margin-bottom: 1.043em;
 }
-/* no paragraph margin, but indent - http://artequalswork.com/posts/islands-of-thought.php */
-/*p + p {
-    margin-bottom: 0;
-    text-indent: 1.618em;
-}*/
 
 h2, .filter {
     margin-top: 1.043em;
     margin-bottom: 1.043em;
 }
 
+/* no paragraph margin, but indent - http://artequalswork.com/posts/islands-of-thought.php */
+/*p + p {
+    margin-bottom: 0;
+    text-indent: 1.618em;
+}
+
 pre, blockquote {
     margin-top: 1.6875em;
-}
+}*/
 /* end no paragraph margin */
 
 pre {
@@ -228,6 +229,10 @@ code, kbd, var, samp, tt {
 
 figure {
     margin: 1.6875em 0;
+}
+
+.content > figure:nth-child(1) {
+    margin-top: 0;
 }
 
 figure pre {
