@@ -163,7 +163,10 @@
 
 <div class="content{{#blip}} blip{{/blip}}">
   {{#blip}}<blockquote cite="{{{cite}}}">{{/blip}}
-  {{{content}}}
+  {{#abstract}}{{#index}}{{{abstract}}}{{#needContinue}}<p>… <a class="continue" href="/{{id}}">Continua →</a></p>{{/needContinue}}{{/index}}{{/abstract}}
+  {{#abstract}}{{#search}}{{{abstract}}}{{#needContinue}}<p>… <a class="continue" href="/{{id}}">Continua →</a></p>{{/needContinue}}{{/search}}{{/abstract}}
+  {{^index}}{{^search}}{{{content}}}{{/search}}{{/index}}
+  {{^abstract}}{{{content}}}{{/abstract}}
   {{#blip}}</blockquote>{{/blip}}
 
   {{#hasRlinks}}
@@ -195,7 +198,7 @@
   </nav>
   
   <small class="vcard">© <a href="/info" class="fn org url" rel="me">Paolo Simonazzi</a><br/>
-  <a href="https://github.com/psimonazzi">Github</a> · <a href="https://twitter.com/psimonazzi">Twitter</a> · <a href="https://plus.google.com/112937103926951607608">Google+</a></small>
+  <a href="mailto:p.simonazzi@gmail.com">p.simonazzi@gmail.com</a> · <a href="https://github.com/psimonazzi">Github</a> · <a href="https://twitter.com/psimonazzi">Twitter</a> · <a href="https://plus.google.com/112937103926951607608">Google+</a></small>
   <small>Contenuti su licenza <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">CC (Attribuzione — Condividi allo stesso modo)</a></small>
   <small><em>Fatto in Italia con amore &amp; ossessione.</em></small>
 </footer>

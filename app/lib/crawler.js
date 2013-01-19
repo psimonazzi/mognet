@@ -48,6 +48,7 @@ var DEFAULTS = function() {
     'title': null,
     'abstract': null,
     'description': null,
+    'needContinue': null,
     'content': null,
     'tag': [],
     'rel': [],
@@ -238,7 +239,11 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
  *
  * 'id': slug created from the title, if undefined. This field is NOT overwritten if it was already set
  *
- * 'content': file content without doctype, <meta>, <title> and first <script> element
+ * 'content': file content without doctype, HTML comments, <meta>, <title> and first <script> element
+
+ * 'abstract': document abstract
+ *
+ * 'description': document description used in HTML meta elements. This field is the abstract without HTML tags, possibly truncated
  *
  * @param {string} s File contents as string
  * @param {Object} doc Possibly empty partial document to be overridden
@@ -259,7 +264,6 @@ Crawler.prototype.fromContent = function(s, doc) {
   }
   else {
     // This will not be Markdown, it's already rendered to HTML
-    //var match = /^#\s(.+)$/m.exec(s);
     var match = /<h1>(.*?)<\/h1>/i.exec(s);
     if (match && match.length == 2) {
       title = match[1].trim();
@@ -272,11 +276,56 @@ Crawler.prototype.fromContent = function(s, doc) {
 
   doc['content'] =
     s.replace(/<!DOCTYPE\s+html>/i, '')
+    .replace(/<!--.*?-->/g, '')
     .replace(/<meta.*?>/ig, '')
     .replace(/<title>.*?<\/title>/i, '')
     .replace(/<h1>.*?<\/h1>/i, '')
     .replace(/<script(?! src)(.*?)>([\s\S]*?)<\/script>/im, '')
     .trim();
+
+
+  if (!doc['title']) {
+    doc['title'] = doc['content']
+      .replace(/<.+?>/g, '')
+      .substring(0, 30) + '…';
+  }
+
+  if (!doc['abstract']) {
+    if (doc['content'].length < 2500) {
+      doc['abstract'] = doc['content'].trim();
+    }
+    else {
+      // Use first <br/> instead of first <p> paragraph
+      /*var startSecondPar = doc['content'].indexOf('<br/>');
+       if (startSecondPar > 0) {
+       doc['abstract'] = doc['content']
+       .substring(0, startSecondPar);
+       }*/
+      var startFirstPar = doc['content'].search(/<p.*?>/);
+      if (startFirstPar >= 0) {
+        var startSecondPar = doc['content'].indexOf('</p>', startFirstPar + 1);
+        if (startSecondPar > 0) {
+          doc['abstract'] = doc['content'].substring(startFirstPar, startSecondPar + 4);
+          if (doc['abstract'].length < doc['content'].length) {
+            doc['needContinue'] = true;
+          }
+          doc['abstract'] = doc['abstract'].trim();
+        }
+      }
+      if (!doc['abstract']) {
+        doc['abstract'] = doc['content'].trim();
+      }
+    }
+  }
+
+  doc['description'] = doc['abstract']
+    .replace(/<.+?>/g, '')
+    .replace(/\n+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (doc['description'].length > 140)
+      doc['description'] = doc['description'].substring(0, 140) + ' …';
+
   return doc;
 };
 
@@ -310,10 +359,15 @@ Crawler.prototype.fromMeta = function(s, doc) {
   [ 'timestamp', 'schedule', 'modified' ].forEach(function(name) {
     if (meta && meta[name]) {
       var match = /^(\d{4})\/(\d{2})\/(\d{2})\s(\d{2}):(\d{2})$/.exec(meta[name]);
-      if (match && match.length == 6)
+      if (match && match.length == 6) {
         meta[name] = new Date(match[1], match[2] - 1, match[3], match[4], match[5], 0);
-      else
-        try { meta[name] = new Date(meta[name]); } catch (ex) { }
+      }
+      else {
+        try {
+          meta[name] = new Date(meta[name]);
+        }
+        catch (ex) { }
+      }
     }
   });
 
@@ -332,43 +386,6 @@ Crawler.prototype.fromMeta = function(s, doc) {
     doc['schedule'] = new Date(doc['schedule']);
   if (!doc['modified'] instanceof Date)
     doc['modified'] = new Date(doc['modified']);
-
-  if (!doc['title']) {
-    // set first content chars as title, stripping any tags
-    doc['title'] = doc['content']
-      .replace(/<.+?>/g, '')
-      .substring(0, 30) + '…';
-  }
-
-  if (!doc['abstract']) {
-    // Use first <br/> instead of first <p> paragraph, so it works with markdown too
-    var startSecondPar = doc['content'].indexOf('<br/>');
-      if (startSecondPar > 0) {
-        doc['abstract'] = doc['content']
-          .substring(0, startSecondPar)
-          .replace(/<.+?>/g, '')
-          .replace(/\n+/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-        if (doc['abstract'].length > 140)
-          doc['abstract'] = doc['abstract'].substring(0, 140) + '…';
-      }
-    /*var startFirstPar = doc['content'].indexOf('<p>');
-    if (startFirstPar > 0) {
-      var startSecondPar = doc['content'].indexOf('<p>', startFirstPar);
-      if (startSecondPar > 0)
-        doc['abstract'] = doc['content'].substring(0, startSecondPar);
-    }*/
-    if (!doc['abstract']) {
-      doc['abstract'] = doc['content']
-        .replace(/<.+?>/g, '')
-        .replace(/\n+/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (doc['abstract'].length > 140)
-          doc['abstract'] = doc['abstract'].substring(0, 140) + '…';
-    }
-  }
 
   return doc;
 };

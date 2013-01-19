@@ -192,5 +192,48 @@ describe('crawler', function() {
       crawler.fetch(filename, stats);
     });
 
+    it('should extract a document abstract and description', function() {
+      var S = "<!DOCTYPE html>\n" +
+            "<meta charset=utf-8>\n" +
+            "<title>Abstract</title>\n" +
+            "\n" +
+            "<p>First <code>p</code> used for     abstract.</p>\n" +
+            "<p>Second.</p>";
+      var doc = crawler.fromContent(S, {});
+      assert.equal("<p>First <code>p</code> used for     abstract.</p>\n<p>Second.</p>", doc['abstract']);
+      assert.equal("First p used for abstract. Second.", doc['description']);
+      assert.equal(null, doc['description'].match(/<.+?>/));
+
+      var PADDING = "<p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p><p>Second.</p>";
+      var ABSTRACT = "<p>First <code>p</code> used for     abstract. First <code>p</code> used for     abstract. First <code>p</code> used for     abstract. First <code>p</code> used for     abstract. First <code>p</code> used for     abstract. First <code>p</code> used for     abstract.</p>";
+      S = "<!DOCTYPE html>\n" +
+            "<meta charset=utf-8>\n" +
+            "<title>Abstract</title>\n" +
+            "\n" +
+            ABSTRACT + "\n" +
+            "<br/>\n\n" +
+            PADDING;
+      var doc2 = crawler.fromContent(S, {});
+      assert.equal(ABSTRACT, doc2['abstract']);
+      assert.equal("First p used for abstract. First p used for abstract. First p used for abstract. First p used for abstract. First p used for abstract. First …", doc2['description']);
+
+      var S2 = "<!DOCTYPE html>\n" +
+            "<meta charset=utf-8>\n" +
+            "<title>Abstract</title>\n" +
+            "<script>\n" +
+            "{\n" +
+            "\"abstract\": false\n" +
+            "}\n" +
+            "</script>\n" +
+            "\n" +
+            ABSTRACT + "\n" +
+            "<br/>\n\n" +
+            PADDING;
+      var doc3 = crawler.fromContent(S2, {});
+      doc3 = crawler.fromMeta(S2, doc3);
+      assert.equal(false, doc3['abstract']);
+      assert.equal("First p used for abstract. First p used for abstract. First p used for abstract. First p used for abstract. First p used for abstract. First …", doc3['description']);
+    });
+
   })
 })
