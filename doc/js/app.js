@@ -1,6 +1,6 @@
 // Just an epsilon of a Javascript library. For modern browsers
 (function() {
-  if (typeof ε === "undefined" || ε === null) {
+  if (typeof ε === 'undefined' || ε === null) {
     var ε = {};
   }
 
@@ -89,7 +89,7 @@
 
     me.init = function init() {
       if (document.querySelectorAll) {
-        var a = document.querySelectorAll("figure a");
+        var a = document.querySelectorAll('figure a');
         [].forEach.call(a, function(e) {
           ε.on(e, 'click', function(ev) {
             modal('<div id="' + MODAL_INSIDE_ID + '"><img src="' + this.href + '" /></div>'); //onload="modalLoaded();"
@@ -115,16 +115,16 @@
 // Invocations
 (function() {
 
-  ε.on(document, "DOMContentLoaded", function() {
+  ε.on(document, 'DOMContentLoaded', function() {
     // Enable lightbox
     ε.lightbox.init();
 
     // Keyboard controls
     // Enable only if there are prev/next links
-    if (document.querySelectorAll("a[rel=prev]").length > 0 || document.querySelectorAll("a[rel=next]").length > 0) {
+    if (document.querySelectorAll('a[rel=prev]').length > 0 || document.querySelectorAll('a[rel=next]').length > 0) {
       ε.on(window, 'keydown', function(e) {
         function changeLocation(dir) {
-          var href = document.querySelectorAll("a[rel=" + (dir === 'prev' ? 'prev' : 'next') + "]")[0].href;
+          var href = document.querySelectorAll('a[rel=' + (dir === 'prev' ? 'prev' : 'next') + ']')[0].href;
           //console.log("WOULD LOAD NEXT (" + height + " - " + scrolled + ") (" + href + ")");
           window.location = href;
         }
