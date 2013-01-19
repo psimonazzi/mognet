@@ -59,18 +59,19 @@ var req = { 'url': res };
 
 if (infoOnly) {
   if (res) {
-    var id = router.context(router.parse(req), req).id;
-    printDocumentInfo(id);
+    printDocumentInfo(res);
   }
   else {
     printInfo();
   }
+  process.exit(0);
 }
 else if (res) {
   if (contextOnly) {
     // do not render, show only context object passed to template
     var ctx = router.context(router.parse(req), req);
     console.log(require('util').inspect(ctx, false, null, true));
+    process.exit(0);
   }
   else {
     // render resource from an index document
@@ -87,6 +88,7 @@ else if (res) {
         process.exit(1);
       }
       console.log(resource);
+      process.exit(0);
     });
   }
 }
@@ -97,18 +99,18 @@ else if (all) {
   function renderResource() {
     var id = ids.shift();
     if (!id)
-      return;
+      process.exit(0);;
     req = { 'url': id };
     router.getResource(req, router.parse(req), function(err, resource) {
       if (err) {
         console.error(err);
         process.exit(1);
       }
-      console.log(id + ':\n' + resource);
+      //console.log(id + ':\n' + resource);
       var fs = require('fs');
       var path = require('path');
-      // TODO put rendered files in /../../doc/, so we can load them without a server to test in the browser
-      fs.writeFile(path.normalize(__dirname + '/../../data/') + id + '.html', resource, 'utf8', function(err2) {
+      // put rendered files in /../../doc/, so we can load them without a server to test in the browser
+      fs.writeFile(path.normalize(__dirname + '/../../doc/') + id + '.html', resource, 'utf8', function(err2) {
         if (err2) {
           console.error(err2);
           process.exit(1);
@@ -117,6 +119,7 @@ else if (all) {
       });
     });
   }
+  // start recursion
   renderResource();
 }
 
@@ -131,12 +134,13 @@ function printDocumentInfo(id) {
                                  utils.pad(Σ.index['id'][id].modified.getMinutes(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getSeconds(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getMilliseconds(), 3));
-  console.log('%d ⋅ '.green.bold + '%s ⋅ '.blue + '%s'.yellow.bold + ' ⋅ %s'.bold + ' ⋅ %s'.grey,
+  console.log('%d ⋅ '.green.bold + '%s ⋅ '.blue + '%s'.yellow.bold + ' ⋅ %s'.bold + ' ⋅ %s'.grey.bold + ' ⋅ %s'.red,
               Σ.index['id'][id].n,
               d,
               id,
               Σ.index['id'][id].title,
-              require('path').basename(Σ.index['id'][id].filename));
+              require('path').basename(Σ.index['id'][id].filename),
+              Σ.index['id'][id].tag);
 }
 
 
@@ -161,6 +165,7 @@ function printInfo() {
     a.forEach(function(id) {
       printDocumentInfo(id);
     });
+    console.log();
     console.log('Special handlers: ');
     for (var h in handlers)
       console.log(h);
