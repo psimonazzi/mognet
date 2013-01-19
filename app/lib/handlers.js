@@ -40,22 +40,13 @@ module.exports = {
       items: []
     };
 
-    // if (req && req.url) {
-    //   var pathname = url.parse(req.url).pathname.replace(/^\//, '');
-    //   var pageMatch = /\/(\d+)$/.exec(pathname);
-    //   if (pageMatch && pageMatch[1])
-    //     ctx.page = pageMatch[1];
-    //   else
-    //     ctx.page = 1;
-    // }
-
     // Select ids to display in the current page and add their contents
     if (Σ.index && Σ.index['n']) {
       var indexer = Indexer.createIndexer();
       var ids = indexer.publicIds();
       var startId = Σ.cfg.pageSize * (route.page - 1);
       var endId = Σ.cfg.pageSize * (route.page);
-      ctx.ids = ids.slice(startId, endId);
+      ctx.ids = ids.reverse().slice(startId, endId);
 
       ctx.items = ctx.ids.map(function(id) {
         return Σ.index.id[id];
@@ -91,42 +82,6 @@ module.exports = {
       items: []
     };
 
-    // Get search filter if set
-    // var tagFilter, timeFilter;
-    // if (req && req.url) {
-    //   var parsedUrl = url.parse(req.url);
-    //   var pathname = parsedUrl.pathname.replace(/^\//, '');
-    //   var idxSlash = pathname.indexOf('/');
-    //   if (idxSlash >= 0 && pathname.length > idxSlash)
-    //     var params = pathname.substring(idxSlash + 1);
-    //   if (params) {
-    //     var slashed = params.split('/');
-    //     if (slashed) {
-    //       if (slashed.length == 1) {
-    //         ctx.filter = slashed[0];
-    //         tagFilter = true;
-    //       }
-    //       else if (slashed.length == 2) {
-    //         // Tags cannot be pure numbers, as they are interpreted as dates
-    //         if (!slashed[0].match(/^\d+$/)) {
-    //           ctx.filter = slashed[0];
-    //           ctx.page = slashed[1];
-    //           tagFilter = true;
-    //         }
-    //         else {
-    //           ctx.filter = slashed[0] + '/' + slashed[1];
-    //           timeFilter = true;
-    //         }
-    //       }
-    //       else if (slashed.length == 3) {
-    //         ctx.filter = slashed[0] + '/' + slashed[1];
-    //         ctx.page = slashed[2];
-    //         timeFilter = true;
-    //       }
-    //     }
-    //   }
-    // }
-
     if (!route.filter) {
       // Search options / archive
       ctx.tags = Object.keys(Σ.index.tag).sort().map(mapTagNames);
@@ -149,8 +104,11 @@ module.exports = {
             if (doc && indexer.isPublicId(id))
               ctx.items.push(doc);
           });
-          if (ctx.items.length > 0)
+          if (ctx.items.length > 0) {
             ctx.count = ctx.items.length;
+            //TODO are they ordered?
+            ctx.items.reverse();
+          }
         }
       }
     }
@@ -162,34 +120,36 @@ module.exports = {
     var ctx = {
       language: null,
       lastBuildDate: null,
-      ttl: null,
       atomLink: null,
+      link: null,
+      generator: null,
       items: []
     };
 
     var MAX_COUNT = 12;
 
     ctx.language = Σ.cfg.locale;
-    ctx.ttl = 'TODO';
     ctx.atomLink = Σ.cfg.baseUrl + '/' + route.key;
+    ctx.link = Σ.cfg.baseUrl + '/';
+    ctx.generator = 'Mognet (' + Σ.cfg.version + ')';
 
     // Select ids to display in the RSS feed
-    if (Σ.index && Σ.index['id'].length > 0 && Σ.index['n']) {
+    if (Σ.index && Σ.index['n']) {
       var indexer = Indexer.createIndexer();
       var ids = indexer.publicIds();
-      ctx.items = ids.slice(ids.length >= MAX_COUNT ? -MAX_COUNT : -ids.length).map(function(id) {
-        var doc = Σ.index['id'][id];
-        return {
-          'title': doc['title'],
-          'link': Σ.cfg.baseUrl + '/' + id,
-          'pubDate': doc['modified'],
-          'description': doc['abstract']
-        };
-      });
-
-      // Latest modified document in the index is global last modified date
-      // TODO format as RSS date: .toISOString()?
-      ctx.lastBuildDate = Σ.index['id'][Σ.index['n'].slice(-1)]['modified'];
+      if (ids) {
+        ids = ids.slice(ids.length >= MAX_COUNT ? -MAX_COUNT : -ids.length);
+        ctx.items = ids.map(function(id) {
+          var doc = Σ.index.id[id];
+          return {
+            title: doc.title.replace(/<.+?>/g, '').trim(), // TODO reuse titleSafe
+            description: doc.content,
+            link: Σ.cfg.baseUrl + '/' + id,
+            guid: Σ.cfg.baseUrl + '/' + id,
+            pubDate: toRFC2822(doc.modified)
+          };
+        }).reverse();
+      }
     }
 
     return ctx;
@@ -216,6 +176,39 @@ function mapDateNames(d) {
     name = (MONTHS[Σ.cfg.locale][slashed[1].replace(/^0/, '') - 1] || slashed[1]) + ' ' + slashed[0];
   }
   return { 'name': name, 'href': d };
+}
+
+
+function toRFC2822(oDate) {
+  var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  function padWithZero(val) {
+    if (val < 10)
+      return '0' + val;
+    return val;
+  }
+
+  function getTZOString(timezoneOffset) {
+    var hours = Math.floor(timezoneOffset / 60);
+    var modMin = Math.abs(timezoneOffset % 60);
+    var s = (hours > 0) ? "-" : "+";
+    var absHours = Math.abs(hours);
+    s += (absHours < 10) ? "0" + absHours : absHours;
+    s += (modMin == 0) ? "00" : modMin;
+    return s;
+  }
+
+  var dtm;
+  dtm = days[oDate.getDay()] + ", ";
+  dtm += padWithZero(oDate.getDate()) + " ";
+  dtm += months[oDate.getMonth()] + " ";
+  dtm += oDate.getFullYear() + " ";
+  dtm += padWithZero(oDate.getHours()) + ":";
+  dtm += padWithZero(oDate.getMinutes()) + ":";
+  dtm += padWithZero(oDate.getSeconds()) + " " ;
+  dtm += getTZOString(oDate.getTimezoneOffset());
+  return dtm;
 }
 
 

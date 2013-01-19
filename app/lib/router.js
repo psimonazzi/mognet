@@ -40,6 +40,7 @@ exports.parse = function parse(req) {
     url: null,
     output: null,
     hiSpec: null,
+    medium: null,
     contentType: null,
     key: null,
     parsedUrl: null,
@@ -47,7 +48,8 @@ exports.parse = function parse(req) {
     page: null,
     filter: null,
     filterType: null,
-    baseUrl: null
+    baseUrl: null,
+    noCache: null
   };
   var acceptTypes = {
     'text/html': 'html',
@@ -56,7 +58,7 @@ exports.parse = function parse(req) {
   var contentTypes = {
     html: 'text/html',
     json: 'application/json',
-    xml: 'application/xml'
+    xml: 'text/xml'
   };
 
   exports.canonicalize(req, route);
@@ -175,6 +177,15 @@ exports.canonicalize = function canonicalize(req, route) {
     route.key = route.url + (route.filter ? '/' + route.filter : '') + (route.page > 1 ? '/' + route.page : '');
     break;
 
+  case 'rss':
+  case 'atom':
+    // RSS/Atom feed
+    route.output = 'xml';
+    route.medium = 'rss';
+    route.noCache = true;
+    route.url = 'rss';
+    route.key = 'rss';
+    break;
   default:
     // canonical url for an indexed document (or maybe a non-existent resource)
     route.key = route.url;
@@ -283,80 +294,79 @@ exports.context = function context(route, req) {
   // Also pull in context for any global templates (menus, archive...) if needed.
   if (route.output == 'html') {
     ctx.menu = handlers['menu'](req);
-  }
 
-  // Additional data for articles
-  if (!ctx.items)
-    ctx.items = [];
-  ctx.items = ctx.items.map(function(item) {
-    if (item) {
-      // safe title representation for metadata (without HTML tags)
-      item.titleSafe = item.title.replace(/<.+?>/g, '').trim();
-    }
+    // Additional data for articles
+    if (!ctx.items)
+      ctx.items = [];
+    ctx.items = ctx.items.map(function(item) {
+      if (item) {
+        // safe title representation for metadata (without HTML tags)
+        item.titleSafe = item.title.replace(/<.+?>/g, '').trim();
+      }
 
-    if (item && !item.doc) {
-      // Dates display
-      item.timeTag = util.format("%s-%s-%s",
-                                 item.modified.getFullYear(),
-                                 utils.pad(item.modified.getMonth() + 1, 2),
-                                 utils.pad(item.modified.getDay() + 1, 2));
-      item.displayDate = util.format("%s/%s/%s",
-                                     utils.pad(item.modified.getDay() + 1, 2),
-                                     utils.pad(item.modified.getMonth() + 1, 2),
-                                     item.modified.getFullYear());
-      item.displayTime = util.format("%s:%s:%s.%s",
-                                     utils.pad(item.modified.getHours(), 2),
-                                     utils.pad(item.modified.getMinutes(), 2),
-                                     utils.pad(item.modified.getSeconds(), 2),
-                                     utils.pad(item.modified.getMilliseconds(), 3));
+      if (item && !item.doc) {
+        // Dates display
+        item.timeTag = util.format("%s-%s-%s",
+                                   item.modified.getFullYear(),
+                                   utils.pad(item.modified.getMonth() + 1, 2),
+                                   utils.pad(item.modified.getDay() + 1, 2));
+        item.displayDate = util.format("%s/%s/%s",
+                                       utils.pad(item.modified.getDay() + 1, 2),
+                                       utils.pad(item.modified.getMonth() + 1, 2),
+                                       item.modified.getFullYear());
+        item.displayTime = util.format("%s:%s:%s.%s",
+                                       utils.pad(item.modified.getHours(), 2),
+                                       utils.pad(item.modified.getMinutes(), 2),
+                                       utils.pad(item.modified.getSeconds(), 2),
+                                       utils.pad(item.modified.getMilliseconds(), 3));
 
-      // Tags to display
-      if (item.tag.length > 0) {
-        item.displayTags = item.tag.map(function(t) {
-          return { 'name': t, 'href': encodeURIComponent(t) };
+        // Tags to display
+        if (item.tag.length > 0) {
+          item.displayTags = item.tag.map(function(t) {
+            return { 'name': t, 'href': encodeURIComponent(t) };
+          });
+        }
+
+        // Pagination for single article pages
+        if (Σ.index.n) {
+          if (!ctx.index && !ctx.search) {
+            var nextN = item.n + 1 < 0 || item.n + 1 > Σ.index.n.length ? null : item.n + 1;
+            ctx.nextPage = nextN != null ? Σ.index.n[nextN] : '';
+            if (ctx.nextPage && Σ.index.id[ctx.nextPage])
+              ctx.nextTitle = Σ.index.id[ctx.nextPage].title;
+            else
+              ctx.nextTitle = '/';
+            var prevN = item.n - 1 < 0 || item.n - 1 > Σ.index.n.length ? null : item.n - 1;
+            ctx.prevPage = prevN != null ? Σ.index.n[prevN] : '';
+            if (ctx.prevPage && Σ.index.id[ctx.prevPage])
+              ctx.prevTitle = Σ.index.id[ctx.prevPage].title;
+            else
+              ctx.prevTitle = '/';
+          }
+        }
+      }
+
+      // Related articles data, only in single article pages
+      if (item.rel.length > 0 && !ctx.index) {
+        item.hasRlinks = true;
+        item.rlinks = item.rel.map(function(id) {
+          if (Σ.index.id[id]) {
+            return {
+              'href': id,
+              'title': Σ.index.id[id].title
+            };
+          }
+          else {
+            logger.e('(Router) No title found for related id %s in %s', id, item.id);
+            return {
+              'href': id,
+              'title': ''
+            };
+          }
         });
       }
-
-      // Pagination for single article pages
-      if (Σ.index.n) {
-        if (!ctx.index && !ctx.search) {
-          var nextN = item.n + 1 < 0 || item.n + 1 > Σ.index.n.length ? null : item.n + 1;
-          ctx.nextPage = nextN != null ? Σ.index.n[nextN] : '';
-          if (ctx.nextPage && Σ.index.id[ctx.nextPage])
-            ctx.nextTitle = Σ.index.id[ctx.nextPage].title;
-          else
-            ctx.nextTitle = '/';
-          var prevN = item.n - 1 < 0 || item.n - 1 > Σ.index.n.length ? null : item.n - 1;
-          ctx.prevPage = prevN != null ? Σ.index.n[prevN] : '';
-          if (ctx.prevPage && Σ.index.id[ctx.prevPage])
-            ctx.prevTitle = Σ.index.id[ctx.prevPage].title;
-          else
-            ctx.prevTitle = '/';
-        }
-      }
-    }
-
-    // Related articles data, only in single article pages
-    if (item.rel.length > 0 && !ctx.index) {
-      item.hasRlinks = true;
-      item.rlinks = item.rel.map(function(id) {
-        if (Σ.index.id[id]) {
-          return {
-            'href': id,
-            'title': Σ.index.id[id].title
-          };
-        }
-        else {
-          logger.e('(Router) No title found for related id %s in %s', id, item.id);
-          return {
-            'href': id,
-            'title': ''
-          };
-        }
-      });
-    }
-    return item;
-  });
-
+      return item;
+    });
+  }
   return ctx;
 };

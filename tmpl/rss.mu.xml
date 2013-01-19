@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <atom:link href="{{{atomLink}}}" rel="self" type="application/rss+xml" />
+    <description>Sito personale di Paolo Simonazzi. Fatto in Italia con amore &amp; ossessione.</description>
+    <title>Paolo Simonazzi</title>
+    <generator>{{generator}}</generator>
+    <link>{{link}}</link>
+    {{#items}}
+    <item>
+      <title>{{{title}}}</title>
+      <description>{{description}}</description>
+      <link>{{{link}}}</link>
+      <guid>{{{guid}}}</guid>
+      <pubDate>{{pubDate}}</pubDate>
+    </item>
+    {{/items}}
+  </channel>
+</rss>

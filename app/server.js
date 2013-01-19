@@ -107,8 +107,8 @@ var app = connect()
       .use(connect.static(path.normalize(__dirname + '/../doc'), { 'maxAge': ONE_YEAR }))
       .use('/static', connect.static(path.normalize(__dirname + '/../../static'), { 'maxAge': ONE_YEAR }))
       .use('/api', function(req, res) {
-        res.setHeader('content-type', 'text/html; charset=UTF-8');
-        res.end('DEBUG: ' + req.url);
+        res.statusCode = 204;
+        res.end();
       })
       .use(function(req, res) {
         if (req.method != 'GET' && req.method != 'HEAD') {
@@ -141,18 +141,20 @@ var app = connect()
           }
           // If content length is not set, chunked encoding will be used automatically (as defined by the HTTP standard)
           var len = Buffer.byteLength(resource, 'utf8');
-          // Use a hash based Etag so if the template (but not the document) has changed it will be reflected in the Etag
-          //var etag = '"' + len + '-' + Number(lastModified.getTime()) + '"';
-          var etag = '"' + connect.utils.md5(resource) + '"';
-          res.setHeader('Etag', etag);
-          // Check if we need to return the content or just Not Modified
-          // Could reuse VisionMedia node-fresh, but we don't really need it
-          if (etag === req.headers['if-none-match']) {
-            res.statusCode = 304;
-            res.removeHeader('content-type');
-            res.removeHeader('content-length');
-            res.end();
-            return;
+          if (!route.noCache) {
+            // Use a hash based Etag so if the template (but not the document) has changed it will be reflected in the Etag
+            //var etag = '"' + len + '-' + Number(lastModified.getTime()) + '"';
+            var etag = '"' + connect.utils.md5(resource) + '"';
+            res.setHeader('Etag', etag);
+            // Check if we need to return the content or just Not Modified
+            // Could reuse VisionMedia node-fresh, but we don't really need it
+            if (etag === req.headers['if-none-match']) {
+              res.statusCode = 304;
+              res.removeHeader('content-type');
+              res.removeHeader('content-length');
+              res.end();
+              return;
+            }
           }
           res.setHeader('content-length', len);
           res.end(resource);
