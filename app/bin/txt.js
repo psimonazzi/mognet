@@ -5,56 +5,67 @@ require('colors');
 var txt = require('../lib/txt');
 
 
-var help, smarten, transliterate, escape, f;
+var cmd, f;
 if (process.argv.length > 2) {
   if (process.argv[2] == '-h')
-    help = true;
+    cmd = 'help';
   if (process.argv[2] == '-s' || process.argv[2] == '--smarten')
-    smarten = true;
+    cmd = 'smarten';
   else if (process.argv[2] == '-e' || process.argv[2] == '--escape')
-    escape = true;
+    cmd = 'escape';
   else if (process.argv[2] == '-t' || process.argv[2] == '--transliterate')
-    transliterate = true;
+    cmd = 'transliterate';
+  else if (process.argv[2] == '-m' || process.argv[2] == '--markdown')
+    cmd = 'markdown';
   if (process.argv.length > 3)
     f = process.argv[3];
 }
 else {
-  smarten = true;
+  cmd = 'help';
 }
 
-if (help) {
+if (cmd == 'help') {
   console.log('USAGE:');
   console.log('%s -s,--smarten [<file>]       ' + 'Refine typography on input (stdin or file)'.grey, process.argv[1]);
   console.log('%s -t,--transliterate [<file>] ' + 'Transliterate to ASCII string the input (stdin or file)'.grey, process.argv[1]);
   console.log('%s -e,--escape [<file>]        ' + 'Escape HTML special chars on input (stdin or file)'.grey, process.argv[1]);
-  console.log('%s -h                        ' + 'Display this message'.grey, process.argv[1]);
+  console.log('%s -m,--markdown [<file>]      ' + 'Convert to HTML the Markdown input (stdin or file)'.grey, process.argv[1]);
+  console.log('%s -h                          ' + 'Display this message'.grey, process.argv[1]);
   process.exit(1);
+}
+
+function out(s, fn) {
+  switch (cmd) {
+  case 'smarten':
+    fn(txt.smarten(s));
+    break;
+  case 'transliterate':
+    fn(txt.transliterate(s));
+    break;
+  case 'escape':
+    fn(txt.htmlEscape(s));
+    break;
+  case 'markdown':
+    var marked = require('marked');
+    fn(marked(s));
+    break;
+  }
 }
 
 if (f) {
   // read from file and output to stdout
   var s = require('fs').readFileSync(f, 'utf8');
-  if (smarten)
-    console.log(txt.smarten(s));
-  else if (transliterate)
-    console.log(txt.transliterate(s));
-  else if (escape)
-    console.log(txt.htmlEscape(s));
+  out(s, console.log);
 }
 else {
   // read from stdin and output to stdout, interactively
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
   process.stdin.on('data', function(s) {
-    if (smarten)
-      process.stdout.write(txt.smarten(s));
-    else if (transliterate)
-      process.stdout.write(txt.transliterate(s));
-    else if (escape)
-      process.stdout.write(txt.htmlEscape(s));
+    out(s, function(a) { process.stdout.write(a); });
   });
 
   process.stdin.on('end', function () {
-    
+    // no op
   });
 }

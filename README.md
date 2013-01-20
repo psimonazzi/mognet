@@ -22,7 +22,9 @@ Mognet is an in-memory, single-threaded tiny demon of Speed, designed to run on 
 
 Clone this repository, then:
 
-    npm install mognet
+```sh
+$ npm install mognet
+```
 
 This will download all needed dependencies. Mognet follows convention over configuration, so it just works and you don't need to configure anything. Ha!
 
@@ -90,31 +92,42 @@ Now you are ready to run the server.
 
 Quick test run from the server directory (quit with Ctrl-C):
 
-    node server.js
+```sh
+$ node server.js
+```
 
 or if you want to specify a custom port (the default port is 80):
 
-    PORT=3000 node server.js
+```sh
+$ PORT=3000 node server.js
+```
 
 To run in production (with features like running as daemon, restarting on crash, log rotation etc.), first install Naught globally:
 
-    sudo npm install -g naught
+```sh
+$sudo npm install -g naught
+```
 
 After deploying, start the server with:
 
-    npm start
+```sh
+$ npm start
+```
 
 And to stop:
 
-    npm stop
+```sh
+$ npm stop
+```
 
 To run at system boot and stop on shutdown, configure a service with these start and stop commands (this distribution already includes an Upstart configuration).
 
 
 ## Examples
 
-    ./deploy.sh && cd /var/www/mognet/app && sudo npm start
-
+```sh
+./deploy.sh && cd /var/www/mognet/app && sudo npm start
+```
 
 ## License
 
