@@ -4,8 +4,7 @@
 # get latest tag or current branch name if none
 TAG=`git describe --exact-match --abbrev=0 2>&1`
 if [[ `echo $TAG | grep fatal` != "" ]]; then
-    echo "No tag matches current HEAD. Using current branch..."
-    # This requires checking out the tag first?
+    echo "No tag matches current HEAD, using current branch..."
     TAG=`git branch | grep "*" | sed "s/* //"`
     #exit 1
 fi
@@ -39,5 +38,7 @@ echo "Minifying..."
 echo "Updating index..."
 /var/www/mognet/app/bin/update.js >/dev/null
 
+#cp app/mognet.conf /etc/init
+
 echo "Deployed to /var/www/mognet-$TAG."
-echo "Start server with 'npm start' or redeploy with 'naught deploy'"
+echo "Set config if needed and start server with 'start mognet'."

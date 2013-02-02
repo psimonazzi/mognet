@@ -60,26 +60,10 @@ process.on('SIGUSR2', function() {
   console.log('%j', process.memoryUsage());
 });
 
-// listen for Naught shutdown message
-process.on('message', function(message) {
-  if (message === 'shutdown') {
-    console.log("shutting down...");
-    //try { fs.unlinkSync(__dirname + '/server.pid'); }
-    //catch (err) { console.error(err); }
-    process.exit(0);
-  }
-});
-
-
 try {
   var version = utils.loadJSONSync(__dirname + '/package.json').version;
 } catch (err) { }
 console.log('Server v%s (pid %s)', version, process.pid);
-fs.writeFile(__dirname + '/server.pid', process.pid, 'utf8', function(err) {
-  if (err) {
-    console.error('✖ ERROR: Cannot write pid file: ' + err);
-  }
-});
 
 console.log('Loading index from disk...');
 var indexer = Indexer.createIndexer();
@@ -167,16 +151,17 @@ var app = connect()
         // drop root privileges if we have them
         if (process && process.getuid() == 0 && process.getgid() == 0) {
           try {
+            if (!process.env.MOGNET_GROUP || !process.env.MOGNET_USER)
+              throw new Error('Mognet user or group not defined');
             process.setgid(process.env.MOGNET_GROUP);
             process.setuid(process.env.MOGNET_USER);
           } catch (ex) {
             console.error('✖ ERROR: Cannot drop privileges, running as ROOT...! ' + ex);
           }
         }
-
-        // notify Naught if we are using it
-        if (process.send)
-          process.send('online');
+        else {
+          console.log('Running as user ' + process.getuid() + ' and group ' + process.getgid());
+        }
       });
 
 console.log('Server listening on http://0.0.0.0:%s', port);
