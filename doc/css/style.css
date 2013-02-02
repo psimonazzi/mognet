@@ -324,9 +324,10 @@ pre, code {
     background: #1a1a1a;
 }
 
-blockquote p {
-    text-indent: -0.5em; /* http://csswizardry.com/type-tips/#tip-03 */
-}
+/* http://csswizardry.com/type-tips/#tip-03 */
+/*blockquote {
+    text-indent: -0.5em;
+}*/
 
 kbd {
     text-transform:uppercase;
@@ -341,6 +342,16 @@ figcaption {
     font-style: italic;
     color: #f3f2ee;
     background: #1a1a1a;
+}
+
+blockquote + figcaption {
+    padding-left: 2em;
+    color: #222;
+    background: transparent;
+}
+
+blockquote + figcaption:before {
+    content: '— ';
 }
 
 .rel li {
@@ -807,14 +818,8 @@ header nav li #search-menu {
 
 header nav li:hover #search-menu {
     background:
-    -moz-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
-    -moz-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
-    background:
     -webkit-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
     -webkit-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
-    background:
-    -o-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
-    -o-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
     background:
     linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
     linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;

@@ -34,8 +34,8 @@
   "engines": { "node": ">= 0.6.11" },
   "os" : [ "!win32" ],
   "scripts": {
-    "start": "naught start --log ../../log/naught.log --stdout ../../log/stdout.log --stderr ../../log/stderr.log --ipc-file ../../naught.ipc server.js",
-    "stop": "naught stop --ipc-file ../../naught.ipc",
+    "start": "naught start --log ../../log/naught.log --stdout ../../log/stdout.log --stderr ../../log/stderr.log server.js",
+    "stop": "naught stop",
     "test": "mocha --reporter dot"
   }
 }

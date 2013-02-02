@@ -2,7 +2,7 @@
 
 Mognet is an obsessively minimal, opinionated web framework for technology-loving writers or design-loving hackers. It is written in Javascript for Node.js.
 
-Born as the Author's little personal project, it could also be useful for those who still believe in the Do-It-Yourself Web, but don't want to build yet another web framework from scratch. It's completely unnecessary and totally too much work for those who just need a Tumblr. But it's dedicated with love to the geeks who can't sleep at night if the HTML code on their page isn't indented properly.
+Born as the Author's personal project, it may also be useful for those who still believe in the Do-It-Yourself Web, but don't want to build yet another web framework from scratch. It's completely unnecessary and totally too much work for those who just need a Tumblr, but it could be appreciated by geeks who can't sleep at night if the HTML code on their page isn't indented properly.
 
 Mognet is an in-memory, single-threaded tiny demon of Speed, designed to run on cheap hosting services and still capable of withstanding a sudden popularity boost. It prefers to generate static pages once and then serve them from memory, but won't complain too much if forced to build pages dynamically on the fly. Either way, it slurps all your site pages in RAM on initialization or updates, and then it doesn't hit the disk ever again, because hard drives are so slow. Probably it's a good idea to put your images and other big static files in the Cloud, anyway: Mognet can do nothing to save your bandwidth (well, except caching and compressing your data).
 
@@ -13,7 +13,7 @@ Mognet is an in-memory, single-threaded tiny demon of Speed, designed to run on 
 
 - A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. This design is currently used at [the Author's personal site](http://ps.info).
 
-- A collection of command-line tools to manage the site contents (list documents, prettify typography, etc). You don't strictly need them, they are just for fun: Mognet is smart enough to update itself automagically when it senses new contents.
+- A collection of command-line tools to manage the site contents (list documents, prettify typography, etc). You don't strictly need them, they are just for fun and convenience.
 
 - Deployment scripts. Used to deploy Mognet to the live server, start and stop it. They require [Naught](https://github.com/indabamusic/naught) and a Debian-like Linux system; you should easily be able to adapt them to other environments.
 
@@ -63,7 +63,7 @@ So you have to create the ``log``, ``res`` and ``static`` dirs at the same level
 
 Once you are ready, ensure you have write access to the ``/var`` dir on your server and run this command from the ``mognet`` dir:
 
-    ./deploy.sh
+    ./deploy
 
 After this you will have the following structure on your filesystem:
 
@@ -96,7 +96,7 @@ Quick test run from the server directory (quit with Ctrl-C):
 $ node server.js
 ```
 
-or if you want to specify a custom port (the default port is 80):
+or if you want to specify a custom port (the default port is 80, and so you need to be the superuser):
 
 ```sh
 $ PORT=3000 node server.js
@@ -105,10 +105,10 @@ $ PORT=3000 node server.js
 To run in production (with features like running as daemon, restarting on crash, log rotation etc.), first install Naught globally:
 
 ```sh
-$sudo npm install -g naught
+$ sudo npm install -g naught
 ```
 
-After deploying, start the server with:
+After deploying, go to `/var/www/mognet/app` and start the server with:
 
 ```sh
 $ npm start
@@ -126,7 +126,7 @@ To run at system boot and stop on shutdown, configure a service with these start
 ## Examples
 
 ```sh
-./deploy.sh && cd /var/www/mognet/app && sudo npm start
+$ ./deploy && cd /var/www/mognet/app && sudo npm start
 ```
 
 ## License

@@ -55,7 +55,6 @@
   <link rel="canonical" href="{{{cfg.baseUrl}}}/{{key}}"/>
   <link rel="alternate" type="application/atom+xml" href="/atom"/>
   <link rel="shortcut icon" href="/favicon.ico?1"/>
-  <!-- For Opera, iPhone, iPod Touch, and Android 2.1+ devices: -->
   <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png"/>
   <meta name="msapplication-TileImage" content="/apple-touch-icon-precomposed.png"/>
   <meta name="msapplication-TileColor" content="#f3f2ee"/>
@@ -73,7 +72,7 @@
 
 <header>
   <div class="logo"><a href="/" title="Paolo Simonazzi">℘</a></div><!-- ☆ ℘ ∴ ◈ , ♚ ✪ ✦ -->
-  <nav>
+  <nav role="navigation">
     <ul>
       <li><a href="/info">info</a></li>
       <li><a href="/search">ricerca</a>{{#hiSpec}}
@@ -122,11 +121,6 @@
   <div class="filter">{{{filter}}}{{#count}} <sup title="Numero di voci">({{count}})</sup>{{/count}}</div>
   {{/filter}}
   {{^filter}}
-  <!--<form action="/search" method="get">
-      <div class="searchform">
-      <input type="text" id="q" name="q" /><button>↵</button>
-      </div>
-      </form>-->
 
   <h2>Categorie</h2>
   <ul class="menu cf">
@@ -146,7 +140,7 @@
 {{/search}}
 
 {{#items}}
-{{#doc}}<div class="document">{{/doc}}{{^doc}}<article>{{/doc}}
+{{#doc}}<div class="document" role="main">{{/doc}}{{^doc}}<article role="main">{{/doc}}
 <h1>{{^blip}}<a href="/{{id}}">{{{title}}}</a>{{/blip}}</h1>
 
 {{^doc}}
@@ -162,13 +156,11 @@
 {{/doc}}
 
 <div class="content{{#blip}} blip{{/blip}}">
-  {{#blip}}<blockquote cite="{{{cite}}}">{{/blip}}
   {{#abstract}}{{#index}}{{{abstract}}}{{#needContinue}}<p>… <a class="continue" href="/{{id}}">Continua →</a></p>{{/needContinue}}{{/index}}{{/abstract}}
   {{#abstract}}{{#search}}{{{abstract}}}{{#needContinue}}<p>… <a class="continue" href="/{{id}}">Continua →</a></p>{{/needContinue}}{{/search}}{{/abstract}}
   {{^index}}{{^search}}{{{content}}}{{/search}}{{/index}}
   {{^abstract}}{{{content}}}{{/abstract}}
-  {{#blip}}</blockquote>{{/blip}}
-
+  
   {{#hasRlinks}}
   <div class="rel">
     <h2>Correlati</h2>
@@ -223,7 +215,6 @@
 {{/hiSpec}}
 
 {{#cfg.googleAnalyticsAccount}}
-<!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 <script>
   var _gaq=[['_setAccount','{{{cfg.googleAnalyticsAccount}}}'],['_trackPageview']];
   (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];

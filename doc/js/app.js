@@ -125,7 +125,6 @@
       ε.on(window, 'keydown', function(e) {
         function changeLocation(dir) {
           var href = document.querySelectorAll('a[rel=' + (dir === 'prev' ? 'prev' : 'next') + ']')[0].href;
-          //console.log("WOULD LOAD NEXT (" + height + " - " + scrolled + ") (" + href + ")");
           window.location = href;
         }
 

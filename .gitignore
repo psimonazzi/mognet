@@ -2,3 +2,5 @@
 /data/
 /app/config.json
 /app/node_modules
+/app/naught.ipc
+/app/server.pid

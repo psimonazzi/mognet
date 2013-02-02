@@ -63,6 +63,9 @@ process.on('SIGUSR2', function() {
 // listen for Naught shutdown message
 process.on('message', function(message) {
   if (message === 'shutdown') {
+    console.log("shutting down...");
+    //try { fs.unlinkSync(__dirname + '/server.pid'); }
+    //catch (err) { console.error(err); }
     process.exit(0);
   }
 });
@@ -72,7 +75,7 @@ try {
   var version = utils.loadJSONSync(__dirname + '/package.json').version;
 } catch (err) { }
 console.log('Server v%s (pid %s)', version, process.pid);
-fs.writeFile(__dirname + '/../../server.pid', process.pid, 'utf8', function(err) {
+fs.writeFile(__dirname + '/server.pid', process.pid, 'utf8', function(err) {
   if (err) {
     console.error('✖ ERROR: Cannot write pid file: ' + err);
   }
