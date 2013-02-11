@@ -18,6 +18,8 @@ function CONFIG_DEFAULTS() {
     "locale": "en",
     "pageSize": 12,
     "baseUrl": null,
+    "user": null,
+    "group": null,
     "googleAnalyticsAccount": null,
     "readmillKey": null
   };
@@ -62,6 +64,8 @@ function loadConfig() {
   cfg.locale = process.env.MOGNET_LOCALE || cfg.locale;
   cfg.pageSize = process.env.MOGNET_PAGE_SIZE || cfg.pageSize;
   cfg.baseUrl = process.env.MOGNET_BASE_URL || cfg.baseUrl;
+  cfg.user = process.env.MOGNET_USER || cfg.user;
+  cfg.group = process.env.MOGNET_GROUP || cfg.group;
   cfg.googleAnalyticsAccount = process.env.MOGNET_GOOGLE_ANALYTICS_ACCOUNT || cfg.googleAnalyticsAccount;
   cfg.readmillKey = process.env.MOGNET_READMILL_KEY || cfg.readmillKey;
 

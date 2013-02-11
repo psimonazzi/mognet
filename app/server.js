@@ -151,16 +151,17 @@ var app = connect()
         // drop root privileges if we have them
         if (process && process.getuid() == 0 && process.getgid() == 0) {
           try {
-            if (!process.env.MOGNET_GROUP || !process.env.MOGNET_USER)
+            if (!Σ.cfg.group || !Σ.cfg.user)
               throw new Error('Mognet user or group not defined');
-            process.setgid(process.env.MOGNET_GROUP);
-            process.setuid(process.env.MOGNET_USER);
+            console.log('Try to run as user ' + process.getuid() + ' and group ' + process.getgid());
+            process.setgid(Σ.cfg.group);
+            process.setuid(Σ.cfg.user);
           } catch (ex) {
             console.error('✖ ERROR: Cannot drop privileges, running as ROOT...! ' + ex);
           }
         }
         else {
-          console.log('Running as user ' + process.getuid() + ' and group ' + process.getgid());
+          console.log('Now running as user ' + process.getuid() + ' and group ' + process.getgid());
         }
       });
 
