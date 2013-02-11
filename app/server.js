@@ -43,9 +43,9 @@ process.on('SIGHUP', function() {
 process.on('SIGUSR1', function() {
   console.log('Got SIGUSR1 (10).');
   console.log('Index:');
-  console.log(util.inspect(Σ.index, false, null, true));
+  console.log(util.inspect(Σ.index, false, null, false));
   console.log('\nRenders:');
-  console.log(util.inspect(Σ.renders, false, null, true));
+  console.log(util.inspect(Σ.renders, false, null, false));
 });
 
 process.on('SIGUSR2', function() {
@@ -63,6 +63,7 @@ process.on('SIGUSR2', function() {
 try {
   var version = utils.loadJSONSync(__dirname + '/package.json').version;
 } catch (err) { }
+console.log('[' + new Date() + ']');
 console.log('Server v%s (pid %s)', version, process.pid);
 
 console.log('Loading index from disk...');
