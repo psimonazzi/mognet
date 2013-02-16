@@ -23,6 +23,7 @@ var Σ = require(__dirname + '/lib/state');
 var router = require(__dirname + '/lib/router');
 var Indexer = require(__dirname + '/lib/indexer');
 var utils = require(__dirname + '/lib/utils');
+var logger = require(__dirname + '/lib/logger');
 
 // Run with "PORT=3000 node server.js" or "node server.js 3000" (or define in config file)
 var port = process.argv[2] || Σ.cfg.port;
@@ -113,13 +114,14 @@ var app = connect()
           if (err) {
             if (404 === err.status || 403 === err.status) {
               res.statusCode = 404; // mask 403 (secret document) as 404 (not found)
-              resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + req.url;
+              if (!resource)
+                resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + req.url + '\n';
             }
             else {
-              // TODO log somewhere
-              //console.error("✖ " + err);
+              logger.e("✖ " + err);
               res.statusCode = 500;
-              resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + err.toString();
+              if (!resource)
+                resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + err.toString() + '\n';
             }
             res.setHeader('content-type', 'text/html; charset=UTF-8');
           }

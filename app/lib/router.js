@@ -208,7 +208,7 @@ exports.getResource = function getResource(req, route, done) {
   var resource = renderer.render(route);
   if (resource) {
     // Cache HIT! All requests for the same route after the first should follow this code path
-    logger.i('✔ (Router) Render cache hit for %s...', route.url);
+    logger.i('(Router) Render cache hit for %s... :)', route.url);
     done(null, resource);
   }
   else {
@@ -216,12 +216,46 @@ exports.getResource = function getResource(req, route, done) {
     var ctx = exports.context(route, req);
     if (!ctx || ctx instanceof Error) {
       // Aaargh! This will bubble up to the client and result in an HTTP error code
-      done(ctx);
+      // But first try to render an error page
+      getErrorResource(ctx, req, route, done);
+      //done(ctx);
       return;
     }
 
     // Read template from disk and compile if this is the first request for this template, otherwise load cached compiled template
     renderer.renderNew(route, ctx, done);
+  }
+};
+
+
+/**
+ * Like renderResource() but used to render request errors.
+ * The callback will be called with both the error and the resource string set.
+ * If the error cannot be rendered, the resource will be null.
+ * The resource key is the error code.
+ *
+ * @param {Object} err Error to render
+ * @param {Object} req HTTP request object
+ * @param {Object} route Route
+ * @param {Function} done Callback with signature: error, resource string
+ *
+ * @api public
+ */
+function getErrorResource(err, req, route, done) {
+ route.key = route.url = err.status;
+  var resource = renderer.render(route);
+  if (resource) {
+    done(err, resource);
+  }
+  else {
+    var ctx = exports.context(route, req);
+    if (!ctx || ctx instanceof Error) {
+      // return the original error, not this one
+      logger.e('(Router) Error while trying to render an error status for %s. %s', route.url, ctx ? ctx.toString() : ctx);
+      done(err);
+      return;
+    }
+    renderer.renderNew(route, ctx, done, err);
   }
 };
 
@@ -238,13 +272,13 @@ exports.getResource = function getResource(req, route, done) {
  * @param {Object} route Route
  * @param {Object} req Request
  *
- * @return {Object} Context for the request. Could be empty. An error is thrown if there was an error in getting context. The error.status will be 404 if the document was not found in the index, or 500 otherwise.
+ * @return {Object} Context for the request. Could be empty. An error is thrown if there was an error in getting context. The error.status will be 403 if access is forbidden, 404 if the document was not found in the index, or 500 otherwise.
  *
  * @api public
  *
  */
 exports.context = function context(route, req) {
-  logger.i('✔ (Router) Loading context for %s...', route.url);
+  logger.i('(Router) Loading context for %s...', route.url);
 
   var ctx, doc, handled;
   // Try to get document from index
@@ -256,7 +290,7 @@ exports.context = function context(route, req) {
   if (doc && doc.secret) {
     var errSecret = new Error();
     errSecret.status = 403;
-    logger.i('(Router) Denied request %s for secret document %s', route.url, doc.id);
+    logger.w('403 Denied request %s for secret document %s', route.url, doc.id);
     return errSecret;//throw errSecret;
   }
 
@@ -268,7 +302,7 @@ exports.context = function context(route, req) {
 
   if (!doc && !handled) {
     // No indexed doc and no handlers for this route... sadly we have to give up
-    // TODO fire event to log '404 Not Found (' + route.url + ')'
+    logger.w('404 Not Found (%s)', route.url);
     var err = new Error();
     err.status = 404;
     return err;//throw err;

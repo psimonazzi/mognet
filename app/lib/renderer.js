@@ -58,22 +58,25 @@ exports.templateKey = function templateKey(route, templateName) {
  * @param {Object} route Route of the resource
  * @param {Object} context Context data that will be used to render the template; can be null
  * @param {Function} done Callback with signature: error, rendered text
+ * @param {Object} originalError If not null, the resource to render represents this error
  *
  * @api public
  */
-exports.renderNew = function renderNew(route, context, done) {
+exports.renderNew = function renderNew(route, context, done, originalError) {
   var templateName = exports.templateName(route);
   var templateKey = exports.templateKey(route, templateName);
   exports.compileAndRenderFile(templateName, context, function(err, renderedContent) {
     if (err) {
-      done(err);
+      // return the original error, not this one
+      logger.e('(Renderer) Error while trying to render an error status for %s. %s', route.url, err ? err.toString() : err);
+      done(originalError || err);
     }
     else {
       if (!Σ.renders[route.key])
         Σ.renders[route.key] = {};
       Σ.renders[route.key][templateKey] = renderedContent;
       // TODO If we wanted to send customized headers for each resource (for example in the document metadata or its handler), we would need to save the headers too in the in-memory renders.
-      done(null, renderedContent);
+      done(originalError, renderedContent);
     }
   });
 };
