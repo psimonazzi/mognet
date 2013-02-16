@@ -5,7 +5,7 @@ require('colors');
 var txt = require('../lib/txt');
 
 
-var cmd, f;
+var cmd, filename;
 if (process.argv.length > 2) {
   if (process.argv[2] == '-h')
     cmd = 'help';
@@ -18,7 +18,7 @@ if (process.argv.length > 2) {
   else if (process.argv[2] == '-m' || process.argv[2] == '--markdown')
     cmd = 'markdown';
   if (process.argv.length > 3)
-    f = process.argv[3];
+    filename = process.argv[3];
 }
 else {
   cmd = 'help';
@@ -52,9 +52,9 @@ function out(s, fn) {
   }
 }
 
-if (f) {
+if (filename) {
   // read from file and output to stdout
-  var s = require('fs').readFileSync(f, 'utf8');
+  var s = require('fs').readFileSync(filename, 'utf8');
   out(s, console.log);
 }
 else {
@@ -62,7 +62,7 @@ else {
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
   process.stdin.on('data', function(s) {
-    out(s, function(a) { process.stdout.write(a); });
+    out(s, function(content) { process.stdout.write(content); });
   });
 
   process.stdin.on('end', function () {
