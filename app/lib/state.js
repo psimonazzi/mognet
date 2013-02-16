@@ -21,7 +21,7 @@ function CONFIG_DEFAULTS() {
     "user": null,
     "group": null,
     "googleAnalyticsAccount": null,
-    "readmillKey": null
+    "staticUrl": null
   };
 }
 
@@ -67,7 +67,7 @@ function loadConfig() {
   cfg.user = process.env.MOGNET_USER || cfg.user;
   cfg.group = process.env.MOGNET_GROUP || cfg.group;
   cfg.googleAnalyticsAccount = process.env.MOGNET_GOOGLE_ANALYTICS_ACCOUNT || cfg.googleAnalyticsAccount;
-  cfg.readmillKey = process.env.MOGNET_READMILL_KEY || cfg.readmillKey;
+  cfg.staticUrl = process.env.MOGNET_STATIC_URL || cfg.staticUrl;
 
   // If there was no file write it with the current values
   if (writeCfgFile) {
