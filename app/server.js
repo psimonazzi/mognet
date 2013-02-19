@@ -89,7 +89,7 @@ var ONE_YEAR = 31536000000;
 // last handler applies to paths not served by the previous (static() by default serves '/' and all filenames under it)
 // so it catches any non-existent url
 var app = connect()
-      .use(connect.logger({ format: 'tiny', buffer: 1000 }))
+      .use(connect.logger({ format: 'tiny', buffer: 1000 })) //TODO debug only
       .use(connect.timeout(10000))
       .use(connect.compress())
       .use(connect.favicon(__dirname + '/../doc/favicon.ico', { 'maxAge': ONE_YEAR }))

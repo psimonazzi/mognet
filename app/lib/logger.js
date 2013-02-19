@@ -1,5 +1,6 @@
 var util = require('util');
 var Σ = require('../lib/state');
+var utils = require('../lib/utils');
 
 var buffer = {
   info: [],
@@ -7,27 +8,27 @@ var buffer = {
   error: []
 };
 
-exports.flushInterval = 5000;
+exports.flushInterval = 1000;
 
 
 exports.e = function e() {
   if (!Σ.cfg.verbose)
     return;
-  buffer['error'].push(util.format.apply(this, arguments));
+  buffer['error'].push(timestamp() + util.format.apply(this, arguments));
 };
 
 
 exports.w = function i() {
   if (!Σ.cfg.verbose)
     return;
-  buffer['warning'].push(util.format.apply(this, arguments));
+  buffer['warning'].push(timestamp() + util.format.apply(this, arguments));
 };
 
 
 exports.i = function i() {
   if (!Σ.cfg.verbose)
     return;
-  buffer['info'].push(util.format.apply(this, arguments));
+  buffer['info'].push(timestamp() + util.format.apply(this, arguments));
 };
 
 
@@ -46,6 +47,18 @@ exports.flush = function flush() {
   }
 };
 
+
+function timestamp() {
+  var d = new Date();
+  return util.format('[%s/%s/%s %s:%s:%s.%s] ',
+                     d.getFullYear(),
+                     utils.pad(d.getMonth() + 1, 2),
+                     utils.pad(d.getDay() + 1, 2),
+                     utils.pad(d.getHours(), 2),
+                     utils.pad(d.getMinutes(), 2),
+                     utils.pad(d.getSeconds(), 2),
+                     utils.pad(d.getMilliseconds(), 3));
+}
 
 setInterval(function() {
   exports.flush();
