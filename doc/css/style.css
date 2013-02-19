@@ -821,6 +821,9 @@ header nav li:hover #search-menu {
     -webkit-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
     -webkit-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
     background:
+    -moz-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
+    -moz-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
+    background:
     linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
     linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
     background-size: 100%, 200%;
