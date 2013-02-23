@@ -27,12 +27,12 @@ function CONFIG_DEFAULTS() {
 
 
 /**
- * Load config (sync) from a file in JSON format.
+ * Load config (sync) from a file in JSON format and/or from environment variables.
  * Filename is 'config.json'.
- * If the file is not found, it is created with the default values.
+ * If the file is not found, it is created with the default values, or the values set in environment variables.
  *
  * Any property found in environment variables will override the value set in the file.
- * Environment variables are named with prefix 'MOGNET_' and the uppercased property name with '_' instead of camelCase, eg. 'pageSize' becomes 'MOGNET_PAGE_SIZE'.
+ * Environment variables are named with prefix 'MOGNET_' and the uppercased property name with '_' instead of camelCase, eg. 'pageSize' becomes 'MOGNET_PAGE_SIZE'. An exception is the port variable, which can be set as MOGNET_PORT or PORT.
  *
  * @return {Object} The config object. If there was an error returns a hardcoded default config (see sources)
  *
@@ -58,25 +58,38 @@ function loadConfig() {
   }
 
   // finally try to override with env vars
-  cfg.port = process.env.MOGNET_PORT || process.env.PORT || cfg.port;
-  cfg.denyDiskRead = process.env.MOGNET_DENY_DISK_READ || cfg.denyDiskRead;
-  cfg.verbose = process.env.MOGNET_VERBOSE || cfg.verbose;
-  cfg.locale = process.env.MOGNET_LOCALE || cfg.locale;
-  cfg.pageSize = process.env.MOGNET_PAGE_SIZE || cfg.pageSize;
-  cfg.baseUrl = process.env.MOGNET_BASE_URL || cfg.baseUrl;
-  cfg.user = process.env.MOGNET_USER || cfg.user;
-  cfg.group = process.env.MOGNET_GROUP || cfg.group;
-  cfg.googleAnalyticsAccount = process.env.MOGNET_GOOGLE_ANALYTICS_ACCOUNT || cfg.googleAnalyticsAccount;
-  cfg.staticUrl = process.env.MOGNET_STATIC_URL || cfg.staticUrl;
+  var envCfg = {};
+  if (process.env.PORT)
+    envCfg.port = process.env.PORT;
+  Object.keys(process.env).forEach(function(k) {
+    if (k.match(/^MOGNET_/) && process.env[k] !== undefined) {
+      var tmpName = k.replace(/^MOGNET_/, "").toLowerCase();
+      var name = "";
+      for (var i = 0; i < tmpName.length; i++)
+        name += (i > 0 && tmpName[i-1]) == '_' ? tmpName[i].toUpperCase() : tmpName[i].toLowerCase();
+      name = name.replace(/_/g, "");
+      if (process.env[k] === 'false')
+        envCfg[name] = false;
+      else if (process.env[k] === 'true')
+        envCfg[name] = true;
+      else if (process.env[k].match(/^\d+$/) && new Number(process.env[k]) !== Number.NaN) {
+        envCfg[name] = new Number(process.env[k]).valueOf();
+      }
+      else
+        envCfg[name] = process.env[k];
+    }
+  });
+  require('../lib/utils').extend(cfg, envCfg);
 
   // If there was no file write it with the current values
-  if (writeCfgFile) {
+  // TODO confusing, as the values in the file may be different from the actual values used.
+  /*if (writeCfgFile) {
     try {
       require('fs').writeFileSync(filename, JSON.stringify(cfg, null, '  '), 'utf8');
     } catch (err) {
       console.error(err);
     }
-  }
+  }*/
 
   return cfg;
 }
