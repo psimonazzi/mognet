@@ -93,6 +93,8 @@ else if (res) {
   }
 }
 else if (all) {
+  // Ignore config...
+  Σ.cfg.denyDiskRead = false;
   // render all documents in index and save them
   // Don't use Object.keys(Σ.index['id']).forEach, because template loading from disk is async and it will try to read it once for each document at the same time...
   var ids = Object.keys(Σ.index['id']);
@@ -129,7 +131,7 @@ function printDocumentInfo(id) {
   var d = require('util').format('%s/%s/%s %s:%s:%s.%s',
                                  Σ.index['id'][id].modified.getFullYear(),
                                  utils.pad(Σ.index['id'][id].modified.getMonth() + 1, 2),
-                                 utils.pad(Σ.index['id'][id].modified.getDay() + 1, 2),
+                                 utils.pad(Σ.index['id'][id].modified.getDate(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getHours(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getMinutes(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getSeconds(), 2),

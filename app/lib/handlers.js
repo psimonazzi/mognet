@@ -52,7 +52,7 @@ module.exports = {
         return Σ.index.id[id];
       });
 
-      if (Σ.index.n.length < Σ.cfg.pageSize * (route.page + 1)) {
+      if (Σ.index.n.length <= Σ.cfg.pageSize * route.page) {
         ctx.nextPage = null;
         ctx.nextTitle = '/';
       }
@@ -173,7 +173,8 @@ function mapDateNames(d) {
       { lang: 'en', re: /en/i },
       { lang: 'it', re: /it/i }
     ].forEach(function(l) { if (l.re.exec(Σ.cfg.locale)) { locale = l.lang; } });
-    name = (MONTHS[Σ.cfg.locale][slashed[1].replace(/^0/, '') - 1] || slashed[1]) + ' ' + slashed[0];
+    if (MONTHS[Σ.cfg.locale])
+      name = (MONTHS[Σ.cfg.locale][slashed[1].replace(/^0/, '') - 1] || slashed[1]) + ' ' + slashed[0];
   }
   return { 'name': name, 'href': d };
 }

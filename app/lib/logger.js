@@ -14,14 +14,14 @@ exports.flushInterval = 1000;
 exports.e = function e() {
   if (!Σ.cfg.verbose)
     return;
-  buffer['error'].push(timestamp() + util.format.apply(this, arguments));
+  buffer['error'].push('✖ ' + timestamp() + util.format.apply(this, arguments));
 };
 
 
 exports.w = function i() {
   if (!Σ.cfg.verbose)
     return;
-  buffer['warning'].push(timestamp() + util.format.apply(this, arguments));
+  buffer['warning'].push('✖ ' + timestamp() + util.format.apply(this, arguments));
 };
 
 
@@ -53,7 +53,7 @@ function timestamp() {
   return util.format('[%s/%s/%s %s:%s:%s.%s] ',
                      d.getFullYear(),
                      utils.pad(d.getMonth() + 1, 2),
-                     utils.pad(d.getDay() + 1, 2),
+                     utils.pad(d.getDate(), 2),
                      utils.pad(d.getHours(), 2),
                      utils.pad(d.getMinutes(), 2),
                      utils.pad(d.getSeconds(), 2),

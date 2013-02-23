@@ -58,6 +58,7 @@ process.on('SIGUSR2', function() {
   console.log('Running from ' + __dirname + ' as user ' + process.getuid() + ' and group ' + process.getgid());
   console.log('Config:');
   console.log(util.inspect(Σ.cfg, false, null, false));
+  console.log('Memory usage:');
   console.log('%j', process.memoryUsage());
 });
 
@@ -118,7 +119,7 @@ var app = connect()
                 resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + req.url + '\n';
             }
             else {
-              logger.e("✖ " + err);
+              logger.e(err.message);
               res.statusCode = 500;
               if (!resource)
                 resource = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n' + err.toString() + '\n';

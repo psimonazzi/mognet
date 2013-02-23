@@ -75,7 +75,8 @@ Indexer.prototype.add = function(doc) {
       Σ.index['tag'] = {};
     doc.tag.forEach(function(e) {
       var tags = Σ.index['tag'][e] || [];
-      tags.push(doc.id);
+      if (!tags.some(function(t) { return t === doc.id; }))
+        tags.push(doc.id);
       Σ.index['tag'][e] = tags;
     });
 
@@ -84,7 +85,8 @@ Indexer.prototype.add = function(doc) {
       Σ.index['time'] = {};
     var timeTag = util.format('%d/%s', doc.timestamp.getFullYear(), utils.pad(doc.timestamp.getMonth() + 1, 2));
     var times = Σ.index['time'][timeTag] || [];
-    times.push(doc.id);
+    if (!times.some(function(t) { return t === doc.id; }))
+      times.push(doc.id);
     Σ.index['time'][timeTag] = times;
   }
 };

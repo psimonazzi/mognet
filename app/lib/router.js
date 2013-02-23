@@ -343,9 +343,9 @@ exports.context = function context(route, req) {
         item.timeTag = util.format("%s-%s-%s",
                                    item.modified.getFullYear(),
                                    utils.pad(item.modified.getMonth() + 1, 2),
-                                   utils.pad(item.modified.getDay() + 1, 2));
+                                   utils.pad(item.modified.getDate(), 2));
         item.displayDate = util.format("%s/%s/%s",
-                                       utils.pad(item.modified.getDay() + 1, 2),
+                                       utils.pad(item.modified.getDate(), 2),
                                        utils.pad(item.modified.getMonth() + 1, 2),
                                        item.modified.getFullYear());
         item.displayTime = util.format("%s:%s:%s.%s",

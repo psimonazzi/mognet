@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 var mustache = require('mustache');
 
 var logger = require('../lib/logger');
@@ -68,7 +69,7 @@ exports.renderNew = function renderNew(route, context, done, originalError) {
   exports.compileAndRenderFile(templateName, context, function(err, renderedContent) {
     if (err) {
       // return the original error, not this one
-      logger.e('(Renderer) Error while trying to render an error status for %s. %s', route.url, err ? err.toString() : err);
+      logger.e('(Renderer) Error while trying to render an error status for %s. (%s)', route.url, err ? err.toString() : err);
       done(originalError || err);
     }
     else {
@@ -122,26 +123,27 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
   if (!f) {
     // Read template file content as string, then compile and run
     if (Σ.cfg && Σ.cfg['denyDiskRead']) {
-      logger.e('✖ (Renderer) Needed to read %s but was denied by config. Pre-render all resources once before serving them.', templateName);
-      done(new Error('Needed to read from disk but was denied by config'));
+      var err = new Error(util.format('(Renderer) Needed to read %s but was denied by config. Pre-render all resources once before serving them.', templateName));
+      done(err);
     }
-
-    logger.i('✔ (Renderer) Reading %s...', templateName);
-    fs.readFile(exports.path + templateName, 'utf8', function(err, s) {
-      if (err) {
-        done(err);
-      }
-      else {
-        try {
-          Σ.compiled_templates[templateName] = f = mustache.compile(s);
-          var content = f(context);
-        } catch (ex) {
-          err = ex;
-          logger.e('✖ (Renderer) Error compiling template %s. %s', templateName, err);
+    else {
+      logger.i('(Renderer) Reading %s...', templateName);
+      fs.readFile(exports.path + templateName, 'utf8', function(err, s) {
+        if (err) {
+          done(err);
         }
-        done(err, content);
-      }
-    });
+        else {
+          try {
+            Σ.compiled_templates[templateName] = f = mustache.compile(s);
+            var content = f(context);
+          } catch (ex) {
+            err = ex;
+            err.message = util.format('(Renderer) Error compiling template %s. (%s)', templateName, err);
+          }
+          done(err, content);
+        }
+      });
+    }
   }
   else {
     // Cache HIT! Just run the compiled template
@@ -149,7 +151,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
     try {
       var content = f(context);
     } catch (err) {
-      logger.e('✖ (Renderer) Error running compiled template %s. %s', templateName, err);
+      err.message = util.format('(Renderer) Error running compiled template %s. (%s)', templateName, err);
       done(err);
     }
     done(null, content);
@@ -193,7 +195,7 @@ exports.preRender = function preRender(done) {
       require('../lib/router').getResource({ 'url': r.url }, r, function(err, resource) {
         if (err) {
           lastError = err;
-          logger.e('✖ (Renderer) Error pre-rendering %s: %s', r.url, err);
+          logger.e('(Renderer) Error pre-rendering %s. (%s)', r.url, err);
           // continue
         }
         renderResource();

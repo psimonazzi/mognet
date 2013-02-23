@@ -283,10 +283,10 @@ Crawler.prototype.fromContent = function(s, doc) {
     .replace(/<script(?! src)(.*?)>([\s\S]*?)<\/script>/im, '')
     .trim();
 
-
   if (!doc['title']) {
     doc['title'] = doc['content']
       .replace(/<.+?>/g, '')
+      .trim()
       .substring(0, 30) + '…';
   }
 
