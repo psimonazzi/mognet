@@ -221,6 +221,7 @@ pre {
     overflow: auto;
     line-height: 1.215em;
     padding: 1em 0.618em;
+    max-height: 30em;
 }
 
 code, kbd, var, samp, tt {    
@@ -685,6 +686,10 @@ header, article, .document, footer {
     max-width: 71em;
 }
 
+pre {
+    max-height: 36em;
+}
+
 header nav > ul > li > a {
     padding-left: 0.618em;
     padding-right: 0.618em;
@@ -794,6 +799,7 @@ body {
 
 header nav li:hover > div {
     display: block;
+    z-index: 1000;
 }
 
 .floating > div {
