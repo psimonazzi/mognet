@@ -2,7 +2,7 @@
  * Mognet
  * https://github.com/psimonazzi/mognet
  *
- * Copyright (c) 2012 Paolo Simonazzi.
+ * Copyright (c) 2013 Paolo Simonazzi.
  * Available under the MIT license:
  * http://www.opensource.org/licenses/mit-license.php
  *
@@ -25,11 +25,10 @@ var Indexer = require(__dirname + '/lib/indexer');
 var utils = require(__dirname + '/lib/utils');
 var logger = require(__dirname + '/lib/logger');
 
-// Run with "PORT=3000 node server.js" or "node server.js 3000" (or define in config file)
 var port = process.argv[2] || Σ.cfg.port;
 
 process.on('SIGHUP', function() {
-  console.log('Got SIGHUP (1). Rebuilding/reloading index and config & clearing cache...');
+  console.log('Got SIGHUP. Rebuilding/reloading index and config & clearing cache...');
   Σ.compiled_templates = {};
   Σ.renders = {};
   Σ.cfg = Σ.loadConfig();
@@ -37,12 +36,12 @@ process.on('SIGHUP', function() {
     if (!error)
       indexer.load(function() { console.log('Reloaded.'); });
     else
-      console.error('✖ ERROR: Cannot update index. ' + error);
+      console.error('ERROR: Cannot update index. ' + error);
   });
 });
 
 process.on('SIGUSR1', function() {
-  console.log('Got SIGUSR1 (10).');
+  console.log('Got SIGUSR1.');
   console.log('Index:');
   console.log(util.inspect(Σ.index, false, null, false));
   console.log('\nRenders:');
@@ -50,7 +49,7 @@ process.on('SIGUSR1', function() {
 });
 
 process.on('SIGUSR2', function() {
-  console.log('Got SIGUSR2 (12).');
+  console.log('Got SIGUSR2.');
   try {
     var version = utils.loadJSONSync(__dirname + '/package.json').version;
   } catch (err) { }
@@ -71,32 +70,35 @@ console.log('Server v%s (pid %s)', version, process.pid);
 console.log('Loading index from disk...');
 var indexer = Indexer.createIndexer();
 indexer.loadSync();
-//indexer.sort(); // will be already sorted on disk
 
 if (Object.keys(Σ.index['id']).length == 0) {
-  console.error('✖ ERROR: No index found. Maybe create a new index with: bin/update.js');
-  // do not exit, just serve what we can: static files and special routes with dedicated handlers
+  console.error('ERROR: No index found. Maybe create a new index with: bin/update.js');
+  // do not die, just serve what we can: static files and special routes with dedicated handlers
 }
 
 try {
   var lastModified = Σ.index['id'][Σ.index['n'][Σ.index['n'].length - 1]].modified;
   console.log('Index contains %d entries. Last modified on %s', Object.keys(Σ.index.id).length, lastModified);
 } catch (ex) {
-  console.error('✖ ERROR: Cannot determine last modified time for index.');
+  console.error('ERROR: Cannot determine last modified time for index.');
 }
 
 var ONE_YEAR = 31536000000;
 
-// last handler applies to paths not served by the previous (static() by default serves '/' and all filenames under it)
-// so it catches any non-existent url
 var app = connect()
-      .use(connect.logger({ format: 'tiny', buffer: 1000 })) //TODO debug only
+      .use(connect.logger({ format: 'tiny', buffer: 1000 })) // debug only
       .use(connect.timeout(10000))
       .use(connect.compress())
       .use(connect.favicon(__dirname + '/../doc/favicon.ico', { 'maxAge': ONE_YEAR }))
       .use(connect.static(path.normalize(__dirname + '/../doc'), { 'maxAge': ONE_YEAR }))
       .use('/static', connect.static(path.normalize(__dirname + '/../../static'), { 'maxAge': ONE_YEAR }))
       .use('/api', function(req, res) {
+        // Reserved
+        res.statusCode = 204;
+        res.end();
+      })
+      .use('/_', function(req, res) {
+        // Reserved
         res.statusCode = 204;
         res.end();
       })
@@ -161,7 +163,7 @@ var app = connect()
             process.setgid(Σ.cfg.group);
             process.setuid(Σ.cfg.user);
           } catch (ex) {
-            console.error('✖ ERROR: Cannot drop privileges, running as ROOT...! ' + ex);
+            console.error('ERROR: Cannot drop privileges, running as ROOT...! ' + ex);
           }
         }
         else {

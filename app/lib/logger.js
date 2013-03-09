@@ -21,14 +21,14 @@ exports.e = function e() {
 exports.w = function i() {
   if (!Σ.cfg.verbose)
     return;
-  buffer['warning'].push('✖ ' + timestamp() + util.format.apply(this, arguments));
+  buffer['warning'].push('W ' + timestamp() + util.format.apply(this, arguments));
 };
 
 
 exports.i = function i() {
   if (!Σ.cfg.verbose)
     return;
-  buffer['info'].push(timestamp() + util.format.apply(this, arguments));
+  buffer['info'].push('I ' + timestamp() + util.format.apply(this, arguments));
 };
 
 
