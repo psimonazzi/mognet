@@ -7,6 +7,7 @@ var router = require('../lib/router');
 var handlers = require('../lib/handlers');
 var Indexer = require('../lib/indexer');
 
+var util = require('util');
 require('colors');
 
 
@@ -19,12 +20,11 @@ var help, res, special, all, contextOnly, infoOnly;
 if (process.argv.length > 2) {
   if (process.argv[2] == '-h')
     help = true;
-  if (process.argv[2] == '-s' && process.argv[3])
-    res = process.argv[3];
   else if (process.argv[2] == '--all')
     all = true;
-  else if (process.argv[2] == '-c' && process.argv.length > 3) {
-    res = process.argv[3];
+  else if (process.argv[2] == '-c') {
+    if (process.argv.length > 3)
+      res = process.argv[3];
     contextOnly = true;
   }
   else if (process.argv[2] == '-i') {
@@ -36,10 +36,12 @@ if (process.argv.length > 2) {
     res = process.argv[2];
 }
 
-if (help || (!res && !special && !all && !infoOnly)) {
+if (help || (!res && !special && !all && !infoOnly && !contextOnly)) {
   console.log('USAGE:');
   console.log('%s <document id>    ' + 'Render the document or handler to stdout'.grey, process.argv[1]);
+  console.log('%s -c               ' + 'Print the index data, i.e. the context for all documents'.grey, process.argv[1]);
   console.log('%s -c <document id> ' + 'Print only the document or handler context'.grey, process.argv[1]);
+  console.log('%s -i               ' + 'Print info on all indexed documents'.grey, process.argv[1]);
   console.log('%s -i <document id> ' + 'Print info on the document'.grey, process.argv[1]);
   console.log('%s --all            ' + 'Render all indexed documents and save them to disk'.grey, process.argv[1]);
   console.log('%s -h               ' + '(Display this message)'.grey, process.argv[1]);
@@ -66,11 +68,15 @@ if (infoOnly) {
   }
   process.exit(0);
 }
+else if (contextOnly && !res) {
+  console.log(util.inspect(Σ.index, false, null, true));
+  process.exit(0);
+}
 else if (res) {
   if (contextOnly) {
     // do not render, show only context object passed to template
     var ctx = router.context(router.parse(req), req);
-    console.log(require('util').inspect(ctx, false, null, true));
+    console.log(util.inspect(ctx, false, null, true));
     process.exit(0);
   }
   else {
@@ -128,7 +134,7 @@ else if (all) {
 
 function printDocumentInfo(id) {
   //Σ.index['id'][id].modified.toLocaleFormat('%Y/%m/%e %T')
-  var d = require('util').format('%s/%s/%s %s:%s:%s.%s',
+  var d = util.format('%s/%s/%s %s:%s:%s.%s',
                                  Σ.index['id'][id].modified.getFullYear(),
                                  utils.pad(Σ.index['id'][id].modified.getMonth() + 1, 2),
                                  utils.pad(Σ.index['id'][id].modified.getDate(), 2),

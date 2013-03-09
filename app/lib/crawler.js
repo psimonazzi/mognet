@@ -173,8 +173,6 @@ Crawler.prototype.slug = function slug(title) {
  * Create a partial document from a file, overriding any existing field of the passed document.
  * The following document fields are set:
  *
- * 'n': counter starting from 1
- *
  * 'timestamp': if the file name is formatted as 'yyyymmdd_slug.html', the first 8 digits are interpreted as a timestamp.
  * If not, the file last modified time is used as a timestamp.
  *
@@ -190,8 +188,6 @@ Crawler.prototype.slug = function slug(title) {
  */
 Crawler.prototype.fromFile = function(file, stat, doc) {
   doc['filename'] = file;
-  // Temp numbering: when index is complete we can order by timestamp relative to ALL documents
-  //doc['n'] = count;
   doc['timestamp'] = stat.mtime;
 
   var name = path.basename(file);
@@ -208,7 +204,8 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
     }
   }
   else {
-    doc['id'] = name.replace(/^[^_]+_/, '').replace(/\.[^.]+$/, '');
+    // ignore chars up to first '_'
+    doc['id'] = this.slug(name.replace(/^[^_]+_/, '').replace(/\.[^.]+$/, ''));
   }
   return doc;
 };

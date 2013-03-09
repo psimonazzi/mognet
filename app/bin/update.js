@@ -10,6 +10,7 @@ require('colors');
 var Σ = require('../lib/state');
 var crawler = require('../lib/crawler').createCrawler();
 var indexer = require('../lib/indexer').createIndexer();
+var utils = require('../lib/utils');
 
 function usage() {
   console.log("USAGE:");
@@ -61,6 +62,19 @@ crawler.on('found', function(doc) {
     }
   }
 
+  // Skip documents scheduled for a future date
+  if (doc.schedule.getTime() > new Date().getTime()) {
+    console.log("Skipping %s, scheduled for %s", doc.id, util.format('%s/%s/%s %s:%s:%s.%s',
+                     doc.schedule.getFullYear(),
+                     utils.pad(doc.schedule.getMonth() + 1, 2),
+                     utils.pad(doc.schedule.getDate(), 2),
+                     utils.pad(doc.schedule.getHours(), 2),
+                     utils.pad(doc.schedule.getMinutes(), 2),
+                     utils.pad(doc.schedule.getSeconds(), 2),
+                     utils.pad(doc.schedule.getMilliseconds(), 3)));
+    return;
+  }
+
   indexer.add(doc);
 
   if (filename) {
@@ -75,17 +89,18 @@ crawler.on('end', function(count) {
     if (err)
       throw err;
   });
-  console.log(util.inspect(Σ.index, false, null, true));
+  //console.log(util.inspect(Σ.index, false, null, true));
   console.log("\n------[ Result ]------".grey);
-  console.log("Updated %s files in %s",
-              count.toString().green.bold,
+  console.log("Indexed %s files on %s in %s",
+              Object.keys(Σ.index.id).length.toString().green.bold,
+              count.toString().green,
               (((new Date().getTime() - τ0) / 1000).toFixed(3) + "s").blue.bold);
 });
 
 
 if (filename) {
   // index only the specified file
-  var fullFilename = path.normalize(__dirname + '/../../res/'  + filename);
+  var fullFilename = path.normalize(crawler.path + filename);
   fs.stat(fullFilename, function(err, stats) {
     if (err)
       throw err;
