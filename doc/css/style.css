@@ -123,7 +123,7 @@ h1, h2, h3, h4, header, footer, .meta, .menu, .rel, figcaption, .blip, input, bu
 }
 
 .logo {
-    font-family: sans-serif;
+    font-family: "Arial Unicode MS", "Lucida Sans Unicode", sans-serif;
     font-weight: normal;
 }
 
@@ -221,11 +221,14 @@ pre {
     overflow: auto;
     line-height: 1.215em;
     padding: 1em 0.618em;
-    max-height: 30em;
 }
 
 code, kbd, var, samp, tt {    
     font-size: 0.8125em;
+}
+
+.maxheight {
+    max-height: 30em;
 }
 
 figure {
@@ -288,7 +291,7 @@ h1 a, h1 a:visited {
     text-decoration: none;
 }
 
-.content a:hover, article a:hover, .logo a:hover, h1 a:hover, .menu a:hover {
+.content a:hover, article a:hover, h1 a:hover, .menu a:hover {
     color: #fff;
     background: #c60016;
     text-shadow: 1px 1px 2px #5d0e13;
@@ -686,10 +689,6 @@ header, article, .document, footer {
     max-width: 71em;
 }
 
-pre {
-    max-height: 36em;
-}
-
 header nav > ul > li > a {
     padding-left: 0.618em;
     padding-right: 0.618em;
@@ -729,6 +728,10 @@ article .content >.nostretch {
     width: 65.4%;
 }
 /* end override */
+
+.maxheight {
+    max-height: 36em;
+}
 
 .meta {
     width: 22.05%;
