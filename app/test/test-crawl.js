@@ -77,7 +77,7 @@ describe('crawler', function() {
 
       crawler.once('found', function(doc) {
         assert.equal(filename, doc['filename']);
-        assert.equal(stats.mtime, doc['timestamp']);
+        assert.equal(stats.ctime, doc['timestamp']);
         assert.equal(TITLE, doc['title']);
         assert.equal(ID, doc['id']);
         assert.equal(true, doc['blip']);
@@ -93,11 +93,13 @@ describe('crawler', function() {
 
     it('should extract a document from a file name', function() {
       var mtime = new Date().getTime();
-      var doc = crawler.fromFile("hello-world.html", { 'mtime': mtime }, {});
+      var ctime = new Date(new Date().getTime() - 10000);
+      var doc = crawler.fromFile("hello-world.html", { 'ctime': ctime, 'mtime': mtime }, {});
       assert.equal("hello-world", doc['id']);
-      assert.equal(mtime, doc['timestamp']);
+      assert.equal(ctime, doc['timestamp']);
+      assert.equal(mtime, doc['modified']);
 
-      var doc_date = crawler.fromFile("20121222_hello-world.html", { 'mtime': mtime }, {});
+      var doc_date = crawler.fromFile("20121222_hello-world.html", { 'mtime': mtime, 'ctime': mtime }, {});
       assert.equal("hello-world", doc_date['id']);
       assert.equal(new Date(2012, 11, 22, 0, 0, 0).toLocaleString(), doc_date['timestamp'].toLocaleString());
       assert.equal(2012, doc_date['timestamp'].getFullYear());
@@ -107,7 +109,7 @@ describe('crawler', function() {
 
     it('should extract a document from a file name, ignoring first part', function() {
       var mtime = new Date().getTime();
-      var doc = crawler.fromFile("doc_hello-world.html", { 'mtime': mtime }, {});
+      var doc = crawler.fromFile("doc_hello-world.html", { 'mtime': mtime, 'ctime': mtime }, {});
       assert.equal("hello-world", doc['id']);
       assert.equal(mtime, doc['timestamp']);
     });
@@ -126,7 +128,7 @@ describe('crawler', function() {
             "\"rel\": [ \"title-0\" ],\n" +
             "\"timestamp\": \"1981/07/01 17:30\",\n" +
             "\"schedule\": \"1981/07/01 17:30\",\n" +
-            "\"modified\": \"1981/07/01 17:30\"\n" +
+            "\"modified\": \"1981/08/02 18:30\"\n" +
             "}\n" +
             "</script>\n" +
             "\n" +
@@ -139,7 +141,7 @@ describe('crawler', function() {
       assert.equal('title-0', doc['rel'][0]);
       assert.equal(new Date(1981, 6, 1, 17, 30, 0).toLocaleString(), doc['timestamp'].toLocaleString());
       assert.equal(new Date(1981, 6, 1, 17, 30, 0).toLocaleString(), doc['schedule'].toLocaleString());
-      assert.equal(new Date(1981, 6, 1, 17, 30, 0).toLocaleString(), doc['modified'].toLocaleString());
+      assert.equal(new Date(1981, 7, 2, 18, 30, 0).toLocaleString(), doc['modified'].toLocaleString());
     });
 
     it('should extract a document title from a file contents in HTML or Markdown', function() {

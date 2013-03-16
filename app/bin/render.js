@@ -142,7 +142,7 @@ function printDocumentInfo(id) {
                                  utils.pad(Σ.index['id'][id].modified.getMinutes(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getSeconds(), 2),
                                  utils.pad(Σ.index['id'][id].modified.getMilliseconds(), 3));
-  console.log('%d ⋅ '.green.bold + '%s ⋅ '.blue + '%s'.yellow.bold + ' ⋅ %s'.bold + ' ⋅ %s'.grey.bold + ' ⋅ %s'.red,
+  console.log('%d · '.green.bold + '%s · '.blue + '%s'.yellow.bold + ' · %s'.bold + ' · %s'.grey.bold + ' · %s'.red,
               Σ.index['id'][id].n,
               d,
               id,
@@ -180,7 +180,7 @@ function printInfo() {
     console.log();
     console.log('Tags (%d):', Object.keys(Σ.index['tag']).length);
     Object.keys(Σ.index['tag']).sort()
-      .forEach(function(tag) { console.log(tag.bold + ' ⋅ ' + Σ.index['tag'][tag].length.toString().blue); });
+      .forEach(function(tag) { console.log(tag.bold + ' · ' + Σ.index['tag'][tag].length.toString().blue); });
   }
   else {
     console.log('No indexed documents'.red.bold);

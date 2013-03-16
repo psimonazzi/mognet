@@ -108,7 +108,7 @@ Indexer.prototype.sort = function() {
   Σ.index['n'] = null;
 
   Σ.index['n'] = this.publicIds().sort(function(a, b) {
-    var aTime = Σ.index['id'][a].modified.getTime(), bTime = Σ.index['id'][b].modified.getTime();
+    var aTime = Σ.index['id'][a].timestamp.getTime(), bTime = Σ.index['id'][b].timestamp.getTime();
     if (aTime != bTime)
       return aTime - bTime;
     else {

@@ -174,7 +174,7 @@ Crawler.prototype.slug = function slug(title) {
  * The following document fields are set:
  *
  * 'timestamp': if the file name is formatted as 'yyyymmdd_slug.html', the first 8 digits are interpreted as a timestamp.
- * If not, the file last modified time is used as a timestamp.
+ * If not, the file creation time is used as a timestamp.
  *
  * 'id': a slug created from the whole file name without extension, or the last part if the file name also contains a timestamp. If the filename contains a '_' char, it and all preceding characters are ignored when creating the slug, So one could use the first part of the filename for tagging/sorting on filesystem.
  *
@@ -188,7 +188,8 @@ Crawler.prototype.slug = function slug(title) {
  */
 Crawler.prototype.fromFile = function(file, stat, doc) {
   doc['filename'] = file;
-  doc['timestamp'] = stat.mtime;
+  doc['timestamp'] = stat.ctime;
+  doc['modified'] = stat.mtime;
 
   var name = path.basename(file);
   var match = /^(\d{8})_(.+?)\.[^.]+$/.exec(name);//var match = /^(\d{8})_(.+?)\.html$/.exec(name);

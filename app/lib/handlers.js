@@ -213,7 +213,7 @@ function toRFC2822(oDate) {
 }
 
 
-// TODO i18n
+// i18n
 var MONTHS = {
   it: [
     'Gennaio',

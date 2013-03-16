@@ -333,9 +333,9 @@ exports.context = function context(route, req) {
     if (!ctx.items)
       ctx.items = [];
     ctx.items = ctx.items.map(function(item) {
-      if (item) {
+      if (item && (item.title || item['abstract'])) {
         // safe title representation for metadata (without HTML tags)
-        item.titleSafe = item.title.replace(/<.+?>/g, '').trim();
+        item.titleSafe = (item.title || item['abstract']).replace(/<.+?>/g, '').trim();
       }
 
       if (item && !item.doc) {
