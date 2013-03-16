@@ -35,12 +35,10 @@ chmod +x /var/www/mognet/deploy /var/www/mognet/reload /var/www/mognet/minify /v
 echo "Minifying..."
 cd /var/www/mognet
 /var/www/mognet/minify
-cd -
+cd - >/dev/null
 
 echo "Updating index..."
 /var/www/mognet/app/bin/update.js >/dev/null
-
-#cp app/mognet.conf /etc/init
 
 echo "Deployed to /var/www/mognet-$TAG."
 echo "Set config if needed and start server with 'start mognet'."
