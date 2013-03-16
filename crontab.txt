@@ -1,2 +1,2 @@
 # copy log files from tmpfs to disk
-* * * * * cp -af /dev/shm/*.log /var/www/log
+* * * * * cp -af /dev/shm/stdout.log /dev/shm/stderr.log /var/www/log
