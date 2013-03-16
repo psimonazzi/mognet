@@ -340,19 +340,19 @@ exports.context = function context(route, req) {
 
       if (item && !item.doc) {
         // Dates display
+        var date = item.timestamp;
         item.timeTag = util.format("%s-%s-%s",
-                                   item.modified.getFullYear(),
-                                   utils.pad(item.modified.getMonth() + 1, 2),
-                                   utils.pad(item.modified.getDate(), 2));
+                                   date.getFullYear(),
+                                   utils.pad(date.getMonth() + 1, 2),
+                                   utils.pad(date.getDate(), 2));
         item.displayDate = util.format("%s/%s/%s",
-                                       utils.pad(item.modified.getDate(), 2),
-                                       utils.pad(item.modified.getMonth() + 1, 2),
-                                       item.modified.getFullYear());
-        item.displayTime = util.format("%s:%s:%s.%s",
-                                       utils.pad(item.modified.getHours(), 2),
-                                       utils.pad(item.modified.getMinutes(), 2),
-                                       utils.pad(item.modified.getSeconds(), 2),
-                                       utils.pad(item.modified.getMilliseconds(), 3));
+                                       utils.pad(date.getDate(), 2),
+                                       utils.pad(date.getMonth() + 1, 2),
+                                       date.getFullYear());
+        item.displayTime = util.format("%s:%s:%s",
+                                       utils.pad(date.getHours(), 2),
+                                       utils.pad(date.getMinutes(), 2),
+                                       utils.pad(date.getSeconds(), 2));
 
         // Tags to display
         if (item.tag.length > 0) {
