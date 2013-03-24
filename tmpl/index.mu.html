@@ -36,18 +36,18 @@
   <meta name="description" content="Sito personale di Paolo Simonazzi. Fatto in Italia con amore &amp; ossessione."/>
   {{/search}}
   {{^index}}{{^search}}
-  <meta name="description" content="{{#items}}{{abstract}}{{/items}}"/>
+  <meta name="description" content="{{#items}}{{description}}{{/items}}"/>
   <!-- Facebook (https://developers.facebook.com/docs/technical-guides/opengraph/built-in-objects) -->
   <meta property="og:title" content="{{#items}}{{{titleSafe}}}{{/items}}"/>
-  <meta property="og:description" content="{{#items}}{{abstract}}{{/items}}"/>
+  <meta property="og:description" content="{{#items}}{{description}}{{/items}}"/>
   <meta property="og:type" content="article"/>
   <!-- G+ (https://developers.google.com/+/plugins/snippet/) -->
   <meta itemprop="name" content="{{#items}}{{{titleSafe}}}{{/items}}"/>
-  <meta itemprop="description" content="{{#items}}{{abstract}}{{/items}}"/>
+  <meta itemprop="description" content="{{#items}}{{description}}{{/items}}"/>
   <!-- Twitter (https://dev.twitter.com/docs/cards) -->
   <meta name="twitter:title" content="{{#items}}{{{titleSafe}}}{{/items}}"/>
-  <meta name="twitter:description" content="{{#items}}{{abstract}}{{/items}}"/>
-  <meta name="twitter:url" content="{{{cfg.baseUrl}}}/{{key}}"/>
+  <meta name="twitter:description" content="{{#items}}{{description}}{{/items}}"/>
+  <meta name="twitter:url" content="{{{cfg.baseUrl}}}/{{{key}}}"/>
   <meta name="twitter:creator" content="@psimonazzi"/>
   {{/search}}{{/index}}
   
@@ -141,7 +141,7 @@
 
 {{#items}}
 {{#doc}}<div class="document" role="main">{{/doc}}{{^doc}}<article role="main">{{/doc}}
-<h1>{{^blip}}<a href="/{{id}}">{{{title}}}</a>{{/blip}}</h1>
+<h1><a href="/{{id}}">{{^blip}}{{{title}}}{{/blip}}{{#blip}}∞{{/blip}}</a></h1>
 
 {{^doc}}
 <div class="meta">
@@ -194,21 +194,6 @@
   <small>Contenuti su licenza <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.it">CC (Attribuzione — Condividi allo stesso modo)</a></small>
   <small><em>Fatto in Italia con amore &amp; ossessione.</em></small>
 </footer>
-
-
-
-<!-- Various floating elements, normally hidden -->
-<!--
-    <div id="controls-menu" class="hidden floating">
-    <dl>
-    <dt><code>J</code></dt><dd>— Pagina successiva</dd>
-    <dt><code>K</code></dt><dd>— Pagina precedente</dd>
-    <dt><code>SPAZIO</code></dt><dd>— Scorrimento pagina / pagina successiva se in fondo alla pagina corrente</dd>
-    <dt><code>S</code></dt><dd>— Cerca</dd>
-    <dt><code>H</code></dt><dd>— Mostra / nascondi questa guida</dd>
-    </dl>
-    </div>
--->
 
 {{#hiSpec}}
 <script src="/js/app.min.js?1"></script>
