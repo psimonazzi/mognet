@@ -122,7 +122,6 @@ describe('handlers', function() {
       var route1 = router.parse(req1);
       assert.equal("rss", route1.url);
       var ctx1 = router.context(route1, req1);
-      assert.equal(Σ.cfg.locale, ctx1.language);
     });
   })
 

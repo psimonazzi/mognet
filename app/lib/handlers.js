@@ -118,7 +118,6 @@ module.exports = {
 
   rss: function(route) {
     var ctx = {
-      language: null,
       lastBuildDate: null,
       atomLink: null,
       link: null,
@@ -128,7 +127,6 @@ module.exports = {
 
     var MAX_COUNT = 12;
 
-    ctx.language = Σ.cfg.locale;
     ctx.atomLink = Σ.cfg.baseUrl + '/' + route.key;
     ctx.link = Σ.cfg.baseUrl + '/';
     ctx.generator = 'Mognet (' + Σ.cfg.version + ')';
@@ -165,17 +163,8 @@ function mapTagNames(t) {
 function mapDateNames(d) {
   var name = d;
   var slashed = d.split('/');
-  if (slashed && slashed.length == 2) {
-    // Try to guess which of the supported locales has been set in config.
-    // We do not enforce a specific format for specifying the locale (eg. 'en_EN', 'it'...)
-    var locale;
-    [
-      { lang: 'en', re: /en/i },
-      { lang: 'it', re: /it/i }
-    ].forEach(function(l) { if (l.re.exec(Σ.cfg.locale)) { locale = l.lang; } });
-    if (MONTHS[Σ.cfg.locale])
-      name = (MONTHS[Σ.cfg.locale][slashed[1].replace(/^0/, '') - 1] || slashed[1]) + ' ' + slashed[0];
-  }
+  if (slashed && slashed.length == 2)
+    name = slashed[1] + '/' + slashed[0];
   return { 'name': name, 'href': d };
 }
 
@@ -211,36 +200,3 @@ function toRFC2822(oDate) {
   dtm += getTZOString(oDate.getTimezoneOffset());
   return dtm;
 }
-
-
-// i18n
-var MONTHS = {
-  it: [
-    'Gennaio',
-    'Febbraio',
-    'Marzo',
-    'Aprile',
-    'Maggio',
-    'Giugno',
-    'Luglio',
-    'Agosto',
-    'Settembre',
-    'Ottobre',
-    'Novembre',
-    'Dicembre'
-  ],
-  en: [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ]
-};

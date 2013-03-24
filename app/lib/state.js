@@ -15,7 +15,6 @@ function CONFIG_DEFAULTS() {
     "port": 80,
     "denyDiskRead": false,
     "verbose": false,
-    "locale": "en",
     "pageSize": 12,
     "baseUrl": null,
     "user": null,
@@ -80,16 +79,6 @@ function loadConfig() {
     }
   });
   require('../lib/utils').extend(cfg, envCfg);
-
-  // If there was no file write it with the current values
-  // TODO confusing, as the values in the file may be different from the actual values used.
-  /*if (writeCfgFile) {
-    try {
-      require('fs').writeFileSync(filename, JSON.stringify(cfg, null, '  '), 'utf8');
-    } catch (err) {
-      console.error(err);
-    }
-  }*/
 
   return cfg;
 }

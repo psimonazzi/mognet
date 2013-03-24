@@ -167,8 +167,6 @@ Any variable can be passed to Mognet in these ways, even custom variables you ca
 
 * ``verbose``: (default: false) If true print log messages to stdout and stderr, otherwise no messages or errors will be printed.
 
-* ``locale``: (default: "en") Localization language code, used in the default template only to generate month names. Currently supported languages are "en" (english) and "it" (italian).
-
 * ``pageSize``: (default: 12) Number of articles displayed on each index page in the default template.
 
 * ``baseUrl``: (default: null) The host and port of the urls served by this server, as seen from the internet. Internal urls will usually be specified in links as absolute paths (like ``/search``), but sometimes a full url is required by templates, for example in social networks metadata. The full url will be the concatenation of this value and an absolute path. Example value: ``http://example.com``.
