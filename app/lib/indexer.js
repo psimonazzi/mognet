@@ -95,8 +95,8 @@ Indexer.prototype.add = function(doc) {
 /**
  * Sort the public articles in the index, creating an array with the ordered document ids in the 'n' field of the index.
  * The 'n' field of each document is also updated to reflect its position in the index (zero-based).
- * Sort according to modified date and document id.
- * Only public articles are sorted. Secret, ignored, or non-article documents will not have a 'n' field. So the sorted array length may NOT be equal to the total number of documents in the index.
+ * Sort according to timestamp and document id.
+ * Only public articles are sorted. Secret or non-article documents will not have a 'n' field. So the sorted array length may NOT be equal to the total number of documents in the index.
  *
  * @api public
  */
@@ -128,7 +128,7 @@ Indexer.prototype.sort = function() {
 
 
 /**
- * Get the ids of the public documents in the index. Public documents are all articles not flagged 'secret' or 'ignore'.
+ * Get the ids of the public documents in the index. Public documents are all articles not flagged 'secret'.
  *
  * @return {Array} The array of public document ids (sorted if the index is sorted), or the empty array if the index is empty
  *
@@ -159,14 +159,14 @@ Indexer.prototype.nonPublicIds = function nonPublicIds() {
     return [];
   var self = this;
   var ids = (Object.keys(Σ.index['id'])).filter(function(id, index, array) {
-    return !Σ.index['id'][id].doc && (Σ.index['id'][id].ignore || Σ.index['id'][id].secret);
+    return !Σ.index['id'][id].doc && Σ.index['id'][id].secret;
   });
   return ids;
 };
 
 
 /**
- * Determine if the document with the given id is public. Public documents are all articles not flagged 'secret' or 'ignore'.
+ * Determine if the document with the given id is public. Public documents are all articles not flagged 'secret'.
  *
  * @param {string} id The document id
  *
@@ -175,7 +175,7 @@ Indexer.prototype.nonPublicIds = function nonPublicIds() {
  * @api public
  */
 Indexer.prototype.isPublicId = function isPublicId(id) {
-  return !Σ.index['id'][id].doc && !Σ.index['id'][id].ignore && !Σ.index['id'][id].secret;
+  return !Σ.index['id'][id].doc && !Σ.index['id'][id].secret;
 };
 
 

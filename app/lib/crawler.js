@@ -54,7 +54,6 @@ var DEFAULTS = function() {
     'rel': [],
     'blip': false,
     'cite': null,
-    'ignore': false,
     'secret': false,
     'doc': false,
     'location': [],
@@ -370,6 +369,10 @@ Crawler.prototype.fromMeta = function(s, doc) {
   });
 
   doc = utils.extend(doc, meta);
+
+  // remove abstract from blip articles
+  /*if (doc['blip'])
+    doc['abstract'] = null;*/
 
   // Heuristically set any field still missing
   // Do this here to keep all document creation logic in one place

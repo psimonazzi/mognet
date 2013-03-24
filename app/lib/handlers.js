@@ -146,7 +146,7 @@ module.exports = {
             description: doc.content,
             link: Σ.cfg.baseUrl + '/' + id,
             guid: Σ.cfg.baseUrl + '/' + id,
-            pubDate: toRFC2822(doc.modified)
+            pubDate: toRFC2822(doc.timestamp)
           };
         }).reverse();
       }

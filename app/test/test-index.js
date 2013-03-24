@@ -7,7 +7,6 @@ var doc1 = {
   n: 1,
   tag: [ 'www' ],
   rel: [],
-  ignore: false,
   secret: false,
   doc: false,
   timestamp: new Date(0),
@@ -21,7 +20,6 @@ var doc2 = {
   n: 2,
   tag: [ 'www', 'tag2' ],
   rel: [ 'title-0' ],
-  ignore: false,
   secret: false,
   doc: false,
   timestamp: new Date(1000),
@@ -31,25 +29,10 @@ var doc2 = {
   content: '<p>content</p>',
   id: 'title-1'
 };
-var doc3 = {
-  n: 3,
-  tag: [],
-  rel: [],
-  ignore: true,
-  secret: false,
-  doc: false,
-  timestamp: new Date(2000),
-  schedule: new Date(2000),
-  modified: new Date(2000),
-  title: 'Ignore Me',
-  content: '<p>content</p>',
-  id: 'ignore-me'
-};
 var doc4 = {
   n: 4,
   tag: [],
   rel: [],
-  ignore: false,
   secret: true,
   doc: false,
   timestamp: new Date(3000),
@@ -63,7 +46,6 @@ var doc5 = {
   n: 5,
   tag: [],
   rel: [],
-  ignore: false,
   secret: true,
   doc: true,
   timestamp: new Date(4000),
@@ -77,7 +59,6 @@ var doc6 = {
   n: 6,
   tag: [],
   rel: [],
-  ignore: false,
   secret: false,
   doc: true,
   timestamp: new Date('Wed, 01 Jul 1981 17:42:03 GMT'),
@@ -91,7 +72,6 @@ var doc7 = {
   n: 7,
   tag: [],
   rel: [],
-  ignore: false,
   secret: false,
   doc: false,
   timestamp: new Date('Sat, 13 Oct 2012 10:47:00 GMT'),
@@ -159,7 +139,6 @@ describe('indexer', function() {
     it('should sort documents in the index', function() {
       indexer.add(doc1);
       indexer.add(doc2);
-      indexer.add(doc3);
       indexer.add(doc4);
       indexer.add(doc5);
       indexer.add(doc6);
@@ -202,12 +181,11 @@ describe('indexer', function() {
     it('should get the ids of public documents', function() {
       indexer.add(doc1);
       indexer.add(doc2);
-      indexer.add(doc3);
       indexer.add(doc4);
       indexer.add(doc5);
       indexer.add(doc6);
 
-      assert.equal(6, Object.keys(Σ.index.id).length);
+      assert.equal(5, Object.keys(Σ.index.id).length);
       assert.equal(2, indexer.publicIds().length);
       indexer.sort();
       assert.equal(doc1.id, indexer.publicIds()[0]);
@@ -218,17 +196,15 @@ describe('indexer', function() {
     it('should get the ids of non-public documents', function() {
       indexer.add(doc1);
       indexer.add(doc2);
-      indexer.add(doc3);
       indexer.add(doc4);
       indexer.add(doc5);
       indexer.add(doc6);
       indexer.sort();
 
       var nonPublicIds = indexer.nonPublicIds();
-      assert.equal(2, nonPublicIds.length);
-      assert.equal(4, nonPublicIds.length + indexer.publicIds().length);
-      assert.equal(doc3.id, nonPublicIds[0]);
-      assert.equal(doc4.id, nonPublicIds[1]);
+      assert.equal(1, nonPublicIds.length);
+      assert.equal(3, nonPublicIds.length + indexer.publicIds().length);
+      assert.equal(doc4.id, nonPublicIds[0]);
     });
   })
 
@@ -236,7 +212,6 @@ describe('indexer', function() {
     it('should get the ids of non-articles', function() {
       indexer.add(doc1);
       indexer.add(doc2);
-      indexer.add(doc3);
       indexer.add(doc4);
       indexer.add(doc5);
       indexer.add(doc6);

@@ -133,14 +133,14 @@ else if (all) {
 
 
 function printDocumentInfo(id) {
-  //Σ.index.id[id].modified.toLocaleFormat('%Y/%m/%e %T')
+  //Σ.index.id[id].timestamp.toLocaleFormat('%Y/%m/%e %T')
   var d = util.format('%s/%s/%s %s:%s:%s',
-                                 Σ.index.id[id].modified.getFullYear(),
-                                 utils.pad(Σ.index.id[id].modified.getMonth() + 1, 2),
-                                 utils.pad(Σ.index.id[id].modified.getDate(), 2),
-                                 utils.pad(Σ.index.id[id].modified.getHours(), 2),
-                                 utils.pad(Σ.index.id[id].modified.getMinutes(), 2),
-                                 utils.pad(Σ.index.id[id].modified.getSeconds(), 2));
+                                 Σ.index.id[id].timestamp.getFullYear(),
+                                 utils.pad(Σ.index.id[id].timestamp.getMonth() + 1, 2),
+                                 utils.pad(Σ.index.id[id].timestamp.getDate(), 2),
+                                 utils.pad(Σ.index.id[id].timestamp.getHours(), 2),
+                                 utils.pad(Σ.index.id[id].timestamp.getMinutes(), 2),
+                                 utils.pad(Σ.index.id[id].timestamp.getSeconds(), 2));
   console.log('%d · '.green.bold + '%s · '.blue + '%s'.yellow.bold + ' · %s'.bold + ' · %s'.grey.bold + ' · %s%s'.red,
               Σ.index.id[id].n,
               d,
