@@ -364,18 +364,18 @@ exports.context = function context(route, req) {
         // Pagination for single article pages
         if (Σ.index.n) {
           if (!ctx.index && !ctx.search) {
-            var nextN = item.n + 1 < 0 || item.n + 1 > Σ.index.n.length ? null : item.n + 1;
-            ctx.nextPage = nextN != null ? Σ.index.n[nextN] : '';
-            if (ctx.nextPage && Σ.index.id[ctx.nextPage])
-              ctx.nextTitle = Σ.index.id[ctx.nextPage].title;
-            else
-              ctx.nextTitle = '/';
-            var prevN = item.n - 1 < 0 || item.n - 1 > Σ.index.n.length ? null : item.n - 1;
+            var prevN = item.n + 1 < 0 || item.n + 1 > Σ.index.n.length ? null : item.n + 1;
             ctx.prevPage = prevN != null ? Σ.index.n[prevN] : '';
             if (ctx.prevPage && Σ.index.id[ctx.prevPage])
               ctx.prevTitle = Σ.index.id[ctx.prevPage].title;
             else
               ctx.prevTitle = '/';
+            var nextN = item.n - 1 < 0 || item.n - 1 > Σ.index.n.length ? null : item.n - 1;
+            ctx.nextPage = nextN != null ? Σ.index.n[nextN] : '';
+            if (ctx.nextPage && Σ.index.id[ctx.nextPage])
+              ctx.nextTitle = Σ.index.id[ctx.nextPage].title;
+            else
+              ctx.nextTitle = '/';
           }
         }
       }
