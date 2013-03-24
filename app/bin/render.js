@@ -84,9 +84,9 @@ else if (res) {
     router.getResource(req, router.parse(req), function(err, resource) {
       if (err) {
         console.error(err);
-        console.log('Available documents in the index (%d): ', Object.keys(Σ.index['id']).length);
-        Object.keys(Σ.index['id']).forEach(function(id) {
-          console.log(Σ.index['id'][id].n + '. ' + id);
+        console.log('Available documents in the index (%d): ', Object.keys(Σ.index.id).length);
+        Object.keys(Σ.index.id).forEach(function(id) {
+          console.log(Σ.index.id[id].n + '. ' + id);
         });
         console.log('Available special handlers: ');
         for (var t in handlers)
@@ -102,8 +102,8 @@ else if (all) {
   // Ignore config...
   Σ.cfg.denyDiskRead = false;
   // render all documents in index and save them
-  // Don't use Object.keys(Σ.index['id']).forEach, because template loading from disk is async and it will try to read it once for each document at the same time...
-  var ids = Object.keys(Σ.index['id']);
+  // Don't use Object.keys(Σ.index.id).forEach, because template loading from disk is async and it will try to read it once for each document at the same time...
+  var ids = Object.keys(Σ.index.id);
   function renderResource() {
     var id = ids.shift();
     if (!id)
@@ -133,29 +133,30 @@ else if (all) {
 
 
 function printDocumentInfo(id) {
-  //Σ.index['id'][id].modified.toLocaleFormat('%Y/%m/%e %T')
-  var d = util.format('%s/%s/%s %s:%s:%s.%s',
-                                 Σ.index['id'][id].modified.getFullYear(),
-                                 utils.pad(Σ.index['id'][id].modified.getMonth() + 1, 2),
-                                 utils.pad(Σ.index['id'][id].modified.getDate(), 2),
-                                 utils.pad(Σ.index['id'][id].modified.getHours(), 2),
-                                 utils.pad(Σ.index['id'][id].modified.getMinutes(), 2),
-                                 utils.pad(Σ.index['id'][id].modified.getSeconds(), 2),
-                                 utils.pad(Σ.index['id'][id].modified.getMilliseconds(), 3));
-  console.log('%d · '.green.bold + '%s · '.blue + '%s'.yellow.bold + ' · %s'.bold + ' · %s'.grey.bold + ' · %s'.red,
-              Σ.index['id'][id].n,
+  //Σ.index.id[id].modified.toLocaleFormat('%Y/%m/%e %T')
+  var d = util.format('%s/%s/%s %s:%s:%s',
+                                 Σ.index.id[id].modified.getFullYear(),
+                                 utils.pad(Σ.index.id[id].modified.getMonth() + 1, 2),
+                                 utils.pad(Σ.index.id[id].modified.getDate(), 2),
+                                 utils.pad(Σ.index.id[id].modified.getHours(), 2),
+                                 utils.pad(Σ.index.id[id].modified.getMinutes(), 2),
+                                 utils.pad(Σ.index.id[id].modified.getSeconds(), 2));
+  console.log('%d · '.green.bold + '%s · '.blue + '%s'.yellow.bold + ' · %s'.bold + ' · %s'.grey.bold + ' · %s%s'.red,
+              Σ.index.id[id].n,
               d,
               id,
-              Σ.index['id'][id].title,
-              require('path').basename(Σ.index['id'][id].filename),
-              Σ.index['id'][id].tag);
+              Σ.index.id[id].title,
+              require('path').basename(Σ.index.id[id].filename),
+              (Σ.index.id[id].blip ? '[blip] ' : '') +
+              (Σ.index.id[id].secret ? '[secret] ' : ''),
+              Σ.index.id[id].tag);
 }
 
 
 function printInfo() {
-  if (Σ.index['id']) {
+  if (Σ.index.id) {
     var a = Σ.index['n'] || indexer.publicIds();
-    console.log('Indexed documents: %d', Object.keys(Σ.index['id']).length);
+    console.log('Indexed documents: %d', Object.keys(Σ.index.id).length);
     console.log();
     console.log('Public articles (%d)%s: ', a.length, Σ.index['n'] ? '': ' (not sorted)');
     a.forEach(function(id) {
