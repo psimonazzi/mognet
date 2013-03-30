@@ -10,7 +10,6 @@ var doc1 = {
   secret: false,
   doc: false,
   timestamp: new Date(0),
-  schedule: new Date(0),
   modified: new Date(0),
   title: 'Title 0',
   content: '<p>HTML5 valid ♥',
@@ -23,7 +22,6 @@ var doc2 = {
   secret: false,
   doc: false,
   timestamp: new Date(1000),
-  schedule: new Date(1000),
   modified: new Date(1000),
   title: 'Title 1',
   content: '<p>content</p>',
@@ -36,7 +34,6 @@ var doc4 = {
   secret: true,
   doc: false,
   timestamp: new Date(3000),
-  schedule: new Date(3000),
   modified: new Date(3000),
   title: 'Secret',
   content: '<p>content</p>',
@@ -49,7 +46,6 @@ var doc5 = {
   secret: true,
   doc: true,
   timestamp: new Date(4000),
-  schedule: new Date(4000),
   modified: new Date(4000),
   title: 'Doc 1',
   content: '<p>content</p>',
@@ -62,7 +58,6 @@ var doc6 = {
   secret: false,
   doc: true,
   timestamp: new Date('Wed, 01 Jul 1981 17:42:03 GMT'),
-  schedule: new Date('Wed, 01 Jul 1981 17:42:03 GMT'),
   modified: new Date('Wed, 01 Jul 1981 17:42:03 GMT'),
   title: 'Doc 2',
   content: '<p>content</p>',
@@ -75,7 +70,6 @@ var doc7 = {
   secret: false,
   doc: false,
   timestamp: new Date('Sat, 13 Oct 2012 10:47:00 GMT'),
-  schedule: new Date('Sat, 13 Oct 2012 10:47:00 GMT'),
   modified: new Date('Sat, 13 Oct 2012 10:47:00 GMT'),
   title: 'title 7',
   content: '<p>content</p>',
@@ -166,7 +160,6 @@ describe('indexer', function() {
         indexer.loadSync();
         assert.equal(2, Object.keys(Σ.index.id).length);
         assert.equal(typeof new Date(), typeof Σ.index.id[doc1.id].timestamp);
-        assert.equal(typeof new Date(), typeof Σ.index.id[doc1.id].schedule);
         assert.equal(typeof new Date(), typeof Σ.index.id[doc1.id].modified);
         assert.equal(doc1.timestamp.getSeconds(), Σ.index.id[doc1.id].timestamp.getSeconds());
         assert.equal(typeof doc1.title, typeof Σ.index.id[doc1.id].title);

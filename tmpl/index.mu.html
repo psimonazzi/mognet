@@ -156,10 +156,9 @@
 {{/doc}}
 
 <div class="content{{#blip}} blip{{/blip}}">
-  {{#abstract}}{{#index}}{{{abstract}}}{{#needContinue}}<p>… <a class="continue" href="/{{id}}">Continua →</a></p>{{/needContinue}}{{/index}}{{/abstract}}
-  {{#abstract}}{{#search}}{{{abstract}}}{{#needContinue}}<p>… <a class="continue" href="/{{id}}">Continua →</a></p>{{/needContinue}}{{/search}}{{/abstract}}
+  {{#index}}{{#abstract}}{{{abstract}}}<p>… <a class="continue" href="/{{id}}">Continua →</a></p>{{/abstract}}{{^abstract}}{{{content}}}{{/abstract}}{{/index}}
+  {{#search}}{{#abstract}}{{{abstract}}}<p>… <a class="continue" href="/{{id}}">Continua →</a></p>{{/abstract}}{{^abstract}}{{{content}}}{{/abstract}}{{/search}}
   {{^index}}{{^search}}{{{content}}}{{/search}}{{/index}}
-  {{^abstract}}{{{content}}}{{/abstract}}
   
   {{#hasRlinks}}
   <div class="rel">

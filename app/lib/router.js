@@ -117,7 +117,6 @@ exports.canonicalize = function canonicalize(req, route) {
   var idx = Math.min(idxDot, idxSlash);
   route.url = idx > 0 && idx <= route.pathname.length ? route.pathname.substring(0, idx) : route.pathname;
 
-
   // Check if it is root path
   if (route.url == '')
     route.url = 'index';
@@ -182,7 +181,6 @@ exports.canonicalize = function canonicalize(req, route) {
     // RSS/Atom feed
     route.output = 'xml';
     route.medium = 'rss';
-    route.noCache = true;
     route.url = 'rss';
     route.key = 'rss';
     break;
@@ -333,9 +331,9 @@ exports.context = function context(route, req) {
     if (!ctx.items)
       ctx.items = [];
     ctx.items = ctx.items.map(function(item) {
-      if (item && (item.title || item['abstract'])) {
+      if (item && (item.title || item.description)) {
         // safe title representation for metadata (without HTML tags)
-        item.titleSafe = (item.title || item['abstract']).replace(/<.+?>/g, '').trim();
+        item.titleSafe = (item.title || item.description).replace(/<.+?>/g, '').trim();
       }
 
       if (item && !item.doc) {
@@ -385,17 +383,11 @@ exports.context = function context(route, req) {
         item.hasRlinks = true;
         item.rlinks = item.rel.map(function(id) {
           if (Σ.index.id[id]) {
-            return {
-              'href': id,
-              'title': Σ.index.id[id].title
-            };
+            return { 'href': id, 'title': Σ.index.id[id].title };
           }
           else {
             logger.e('(Router) No title found for related id %s in %s', id, item.id);
-            return {
-              'href': id,
-              'title': ''
-            };
+            return { 'href': id, 'title': '' };
           }
         });
       }

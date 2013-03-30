@@ -210,7 +210,7 @@ function indexReviver(k, v) {
   if (k === '')
     return v;
   if (typeof v === 'string' &&
-      (k === 'modified' || k === 'timestamp' || k === 'schedule')) {
+      (k === 'modified' || k === 'timestamp')) {
     return new Date(v);
   }
   return v;

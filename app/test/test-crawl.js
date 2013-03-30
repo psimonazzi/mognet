@@ -127,7 +127,6 @@ describe('crawler', function() {
             "\"tag\": [ \"www\",\"tag2\" ],\n" +
             "\"rel\": [ \"title-0\" ],\n" +
             "\"timestamp\": \"1981/07/01 17:30\",\n" +
-            "\"schedule\": \"1981/07/01 17:30\",\n" +
             "\"modified\": \"1981/08/02 18:30\"\n" +
             "}\n" +
             "</script>\n" +
@@ -140,7 +139,6 @@ describe('crawler', function() {
       assert.equal('tag2', doc['tag'][1]);
       assert.equal('title-0', doc['rel'][0]);
       assert.equal(new Date(1981, 6, 1, 17, 30, 0).toLocaleString(), doc['timestamp'].toLocaleString());
-      assert.equal(new Date(1981, 6, 1, 17, 30, 0).toLocaleString(), doc['schedule'].toLocaleString());
       assert.equal(new Date(1981, 7, 2, 18, 30, 0).toLocaleString(), doc['modified'].toLocaleString());
     });
 
@@ -202,7 +200,8 @@ describe('crawler', function() {
             "<p>First <code>p</code> used for     abstract.</p>\n" +
             "<p>Second.</p>";
       var doc = crawler.fromContent(S, {});
-      assert.equal("<p>First <code>p</code> used for     abstract.</p>\n<p>Second.</p>", doc['abstract']);
+      assert.equal(null, doc['abstract']);
+      assert.equal("<p>First <code>p</code> used for     abstract.</p>\n<p>Second.</p>", doc['content']);
       assert.equal("First p used for abstract. Second.", doc['description']);
       assert.equal(null, doc['description'].match(/<.+?>/));
 

@@ -63,15 +63,15 @@ crawler.on('found', function(doc) {
   }
 
   // Skip documents scheduled for a future date
-  if (doc.schedule.getTime() > new Date().getTime()) {
+  if (doc.timestamp.getTime() > new Date().getTime()) {
     console.log("Skipping %s, scheduled for %s", doc.id, util.format('%s/%s/%s %s:%s:%s.%s',
-                     doc.schedule.getFullYear(),
-                     utils.pad(doc.schedule.getMonth() + 1, 2),
-                     utils.pad(doc.schedule.getDate(), 2),
-                     utils.pad(doc.schedule.getHours(), 2),
-                     utils.pad(doc.schedule.getMinutes(), 2),
-                     utils.pad(doc.schedule.getSeconds(), 2),
-                     utils.pad(doc.schedule.getMilliseconds(), 3)));
+                     doc.timestamp.getFullYear(),
+                     utils.pad(doc.timestamp.getMonth() + 1, 2),
+                     utils.pad(doc.timestamp.getDate(), 2),
+                     utils.pad(doc.timestamp.getHours(), 2),
+                     utils.pad(doc.timestamp.getMinutes(), 2),
+                     utils.pad(doc.timestamp.getSeconds(), 2),
+                     utils.pad(doc.timestamp.getMilliseconds(), 3)));
     return;
   }
 

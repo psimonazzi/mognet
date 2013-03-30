@@ -39,26 +39,20 @@ module.exports.createCrawler = function createCrawler() { return new Crawler(); 
  */
 var DEFAULTS = function() {
   return {
-    'n': 0,
-    'id': null,
-    'filename': null,
-    'timestamp': null,
-    'schedule': null,
-    'modified': null,
+    'n': 0, // position in ordered index
+    'id': null, // unique id for url
+    'filename': null, // resource filename
+    'timestamp': null, // creation time, set to future to schedule
+    'modified': null, // modification time
     'title': null,
-    'abstract': null,
-    'description': null,
-    'needContinue': null,
+    'abstract': null, // article first lines, empty if full article is shown
+    'description': null, // page description, short and without html tags
     'content': null,
     'tag': [],
-    'rel': [],
-    'blip': false,
-    'cite': null,
-    'secret': false,
-    'doc': false,
-    'location': [],
-    'style': null,
-    'render': null
+    'rel': [], // related ids
+    'blip': false, // special format for short articles
+    'secret': false, // not shown in archives
+    'doc': false // document or article
   };
 };
 
@@ -304,7 +298,7 @@ Crawler.prototype.fromContent = function(s, doc) {
         if (startSecondPar > 0) {
           doc['abstract'] = doc['content'].substring(startFirstPar, startSecondPar + 4);
           if (doc['abstract'].length < doc['content'].length) {
-            doc['needContinue'] = true;
+            var needContinue = true;
           }
           doc['abstract'] = doc['abstract'].trim();
         }
@@ -322,6 +316,10 @@ Crawler.prototype.fromContent = function(s, doc) {
     .trim();
   if (doc['description'].length > 140)
       doc['description'] = doc['description'].substring(0, 140) + ' …';
+
+  // discard abstract if not needed
+  if (!needContinue)
+    doc['abstract'] = null;
 
   return doc;
 };
@@ -353,7 +351,7 @@ Crawler.prototype.fromMeta = function(s, doc) {
   }
   // Transform parsed attributes in the correct format if needed
   // Dates are specified as strings in format 'yyyy/mm/dd hh:mm' or in standard JSON serialized format, i.e. 'yyyy-mm-ddThh:mm:ss.sssZ'
-  [ 'timestamp', 'schedule', 'modified' ].forEach(function(name) {
+  [ 'timestamp', 'modified' ].forEach(function(name) {
     if (meta && meta[name]) {
       var match = /^(\d{4})\/(\d{2})\/(\d{2})\s(\d{2}):(\d{2})$/.exec(meta[name]);
       if (match && match.length == 6) {
@@ -376,15 +374,11 @@ Crawler.prototype.fromMeta = function(s, doc) {
 
   // Heuristically set any field still missing
   // Do this here to keep all document creation logic in one place
-  if (!doc['schedule'])
-    doc['schedule'] = doc['timestamp'];
   if (!doc['modified'])
     doc['modified'] = doc['timestamp'];
 
   if (!doc['timestamp'] instanceof Date)
     doc['timestamp'] = new Date(doc['timestamp']);
-  if (!doc['schedule'] instanceof Date)
-    doc['schedule'] = new Date(doc['schedule']);
   if (!doc['modified'] instanceof Date)
     doc['modified'] = new Date(doc['modified']);
 

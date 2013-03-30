@@ -140,7 +140,7 @@ module.exports = {
         ctx.items = ids.map(function(id) {
           var doc = Σ.index.id[id];
           return {
-            title: doc.title.replace(/<.+?>/g, '').trim(), // TODO reuse titleSafe
+            title: doc.title.replace(/<.+?>/g, '').trim(),
             description: doc.content,
             link: Σ.cfg.baseUrl + '/' + id,
             guid: Σ.cfg.baseUrl + '/' + id,
