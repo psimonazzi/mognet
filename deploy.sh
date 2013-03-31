@@ -30,11 +30,11 @@ fi
 
 mkdir -p /var/www/log
 mkdir -p /var/www/mognet/data
-chmod +x /var/www/mognet/deploy /var/www/mognet/reload /var/www/mognet/minify /var/www/mognet/app/bin/*.js
+chmod +x /var/www/mognet/*.sh /var/www/mognet/app/bin/*.js
 
 echo "Minifying..."
 cd /var/www/mognet
-/var/www/mognet/minify
+/var/www/mognet/minify.sh
 cd - >/dev/null
 
 echo "Updating index..."

@@ -1,2 +1,2 @@
 #!/bin/sh
-cd /var/www/mognet && ./reload
+cd /var/www/mognet && ./reload.sh
