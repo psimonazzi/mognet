@@ -2,24 +2,20 @@
 
 Mognet is an obsessively minimal, opinionated web framework for writers who love hacking or hackers who love design. It is written in Javascript for Node.js.
 
-It was created to run the Author's personal site, but it may also be useful for those who still believe in the Do-It-Yourself Web, and don't want / can't build their own web framework. If you just want Tumblr, this is totally too much work. If you are a geek who can't sleep at night if the HTML code on their page isn't indented beautifully, you may like it.
+It was created to run the Author’s personal site, but it may also be useful for those who still believe in the Do-It-Yourself Web, and don’t want to build their own web framework from scratch. If you just want Tumblr, this is totally too much work. If you can’t sleep at night if the HTML code on your page isn’t indented beautifully, you may like it.
 
-Mognet runs as an in-memory, single-threaded server designed to run on cheap hosting services and still capable of withstanding a sudden popularity. It prefers to generate pages once and then serve them from memory without hitting the disk ever again, because hard disks are really slow. You can also use it to generate static HTML files, which you may just publish on Google Drive or Dropbox, so you don't need a web server at all.
-
-If you have a lot of traffic keep in mind that Mognet can't do anything to save your bandwidth (except caching and compressing HTTP responses), so if you publish many images and other big static files it's probably a good idea to host them in the Cloud, and link to them from your pages.
-
+Mognet runs as an in-memory, single-threaded server designed to run on cheap hosting services and still capable of withstanding a sudden popularity. It prefers to generate pages once and then serve them from memory without reading the disk ever again, as hard disks are really slow. You can also use it to generate static HTML files, which you may just publish on Google Drive or Dropbox, so you don’t need a web server at all.
 
 
 ## Package contents
 
 * The Node.js server. This is Mognet itself.
 
-* A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. [The Mognet page on Github](https://psimonazzi.github.com/mognet) is based on this. This design will also be used at the Author's personal site (coming soon).
+* A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. [The Mognet page on Github](https://psimonazzi.github.com/mognet) is based on this. This design will also be used at the Author’s personal site when it is ready.
 
-* Deployment scripts. Used to deploy Mognet to the live server, start and stop it. They are written for a Debian-like Linux system, but nothing too specific; you should easily be able to use them in other environments. It's very basic stuff, and if you want to do things your way you can just ignore them.
+* Deployment scripts. Used to deploy Mognet to the live server, start and stop it. They are written for a Debian-like Linux system, but nothing too specific; you should easily be able to use them in other environments. It’s very basic stuff, and if you want to do things your way you can just ignore them.
 
-* A collection of command-line tools to manage the site contents (list documents, prettify typography, etc). You don't really need them, they are just for fun and convenience.
-
+* A collection of command-line tools to manage the site contents (list documents, prettify typography, etc). You don’t really need them, they are just for fun and convenience.
 
 
 ## Super quick start if you know what you are doing
@@ -31,7 +27,7 @@ $ cd mognet/app
 $ npm install mognet
 $ cd ..
 $ sudo cp mognet.conf /etc/init
-$ ./deploy
+$ ./deploy.sh
 $ sudo start mognet
 ```
 
@@ -45,10 +41,9 @@ $ cd mognet/app
 $ npm install mognet
 ```
 
-This will download all needed Node.js modules. Mognet follows convention over configuration, so it just works and you don't need to configure anything. Ha! (But seriously, see below for some config options.)
+This will download all needed Node.js modules. Mognet follows convention over configuration, so it just works and you don’t need to configure anything. Ha! (But seriously, see below for some config options.)
 
 When you are ready to run your own Mognet server, go on to Deployment.
-
 
 
 ## Deployment
@@ -57,15 +52,15 @@ When you are ready to run your own Mognet server, go on to Deployment.
 
 * You have access to a public server on the Internet: maybe an Amazon EC2 instance, a virtual host or a RaspberryPi in your kitchen.
 
-* You need to install Mognet there; your user home dir is a nice place to put it. You can just clone the Git repository there: actually, it's a very good idea!
+* You need to install Mognet there; your user home dir is a nice place to put it. You can just clone the Git repository there: actually, it’s a very good idea!
 
-* Once you have the code on the server, you don't just start publishing your site: first, you have to deploy it. This two-step process avoids many crazy security holes, and enables instant updates to the running server without downtime.
+* Once you have the code on the server, you don’t just start publishing your site: first, you have to deploy it. This two-step process avoids many crazy security holes, and enables instant updates to the running server without downtime.
 
 ### How-to
 
 Mognet expects the following directory structure:
 
-    + (wherever you want to put this project, i.e. /home/yourname/www/)
+    + (wherever you want to put this project, like /home/yourname/www/)
     |
     +-- mognet/ (this repository content)
     |
@@ -75,14 +70,14 @@ Mognet expects the following directory structure:
 
 So you have to create the ``res`` and ``static`` dirs at the same level of the ``mognet`` dir. They can also be symlinks to other places if you like.
 
-* ``res/`` is where the site content will be. Posts and articles need to be in this directory so Mognet can discover them. This could be a separate repository, if you want to put under version control your content too. This directory is NOT exposed for public access from the internet, it's used by Mognet internally.
+* ``res/`` is where the site content will be. Posts and articles need to be in this directory so Mognet can discover them. This could be a separate repository, if you want to put under version control your content too. This directory is NOT exposed for public access from the internet, it’s used by Mognet internally.
 
-* ``static/`` is the only place in the filesystem that will be exposed for public access from the internet. Just to be clear: ANYTHING IN THIS DIRECTORY WILL BE ACCESSIBLE FROM THE INTERNET (if one knows the filename). This is where static files for the site will be: images, PDF documents, binary files and so on. You can leave this empty if you have no files, or you prefer to use a remote storage service instead (like Google Drive, Amazon S3, Dropbox...).
+* ``static/`` is the only place in the filesystem that will be exposed for public access from the internet. Just to be clear: ANYTHING IN THIS DIRECTORY WILL BE ACCESSIBLE FROM THE INTERNET (if one knows the filename). This is where static files for the site will be: images, PDF documents, binary files and so on. You can leave this empty if you have no files, or you prefer to use a remote storage service instead. If you have a lot of traffic keep in mind that Mognet can’t do anything to save your bandwidth (except caching and compressing HTTP responses), so if you publish many images and other big static files it’s probably a good idea to host them in the Cloud (Google Drive, Amazon S3, Dropbox...), and link to them from your pages.
 
 Once you are ready, make sure you have write access to the ``/var`` dir on your server and run this command from the ``mognet`` dir:
 
 ```sh
-$ ./deploy
+$ ./deploy.sh
 ```
 
 After this you will have the following structure on your filesystem:
@@ -108,10 +103,9 @@ If something goes wrong, you can immediatly return to the previous working versi
 Now you are ready to run the server.
 
 
-
 ## Running
 
-Quick test run from the ``mognet/app/`` dir (quit with Ctrl-C). This command specifies a custom port ``3000``; the default port is 80, and you need to be the superuser to use it:
+Quick test run from the ``mognet/app/`` dir (quit with Ctrl-C). This command specifies a custom port 3000; the default port is 80, and you need to be the superuser to use it:
 
 ```sh
 $ node server.js 3000
@@ -131,7 +125,9 @@ You will want to run the server as a daemon, starting at system boot and stoppin
 * ``status mognet``
 
 To install Mognet as an Upstart daemon just copy the ``mognet.conf`` file in ``/etc/init``. The server will be started automatically at system boot, and restarted immediatly if it crashes.
-The daemon will print stdout and stderr to ``/dev/shm/stdout.log`` and ``/dev/shm/stderr.log``, which are in a temporary filesystem not written to disk. To save them to persistent files, you can use a periodic job like the one provided in ``crontab.txt``, which copies them to ``/var/www/log``.
+The daemon will print stdout and stderr to ``/dev/shm/stdout.log`` and ``/dev/shm/stderr.log``, which are in a temporary filesystem not written to disk. To save them to persistent files, you can use a periodic job for crontab like this one, which copies them to ``/var/www/log``:
+
+    * * * * * cp -af /dev/shm/stdout.log /dev/shm/stderr.log /var/www/log
 
 By default, the server will listen on port 80 (HTTP) and will not print any log messages (not even errors) except at startup.
 
@@ -140,14 +136,13 @@ By default, the server will listen on port 80 (HTTP) and will not print any log 
 
 The Mognet server process listens on these standard POSIX signals:
 
-* ``HUP (1)``: Updates the index file and reloads it in the server, clearing the content cache. Also reloads the configuration. Use this when you update the site contents, HTML templates or configuration (not needed when you update .css, .js and other static files);
+* ``HUP (1)``: Updates the index file and reloads it in the server, clearing the content cache. Also reloads the configuration. Use this when you update the site contents, HTML templates or configuration (not needed when you update CSS and other static files);
 
 * ``USR1 (10)``: Prints a JSON structure representing the current index and content cache which are stored in-memory by the server. Useful for quick debug;
 
 * ``USR2 (12)``: Prints various info on the running server: version, configuration, memory usage, process id. 
 
 If you have redirected the server standard output to a file, of course to see what Mognet says you will have to open that file.
-
 
 
 ## Configuration
@@ -171,13 +166,11 @@ Any variable can be passed to Mognet in these ways, even custom variables you ca
 
 * ``baseUrl``: (default: null) The host and port of the urls served by this server, as seen from the internet. Internal urls will usually be specified in links as absolute paths (like ``/search``), but sometimes a full url is required by templates, for example in social networks metadata. The full url will be the concatenation of this value and an absolute path. Example value: ``http://example.com``.
 
-* ``staticUrl``: (default: null) *TODO* A base url to set in any link to static resources in the template. Useful if you want to put CSS, javascript, images and so on on a remote storage service, and link to them in the template. If set, the full url of static resources will be the concatenation of this value and an absolute path. For example, if this value is ``http://googledrive.com/host/mytoken`` and the template uses a CSS file ``/css/style.css``, the link to the CSS in the template will be ``http://googledrive.com/host/mytoken/css/style.css``. If not set, urls to static resources in the template will be left as is, so they will refer to local resources. This value will affect only links in the template, not links in the documents you write.
+* ``user``: (default: null) If specified, the server process will run as this user immediatly after binding to the port. Usually you will set this to an unprivileged user, so that the server will start at system boot with root privileges, bind to the default port 80, and then drop privileges and continue running as this user. The value can be a username (string) or uid (number). On Debian/Ubuntu, the first login user you create during installation has uid 1000 and group 1000 by convention, so it should be a safe value to set. This value must be set together with ``group``, otherwise it will have no effect.
 
-- ``user``: (default: null) If specified, the server process will run as this user immediatly after binding to the port. Usually you will set this to an unprivileged user, so that the server will start at system boot with root privileges, bind to the default port 80, and then drop privileges and continue running as this user. The value can be a username (string) or uid (number). On Debian/Ubuntu, the first login user you create during installation has uid 1000 and group 1000 by convention, so it should be a safe value to set. This value must be set together with ``group``, otherwise it will have no effect.
+* ``group``: (default: null) If specified, the server process will run as this group immediatly after binding to the port. See ``user``.
 
-- ``group``: (default: null) If specified, the server process will run as this group immediatly after binding to the port. See ``user``.
-
-- ``googleAnalyticsAccount``: (default: null) A Google Analytics account id, used in the default template to enable Google Analytics tracking on the pages. If not set, Google Analytics will not be enabled.
+* ``googleAnalyticsAccount``: (default: null) A Google Analytics account id, used in the default template to enable Google Analytics tracking on the pages. If not set, Google Analytics will not be enabled.
 
 
 ### Examples
@@ -195,8 +188,7 @@ A ``config.json`` with a custom variable:
     "baseUrl": null,
     "user": 1000,
     "group": 1000,
-    "googleAnalyticsAccount": null,
-    "staticUrl": null
+    "googleAnalyticsAccount": null
 }
 ```
 
@@ -213,7 +205,6 @@ MOGNET_BASE_URL=
 MOGNET_USER=1000
 MOGNET_GROUP=1000
 MOGNET_GOOGLE_ANALYTICS_ACCOUNT=
-MOGNET_STATIC_URL=
 ```
 
 
@@ -226,6 +217,11 @@ $ npm test
 ```
 
 from the ``mognet/app`` dir.
+
+
+## Writing content
+
+TODO
 
 
 ## License

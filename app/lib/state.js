@@ -19,8 +19,7 @@ function CONFIG_DEFAULTS() {
     "baseUrl": null,
     "user": null,
     "group": null,
-    "googleAnalyticsAccount": null,
-    "staticUrl": null
+    "googleAnalyticsAccount": null
   };
 }
 

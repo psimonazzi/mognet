@@ -72,7 +72,7 @@ var indexer = Indexer.createIndexer();
 indexer.loadSync();
 
 if (Object.keys(Σ.index['id']).length == 0) {
-  console.error('ERROR: No index found. Maybe create a new index with: bin/update.js');
+  console.error('ERROR: No index found. Maybe create a new index with bin/update.js then reload');
   // do not die, just serve what we can: static files and special routes with dedicated handlers
 }
 
@@ -115,6 +115,7 @@ var app = connect()
         var route = router.parse(req);
         router.getResource(req, route, function(err, resource) {
           if (err) {
+            // These error pages are a fallback used when no user error pages are found
             if (404 === err.status || 403 === err.status) {
               res.statusCode = 404; // mask 403 (secret document) as 404 (not found)
               if (!resource)
@@ -135,7 +136,7 @@ var app = connect()
           // If content length is not set, chunked encoding will be used automatically (as defined by the HTTP standard)
           var len = Buffer.byteLength(resource, 'utf8');
           if (!route.noCache) {
-            // Use a hash based Etag so if the template (but not the document) has changed it will be reflected in the Etag
+            // Use a hash based Etag so if the template (but not the document) has changed it will still be reflected in the Etag
             //var etag = '"' + len + '-' + Number(lastModified.getTime()) + '"';
             var etag = '"' + connect.utils.md5(resource) + '"';
             res.setHeader('Etag', etag);
