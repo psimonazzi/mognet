@@ -109,10 +109,20 @@ describe('crawler', function() {
 
     it('should extract a document from a file name, ignoring first part', function() {
       var mtime = new Date().getTime();
+      var doc = crawler.fromFile("test_hello-world.html", { 'mtime': mtime, 'ctime': mtime }, {});
+      assert.equal("hello-world", doc['id']);
+      assert.equal(mtime, doc['timestamp']);
+      assert.equal(true, !doc['doc']);
+    });
+
+    it('should extract a document from a file name, marking it as non-article', function() {
+      var mtime = new Date().getTime();
       var doc = crawler.fromFile("doc_hello-world.html", { 'mtime': mtime, 'ctime': mtime }, {});
       assert.equal("hello-world", doc['id']);
       assert.equal(mtime, doc['timestamp']);
+      assert.equal(true, doc['doc']);
     });
+
 
     it('should extract a document from a file contents and metadata', function() {
       var TITLE = "Hello, World";

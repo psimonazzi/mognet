@@ -38,4 +38,3 @@
     "test": "mocha --reporter dot"
   }
 }
-

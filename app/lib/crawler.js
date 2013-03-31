@@ -166,10 +166,12 @@ Crawler.prototype.slug = function slug(title) {
  * Create a partial document from a file, overriding any existing field of the passed document.
  * The following document fields are set:
  *
- * 'timestamp': if the file name is formatted as 'yyyymmdd_slug.html', the first 8 digits are interpreted as a timestamp.
+ * - 'timestamp': if the file name is formatted as 'yyyymmdd_slug.html', the first 8 digits are interpreted as a timestamp.
  * If not, the file creation time is used as a timestamp.
  *
- * 'id': a slug created from the whole file name without extension, or the last part if the file name also contains a timestamp. If the filename contains a '_' char, it and all preceding characters are ignored when creating the slug, So one could use the first part of the filename for tagging/sorting on filesystem.
+ * - 'modified': file modification time.
+ *
+ * - 'id': a slug created from the whole file name without extension, or the last part if the file name also contains a timestamp. If the filename contains a '_' char, it and all preceding characters are ignored when creating the slug, So one could use the first part of the filename for tagging/sorting on filesystem. As a special case, if the filename starts with 'doc_', the 'doc' field is also set to true.
  *
  * @param {string} file Full filename
  * @param {Object} stat Stat data for file.
@@ -198,6 +200,8 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
     }
   }
   else {
+    if (/^doc_/.exec(name))
+      doc['doc'] = true;
     // ignore chars up to first '_'
     doc['id'] = this.slug(name.replace(/^[^_]+_/, '').replace(/\.[^.]+$/, ''));
   }
