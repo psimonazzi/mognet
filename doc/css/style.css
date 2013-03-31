@@ -127,6 +127,9 @@ h1, h2, h3, h4, header, footer, .meta, .menu, .rel, figcaption, .blip, input, bu
     font-family: "Arial Unicode MS", "Lucida Sans Unicode", sans-serif;
     font-weight: normal;
 }
+.logotype {
+    font-family: 'AauxNext-Light', Calibri, Arial, sans-serif;
+}
 
 pre, code, kbd, var, samp, tt {
     font-family: Monaco, Consolas, monospace;
@@ -207,6 +210,10 @@ h2, .filter {
     margin-bottom: 1.043em;
 }
 
+h2 {
+    margin-top: 2.001em;
+}
+
 /* no paragraph margin, but indent - http://artequalswork.com/posts/islands-of-thought.php */
 /*p + p {
     margin-bottom: 0;
@@ -245,7 +252,7 @@ figure pre {
     margin-bottom: 0;
 }
 
-.rel, ol.footnotes {
+.rel, .footnotes {
     margin-top: 3.375em;
 }
 
@@ -253,7 +260,9 @@ figure pre {
     line-height: 1.6875em;
 }
 
-
+.content li {
+    margin-left: 1em;
+}
 
 /*** Layout and style ***/
 
@@ -312,8 +321,6 @@ h1 a:hover:after, .menu a:hover:after, .rel a:hover:after {
     content: ' →';
 }
 
-.filter small {
-}
 .filter:before {
     content: '→ ';
 }
@@ -607,10 +614,6 @@ footer small a:hover {
     border-color: #c60016;
 }
 
-.searchform button {
-    
-}
-
 
 
 /******************************************/
@@ -638,7 +641,7 @@ footer small a:hover {
     padding: 1.6875em 0;
     color: #f3f2ee;
     background: rgba(0, 0, 0, 0.9);
-    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.7);
 }
 
 /*.blur {
@@ -686,7 +689,7 @@ a:hover, a:active { outline: none; }
 
 /**** Hi-Spec ****/
 
-@media screen and (min-width: 1025px) {
+@media screen and (min-width: 1024px) {
 
 h1 {
     font-size: 2.73em;
@@ -700,6 +703,10 @@ header, article, .document, footer {
 header nav > ul > li > a {
     padding-left: 0.618em;
     padding-right: 0.618em;
+}
+
+.content li {
+    margin-left: 0;
 }
 
 .content {
@@ -723,16 +730,16 @@ article h1, .document h1 {
 }
 
 /* start override for different children widths */
-article .content {
+article .content, .document .content {
     width: 74.05%;
 }
-article .content >* {
+article .content >*, .document .content >* {
     width: 65.4%;
 }
-article .content >pre, article .content >figure {
+article .content >pre, article .content >figure, .document .content >pre, .document .content >figure {
     width: 100%;
 }
-article .content >.nostretch {
+article .content >.nostretch, .document .content >.nostretch {
     width: 65.4%;
 }
 /* end override */
@@ -822,21 +829,24 @@ header nav li:hover > div {
 /** animated **/
 
 header .logo {
+    -webkit-animation: in-down 1.5s ease;
     animation: in-down 1.5s ease;
 }
 
 .document {
+    -webkit-animation: fade-in-down 1s ease;
     animation: fade-in-down 1s ease;
 }
 
 header nav li #search-menu {
+    -webkit-animation: none;
     animation: none;
 }
 
 header nav li:hover #search-menu {
     background:
     -webkit-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
-    -webkit-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
+    -webkit-linear-gradient(left, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
     background:
     -moz-linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
     -moz-linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
@@ -844,7 +854,8 @@ header nav li:hover #search-menu {
     linear-gradient(top, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%) no-repeat,
     linear-gradient(0%, rgba(249, 18, 18, 0.5), rgba(249, 18, 181, 0.5), rgba(38, 139, 210, 0.5), rgba(249, 18, 181, 0.5), rgba(249, 18, 18, 0.5)) repeat;
     background-size: 100%, 200%;
-    
+
+    -webkit-animation: fade-in-down .3s ease, aurora 2.5s linear infinite alternate;
     animation: fade-in-down .3s ease, aurora 2.5s linear infinite alternate;
 }
 
@@ -883,7 +894,6 @@ header nav li:hover #search-menu {
 #modal-inside {
     display: table-cell;
     vertical-align: middle;
-    margin: 0 auto;
     text-align: center;
 }
 
@@ -901,7 +911,6 @@ header nav li:hover #search-menu {
 #modal-inside-loading {
     display: table-cell;
     vertical-align: middle;
-    margin: 0 auto;
     text-align: center;
     color: #fff;
 }
