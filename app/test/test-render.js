@@ -145,20 +145,4 @@ describe('renderer', function() {
     });
   })
 
-  describe('#preRender()', function() {
-    it('should render all documents in the index twice (once for lo-spec, one for hi-spec)', function(done) {
-      // First build an index
-      Σ.index = {};
-      var indexer = require('../lib/indexer').createIndexer();
-      indexer.add(doc1);
-      indexer.add(doc2);
-
-      renderer.preRender(function() {
-        assert.equal(Object.keys(Σ.renders).length, Object.keys(Σ.index['id']).length);
-        assert.equal(2, Object.keys(Σ.renders[Object.keys(Σ.renders)[0]]).length);
-        done();
-      });
-    });
-  })
-
 })

@@ -230,15 +230,15 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
  *
  * The following document fields are set:
  *
- * 'title': content of the <title> element or first Markdown title
+ * - 'title': content of the <title> element or first Markdown title
  *
- * 'id': slug created from the title, if undefined. This field is NOT overwritten if it was already set
+ * -'id': slug created from the title, if undefined. This field is NOT overwritten if it was already set
  *
- * 'content': file content without doctype, HTML comments, <meta>, <title> and first <script> element
+ * - 'content': file content without doctype, HTML comments, <meta>, <title> and first <script> element
 
- * 'abstract': document abstract
+ * - 'abstract': document abstract
  *
- * 'description': document description used in HTML meta elements. This field is the abstract without HTML tags, possibly truncated
+ * - 'description': document description used in HTML meta elements. This field is the abstract without HTML tags, possibly truncated
  *
  * @param {string} s File contents as string
  * @param {Object} doc Possibly empty partial document to be overridden
@@ -332,8 +332,12 @@ Crawler.prototype.fromContent = function(s, doc) {
 /**
  * Create a partial document from a file metadata, overriding any existing field of the passed document.
  * Metadata takes precedence over any other way to set attributes.
+ *
+ * Dates are specified as strings in format 'yyyy/mm/dd hh:mm' or in standard JSON serialized format, i.e. 'yyyy-mm-ddThh:mm:ss.sssZ'.
+ *
  * This function returns the final instance of a document. If any field is still undefined after parsing metadata, and has no default value, it is set by heuristics if possible.
- * Further modules consuming the document returned by this function should not modify it, nor transform or parse its attributes. Please!
+ *
+ * Further modules consuming the document returned by this function should not modify it, nor transform or parse its attributes.
  *
  * @param {string} s File contents as string, containing the metadata in the first <script> element
  * @param {Object} doc Possibly empty partial document to be overridden
@@ -354,7 +358,6 @@ Crawler.prototype.fromMeta = function(s, doc) {
     }
   }
   // Transform parsed attributes in the correct format if needed
-  // Dates are specified as strings in format 'yyyy/mm/dd hh:mm' or in standard JSON serialized format, i.e. 'yyyy-mm-ddThh:mm:ss.sssZ'
   [ 'timestamp', 'modified' ].forEach(function(name) {
     if (meta && meta[name]) {
       var match = /^(\d{4})\/(\d{2})\/(\d{2})\s(\d{2}):(\d{2})$/.exec(meta[name]);
@@ -371,10 +374,6 @@ Crawler.prototype.fromMeta = function(s, doc) {
   });
 
   doc = utils.extend(doc, meta);
-
-  // remove abstract from blip articles
-  /*if (doc['blip'])
-    doc['abstract'] = null;*/
 
   // Heuristically set any field still missing
   // Do this here to keep all document creation logic in one place

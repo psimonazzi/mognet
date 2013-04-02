@@ -65,29 +65,29 @@ Indexer.prototype.add = function(doc) {
 
   // by id
   if (!Σ.index['id'])
-    Σ.index['id'] = {};
-  Σ.index['id'][doc.id] = doc;
+    Σ.index.id = {};
+  Σ.index.id[doc.id] = doc;
 
   // Index by tag and time only if the document is public
   if (this.isPublicId(doc.id)) {
     // by tag
     if (!Σ.index['tag'])
-      Σ.index['tag'] = {};
+      Σ.index.tag = {};
     doc.tag.forEach(function(e) {
-      var tags = Σ.index['tag'][e] || [];
+      var tags = Σ.index.tag[e] || [];
       if (!tags.some(function(t) { return t === doc.id; }))
         tags.push(doc.id);
-      Σ.index['tag'][e] = tags;
+      Σ.index.tag[e] = tags;
     });
 
     // by time
     if (!Σ.index['time'])
-      Σ.index['time'] = {};
+      Σ.index.time = {};
     var timeTag = util.format('%d/%s', doc.timestamp.getFullYear(), utils.pad(doc.timestamp.getMonth() + 1, 2));
-    var times = Σ.index['time'][timeTag] || [];
+    var times = Σ.index.time[timeTag] || [];
     if (!times.some(function(t) { return t === doc.id; }))
       times.push(doc.id);
-    Σ.index['time'][timeTag] = times;
+    Σ.index.time[timeTag] = times;
   }
 };
 
@@ -105,24 +105,24 @@ Indexer.prototype.sort = function() {
     return;
 
   // reset
-  Σ.index['n'] = null;
+  Σ.index.n = null;
 
-  Σ.index['n'] = this.publicIds().sort(function(a, b) {
-    var aTime = Σ.index['id'][a].timestamp.getTime(), bTime = Σ.index['id'][b].timestamp.getTime();
+  Σ.index.n = this.publicIds().sort(function(a, b) {
+    var aTime = Σ.index.id[a].timestamp.getTime(), bTime = Σ.index.id[b].timestamp.getTime();
     if (aTime != bTime)
       return aTime - bTime;
     else {
-      if (Σ.index['id'][a].id < Σ.index['id'][b].id)
+      if (Σ.index.id[a].id < Σ.index.id[b].id)
         return -1;
-      else if (Σ.index['id'][a].id > Σ.index['id'][b].id)
+      else if (Σ.index.id[a].id > Σ.index.id[b].id)
         return 1;
       else
         return 0;
     }
   });
 
-  for (var i = 0; i < Σ.index['n'].length; i++) {
-    Σ.index['id'][Σ.index['n'][i]].n = i;
+  for (var i = 0; i < Σ.index.n.length; i++) {
+    Σ.index.id[Σ.index.n[i]].n = i;
   }
 };
 
@@ -139,7 +139,7 @@ Indexer.prototype.publicIds = function publicIds() {
   if (!Σ.index || !Σ.index['id'])
     return [];
   var self = this;
-  var ids = (Σ.index['n'] || Object.keys(Σ.index['id'])).filter(function(id, index, array) {
+  var ids = (Σ.index['n'] || Object.keys(Σ.index.id)).filter(function(id, index, array) {
     return self.isPublicId(id);
   });
   return ids;
@@ -158,8 +158,8 @@ Indexer.prototype.nonPublicIds = function nonPublicIds() {
   if (!Σ.index || !Σ.index['id'])
     return [];
   var self = this;
-  var ids = (Object.keys(Σ.index['id'])).filter(function(id, index, array) {
-    return !Σ.index['id'][id].doc && Σ.index['id'][id].secret;
+  var ids = (Object.keys(Σ.index.id)).filter(function(id, index, array) {
+    return !Σ.index.id[id].doc && Σ.index.id[id].secret;
   });
   return ids;
 };
@@ -175,7 +175,7 @@ Indexer.prototype.nonPublicIds = function nonPublicIds() {
  * @api public
  */
 Indexer.prototype.isPublicId = function isPublicId(id) {
-  return !Σ.index['id'][id].doc && !Σ.index['id'][id].secret;
+  return !Σ.index.id[id].doc && !Σ.index.id[id].secret;
 };
 
 
@@ -191,8 +191,8 @@ Indexer.prototype.documentIds = function documentIds() {
   // TODO memoize candidate?
   if (!Σ.index || !Σ.index['id'])
     return [];
-  var ids = Object.keys(Σ.index['id']).filter(function(id, index, array) {
-    return Σ.index['id'][id].doc && !Σ.index['id'][id].secret;
+  var ids = Object.keys(Σ.index.id).filter(function(id, index, array) {
+    return Σ.index.id[id].doc && !Σ.index.id[id].secret;
   });
   return ids;
 };
