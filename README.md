@@ -147,14 +147,9 @@ If you have redirected the server standard output to a file, of course to see wh
 
 ## Configuration
 
-You can change the default configuration in two ways:
+You can change the default configuration by writing a JSON file named ``config.json`` in ``mognet/app/``.
 
-* setting environment variables whose name starts with ``MOGNET_``;
-
-* writing a JSON file named ``config.json`` in ``mognet/app/``.
-
-These two ways can be combined: environment variables, when specified, always take precedence over the same variables in the JSON file. Env var names will be mapped to the vars used in the JSON file according to this rules: the ``MOGNET_`` prefix will be stripped; the ``_`` chars will be stripped and the words will be camelCased instead. For example, an environment variable ``MOGNET_BASE_URL`` will become the variable ``baseUrl`` in the configuration JSON and in the Mognet code.
-Any variable can be passed to Mognet in these ways, even custom variables you can then use in your custom templates. The configuration variables understood by Mognet are:
+Any variable can be passed to Mognet in this way, even custom variables you can then use in your custom templates. The configuration variables understood by Mognet are:
 
 * ``port``: (default: 80) Server listening port.
 
@@ -179,33 +174,18 @@ A ``config.json`` with a custom variable:
 
 ```javascript
 {
-    "myCustomSetting": "foo",
-    "port": 3000,
-    "denyDiskRead": false,
-    "verbose": false,
-    "locale": "en",
-    "pageSize": 12,
-    "baseUrl": null,
-    "user": 1000,
-    "group": 1000,
-    "googleAnalyticsAccount": null
+  "myCustomSetting": "foo",
+  "port": 3000,
+  "denyDiskRead": false,
+  "verbose": false,
+  "pageSize": 12,
+  "baseUrl": null,
+  "user": 1000,
+  "group": 1000,
+  "googleAnalyticsAccount": null
 }
 ```
 
-And the corresponding environment variables (you could set them in ``/etc/environment`` so they are available to the server process at startup):
-
-```sh
-MOGNET_MY_CUSTOM_SETTING=foo
-MOGNET_PORT=3000
-MOGNET_DENY_DISK_READ=false
-MOGNET_VERBOSE=false
-MOGNET_LOCALE=en
-MOGNET_PAGE_SIZE=12
-MOGNET_BASE_URL=
-MOGNET_USER=1000
-MOGNET_GROUP=1000
-MOGNET_GOOGLE_ANALYTICS_ACCOUNT=
-```
 
 
 ## Unit tests

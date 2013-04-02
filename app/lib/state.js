@@ -45,39 +45,15 @@ function loadConfig() {
   try {
     var raw = require('fs').readFileSync(filename);
   } catch (err) {
-    var writeCfgFile = true;
+    var noCfgFile = true;
   }
-  if (!writeCfgFile) {
+  if (!noCfgFile) {
     try {
       cfg = JSON.parse(raw);
     } catch (err) {
-      console.error(err);
+      require('../lib/logger').e('Cannot load config. %s', err);
     }
   }
-
-  // finally try to override with env vars
-  var envCfg = {};
-  if (process.env.PORT)
-    envCfg.port = process.env.PORT;
-  Object.keys(process.env).forEach(function(k) {
-    if (k.match(/^MOGNET_/) && process.env[k] !== undefined) {
-      var tmpName = k.replace(/^MOGNET_/, "").toLowerCase();
-      var name = "";
-      for (var i = 0; i < tmpName.length; i++)
-        name += (i > 0 && tmpName[i-1]) == '_' ? tmpName[i].toUpperCase() : tmpName[i].toLowerCase();
-      name = name.replace(/_/g, "");
-      if (process.env[k] === 'false')
-        envCfg[name] = false;
-      else if (process.env[k] === 'true')
-        envCfg[name] = true;
-      else if (process.env[k].match(/^\d+$/) && new Number(process.env[k]) !== Number.NaN) {
-        envCfg[name] = new Number(process.env[k]).valueOf();
-      }
-      else
-        envCfg[name] = process.env[k];
-    }
-  });
-  require('../lib/utils').extend(cfg, envCfg);
 
   return cfg;
 }
