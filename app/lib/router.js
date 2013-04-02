@@ -132,7 +132,7 @@ exports.canonicalize = function canonicalize(req, route) {
     //canonical url for index pages
     var pageMatch = /\/(\d+)$/.exec(route.pathname);
     if (pageMatch && pageMatch[1])
-      route.page = pageMatch[1];
+      route.page = Number(pageMatch[1]);
     else
       route.page = 1;
 
@@ -155,7 +155,8 @@ exports.canonicalize = function canonicalize(req, route) {
           // Tags cannot be pure numbers, as they are interpreted as dates
           if (!slashed[0].match(/^\d+$/)) {
             route.filter = slashed[0];
-            route.page = slashed[1];
+            if (slashed[1].match(/^\d+$/))
+              route.page = Number(slashed[1]);
             route.filterType = 'tag';
           }
           else {
@@ -165,7 +166,8 @@ exports.canonicalize = function canonicalize(req, route) {
         }
         else if (slashed.length == 3) {
           route.filter = slashed[0] + '/' + slashed[1];
-          route.page = slashed[2];
+            if (slashed[2].match(/^\d+$/))
+              route.page = Number(slashed[2]);
           route.filterType = 'time';
         }
       }
@@ -206,7 +208,7 @@ exports.getResource = function getResource(req, route, done) {
   var resource = renderer.render(route);
   if (resource) {
     // Cache HIT! All requests for the same route after the first should follow this code path
-    logger.i('(Router) Render cache hit for %s... :)', route.url);
+    logger.i('(Router) Render cache hit for %s :)', route.url);
     done(null, resource);
   }
   else {

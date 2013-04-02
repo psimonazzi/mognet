@@ -34,7 +34,7 @@ module.exports = {
   index: function(route) {
     var ctx = {
       index: true,
-      nextPage: 2,
+      nextPage: 'index/2',
       prevPage: null,
       ids: [],
       items: []
@@ -58,6 +58,7 @@ module.exports = {
       }
       else {
         ctx.nextPage = 'index/' + (route.page + 1);
+        ctx.nextTitle = '' + (route.page + 1);
       }
 
       if (route.page - 1 <= 0) {
@@ -66,6 +67,7 @@ module.exports = {
       }
       else {
         ctx.prevPage = 'index/' + (route.page - 1);
+        ctx.prevTitle = '' + (route.page - 1);
       }
     }
 
