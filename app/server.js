@@ -41,7 +41,7 @@ process.on('SIGHUP', function() {
 });
 
 process.on('SIGUSR1', function() {
-  console.log('Got SIGUSR1.');
+  console.log('Got SIGUSR1');
   console.log('Index:');
   console.log(util.inspect(Σ.index, false, null, false));
   console.log('\nRenders:');
@@ -49,7 +49,7 @@ process.on('SIGUSR1', function() {
 });
 
 process.on('SIGUSR2', function() {
-  console.log('Got SIGUSR2.');
+  console.log('Got SIGUSR2');
   try {
     var version = utils.loadJSONSync(__dirname + '/package.json').version;
   } catch (err) { }
@@ -86,8 +86,8 @@ try {
 var ONE_YEAR = 31536000000;
 
 var app = connect()
-      .use(connect.logger({ format: 'tiny', buffer: 1000 })) // debug only
-      .use(connect.timeout(10000))
+      //.use(connect.logger({ format: 'tiny', buffer: 1000 })) // debug only
+      .use(connect.timeout(20000))
       .use(connect.compress())
       .use(connect.favicon(__dirname + '/../doc/favicon.ico', { 'maxAge': ONE_YEAR }))
       .use(connect.static(path.normalize(__dirname + '/../doc'), { 'maxAge': ONE_YEAR }))
@@ -105,10 +105,7 @@ var app = connect()
       .use(function(req, res) {
         if (req.method != 'GET' && req.method != 'HEAD') {
           res.statusCode = 405;
-          var body = '<h1>' + res.statusCode + ' ' + http.STATUS_CODES[res.statusCode] + '</h1>\n';
-          res.setHeader('content-type', 'text/html; charset=UTF-8');
-          res.setHeader('content-length', Buffer.byteLength(body, 'utf8'));
-          res.end(body);
+          res.end();
           return;
         }
 
