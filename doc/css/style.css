@@ -1,10 +1,23 @@
 /*************************************
+* - Fonts and imports
 * - Resets and element presets
 * - Grid
 * - Typography and layout
 * - Non-semantic elements and tricks
 * - Media queries
 **************************************/
+
+
+/***************************/
+/**** Fonts and imports ****/
+/***************************/
+
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+@font-face {
+    font-family: 'AauxNext-Light';
+    src: url(style_182491.eot); src: local('AauxNext-Light'), url(style_182491.eot?#iefix) format('embedded-opentype'), url(style_182491.woff) format('woff'), url(style_182491.ttf) format('truetype'), url(style_182491.svg#AauxNext-Light) format('svg');
+}
 
 
 
@@ -619,19 +632,6 @@ footer small a:hover {
 /******************************************/
 /**** Non-semantic elements and hacks ****/
 /******************************************/
-
-@font-face {
-    font-family: 'AauxNext-Light';
-    src: url(style_182491.eot); src:url(style_182491.eot?#iefix) format('embedded-opentype'), url(style_182491.woff) format('woff'), url(style_182491.ttf) format('truetype'), url(style_182491.svg#AauxNext-Light) format('svg');
-}
-
-@font-face {
-    font-family: 'Open Sans';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Open Sans'), local('OpenSans'), url(OpenSans400.woff) format('woff');
-}
-/*@import url(http://fonts.googleapis.com/css?family=Open+Sans);*/
 
 .floating {
     position: absolute;
