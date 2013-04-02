@@ -9,7 +9,7 @@ var cmd, filename;
 if (process.argv.length > 2) {
   if (process.argv[2] == '-h')
     cmd = 'help';
-  if (process.argv[2] == '-s' || process.argv[2] == '--smarten')
+  else if (process.argv[2] == '-s' || process.argv[2] == '--smarten')
     cmd = 'smarten';
   else if (process.argv[2] == '-e' || process.argv[2] == '--escape')
     cmd = 'escape';
@@ -17,6 +17,8 @@ if (process.argv.length > 2) {
     cmd = 'transliterate';
   else if (process.argv[2] == '-m' || process.argv[2] == '--markdown')
     cmd = 'markdown';
+  else
+    cmd = 'help';
   if (process.argv.length > 3)
     filename = process.argv[3];
 }
