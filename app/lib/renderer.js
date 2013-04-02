@@ -76,7 +76,7 @@ exports.renderNew = function renderNew(route, context, done, originalError) {
       if (!Σ.renders[route.key])
         Σ.renders[route.key] = {};
       Σ.renders[route.key][templateKey] = renderedContent;
-      // TODO If we wanted to send customized headers for each resource (for example in the document metadata or its handler), we would need to save the headers too in the in-memory renders.
+      // TODO If we want to send customized headers for each resource (for example in the document metadata or its handler), we would need to save the headers too in the in-memory renders.
       done(originalError, renderedContent);
     }
   });
@@ -122,7 +122,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
   var f = Σ.compiled_templates[templateName];
   if (!f) {
     // Read template file content as string, then compile and run
-    if (Σ.cfg && Σ.cfg['denyDiskRead']) {
+    if (Σ.cfg && Σ.cfg.denyDiskRead) {
       var err = new Error(util.format('(Renderer) Needed to read %s but was denied by config. Pre-render all resources once before serving them.', templateName));
       done(err);
     }
@@ -147,7 +147,7 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
   }
   else {
     // Cache HIT! Just run the compiled template
-    logger.i('✔ (Renderer) Rendering compiled template %s...', templateName);
+    logger.i('(Renderer) Rendering compiled template %s...', templateName);
     try {
       var content = f(context);
     } catch (err) {
@@ -156,51 +156,4 @@ exports.compileAndRenderFile = function compileAndRenderFile(templateName, conte
     }
     done(null, content);
   }
-};
-
-
-/**
- * Render all documents in the index. If done before server startup, no rendering will be necessary at runtime.
- * This function will generate all possible permutations of ids/output formats/media and then render the resource for each one, in order to fill the cache.
- * If an error is raised it will be ignored until the function has completed, and passed to the callback.
- *
- * @param {Function} done Callback function called on completion, with signature: error
- *
- * @api public
- */
-exports.preRender = function preRender(done) {
-  var routes = Object.keys(Σ.index['id']).map(function(docId) {
-    return {
-      url: docId,
-      key: docId,
-      output: 'html',
-      hiSpec: true
-    };
-  }).concat(Object.keys(Σ.index['id']).map(function(docId) {
-    return {
-      url: docId,
-      key: docId,
-      output: 'html',
-      hiSpec: false
-    };
-  }));
-
-  var lastError;
-  function renderResource() {
-    var r = routes.shift();
-    if (!r) {
-      done(lastError);
-    }
-    else {
-      require('../lib/router').getResource({ 'url': r.url }, r, function(err, resource) {
-        if (err) {
-          lastError = err;
-          logger.e('(Renderer) Error pre-rendering %s. (%s)', r.url, err);
-          // continue
-        }
-        renderResource();
-      });
-    }
-  }
-  renderResource();
 };
