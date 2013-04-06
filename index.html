@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+  <meta charset="utf-8"/>
+  <meta name="HandheldFriendly" content="True"/>
+  <meta name="MobileOptimized" content="320"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="cleartype" content="on"/>  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+  <!--
+      Greetings, Source Viewer.
+      Full source code for this website is available at https://github.com/psimonazzi/mognet
+  -->
+  
+  <title>Mognet — Obsessively minimal, opinionated web framework for Node.js</title>
+  <meta name="country" content="EN"/>
+  <meta name="language" content="en-US"/>
+  <meta name="author" content="Paolo Simonazzi"/>
+  <meta name="description" content="Mognet — Obsessively minimal, opinionated web framework for Node.js"/>
+  <!-- Facebook (https://developers.facebook.com/docs/technical-guides/opengraph/built-in-objects) -->
+  <meta property="og:title" content="Mognet"/>
+  <meta property="og:description" content="Mognet — Obsessively minimal, opinionated web framework for Node.js"/>
+  <meta property="og:type" content="article"/>
+  <!-- G+ (https://developers.google.com/+/plugins/snippet/) -->
+  <meta itemprop="name" content="Mognet"/>
+  <meta itemprop="description" content="Mognet — Obsessively minimal, opinionated web framework for Node.js"/>
+  <!-- Twitter (https://dev.twitter.com/docs/cards) -->
+  <meta name="twitter:title" content="Mognet"/>
+  <meta name="twitter:description" content="Mognet — Obsessively minimal, opinionated web framework for Node.js"/>
+  <meta name="twitter:url" content="https://psimonazzi.github.io/mognet"/>
+  <meta name="twitter:creator" content="@psimonazzi"/>
+  <link rel="canonical" href="https://psimonazzi.github.io/mognet"/>
+  <meta name="msapplication-TileColor" content="#f3f2ee"/>
+  
+  <link rel="stylesheet" href="/css/style.css" media="screen"/>
+  <!--[if lt IE 9]>
+      <link rel="stylesheet" href="/css/ie.css" media="screen" />
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+</head>
+
+
+
+<body class="doc">
+
+<header>
+  <div class="logo logotype"><a href="/" title="Mognet">mognet</a></div><!-- ☆ ℘ ∴ ◈ , ♚ ✪ ✦ -->
+  <nav role="navigation">
+    <ul>
+      <li><a href="https://github.com/psimonazzi/mognet">source code on github</a></li>
+      <li><a href="https://github.com/psimonazzi">author</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="document" role="main">
+<h1>Mognet — Obsessively minimal, opinionated web framework for Node.js</h1>
+
+<div class="content">
+
+
+<p>Mognet is an obsessively minimal, opinionated web framework for writers who love hacking or hackers who love design. It is written in Javascript for Node.js.</p>
+<p>It was created to run the Author’s personal site, but it may also be useful for those who still believe in the Do-It-Yourself Web. If you just want Tumblr, this is totally too much work. But if you can’t sleep at night if the HTML code on your page isn’t indented beautifully, you may like it.</p>
+<p>Mognet runs as an in-memory, single-threaded server designed for tiny hosting services but still capable of withstanding a sudden popularity. It prefers to generate pages once and then serve them from memory without reading the disk ever again, as hard disks are really slow. You can also use it to generate static HTML files, which you can just publish on Google Drive or Dropbox, so you don’t need a web server at all.</p>
+<h2>Package contents</h2>
+<ul>
+<li><p>The Node.js server. This is Mognet itself.</p>
+</li>
+<li><p>A template for the web pages done in HTML5 &amp; CSS3. It features a fluid &amp; responsive layout, an obsessive care for typographic details and absolutely no image files. <a href="https://psimonazzi.github.io/mognet">The Mognet page on Github</a> is based on this. This design will also be used at the Author’s personal site.</p>
+</li>
+<li><p>Deployment scripts. Used to deploy Mognet to the live server, start and stop it. They are written for a Debian-like Linux system, but nothing too specific; you should easily be able to use them in other environments. It’s very basic stuff, and if you want to do things your way you can just ignore them.</p>
+</li>
+<li><p>A collection of command-line tools to manage the site contents (list documents, prettify typography, etc). You don’t really need them, they are just for fun and convenience.</p>
+</li>
+</ul>
+<h2>Super quick start if you know what you are doing</h2>
+<pre><code class="lang-sh">$ git clone https://github.com/psimonazzi/mognet.git
+$ mkdir res static
+$ cd mognet/app
+$ npm install mognet
+$ cd ..
+$ sudo cp mognet.conf /etc/init
+$ ./deploy.sh
+$ sudo start mognet</code></pre>
+<h2>Installation</h2>
+<p>You must have <a href="http://git-scm.com">Git</a> and <a href="http://nodejs.org">Node.js</a> installed. Clone this repository, then:</p>
+<pre><code class="lang-sh">$ cd mognet/app
+$ npm install mognet</code></pre>
+<p>This will download all needed Node.js modules. Mognet follows convention over configuration, so it just works and you don’t need to configure anything. Ha! (But seriously, see below for some config options.)</p>
+<p>When you are ready to run your own Mognet server, go on to Deployment.</p>
+<h2>Deployment</h2>
+<h3>Our scenario</h3>
+<ul>
+<li><p>You have access to a public server on the Internet: maybe an Amazon EC2 instance, a virtual host or a RaspberryPi in your kitchen.</p>
+</li>
+<li><p>You need to install Mognet there; your user home dir is a nice place to put it. You can just clone the Git repository there: actually, it’s a very good idea!</p>
+</li>
+<li><p>Once you have the code on the server, you don’t just start publishing your site: first, you have to deploy it. This two-step process avoids many crazy security holes, and enables instant updates to the running server without downtime.</p>
+</li>
+</ul>
+<h3>How-to</h3>
+<p>Mognet expects the following directory structure:</p>
+<pre><code>+ (wherever you want to put this project, like /home/yourname/www/)
+|
++-- mognet/ (this repository content)
+|
++-- res/ (where you put the stuff you write)
+|
++-- static/ (where you put images and other files)</code></pre>
+<p>So you have to create the <code>res</code> and <code>static</code> dirs at the same level of the <code>mognet</code> dir. They can also be symlinks to other places if you like.</p>
+<ul>
+<li><p><code>res/</code> is where the site content will be. Posts and articles need to be in this directory so Mognet can discover them. This could be a separate repository, if you want to put under version control your content too. This directory is NOT exposed for public access from the internet, it’s used by Mognet internally.</p>
+</li>
+<li><p><code>static/</code> is the only place in the filesystem that will be exposed for public access from the internet. Just to be clear: ANYTHING IN THIS DIRECTORY WILL BE ACCESSIBLE FROM THE INTERNET (if one knows the filename). This is where static files for the site will be: images, PDF documents, binary files and so on. You can leave this empty if you have no files, or you prefer to use a remote storage service instead. If you have a lot of traffic keep in mind that Mognet can’t do anything to save your bandwidth (except caching and compressing HTTP responses), so if you publish many images and other big static files it’s probably a good idea to host them in the Cloud (Google Drive, Amazon S3, Dropbox...), and link to them from your pages.</p>
+</li>
+</ul>
+<p>Once you are ready, make sure you have write access to the <code>/var</code> dir on your server and run this command from the <code>mognet</code> dir:</p>
+<pre><code class="lang-sh">$ ./deploy.sh</code></pre>
+<p>After this you will have the following structure on your filesystem:</p>
+<pre><code>+ /var/www/
+|
++-- log/ (server log files)
+|
++-- mognet/ (a symlink to the currently used mognet-X.Y.Z dir)
+|
++-- mognet-X.Y.Z/ (the server code at the revision with tag or branch name X.Y.Z)
+|
++-- ...
+|
++-- res/ (a symlink to your project res/ dir)
+|
++-- static/ (a symlink to your project static/ dir, will be accessible from the internet)</code></pre>
+<p>The server will always be run from <code>/var/www/mognet</code>, which is a symlink to one of the <code>/var/www/mognet-X.Y.Z</code> dirs. In this way when you have a new version you can switch the live server code just by changing the symlink (which is a really fast and atomic operation), and restarting the server. Each of those dirs contains a full copy of the server code at the revision with tag or branch name <code>X.Y.Z</code> (usually a version number): but only the source files, without any Git repository metadata. All Node.js modules needed to run the server will be copied in each dir too, in the standard <code>node_modules/</code> path.</p>
+<p>If something goes wrong, you can immediatly return to the previous working version by changing the symlink again and restarting.</p>
+<p>Now you are ready to run the server.</p>
+<h2>Running</h2>
+<p>Quick test run from the <code>mognet/app/</code> dir (quit with Ctrl-C). This command specifies a custom port 3000; the default port is 80, and you need to be the superuser to use it:</p>
+<pre><code class="lang-sh">$ node server.js 3000</code></pre>
+<p>or</p>
+<pre><code class="lang-sh">$ PORT=3000 node server.js</code></pre>
+<p>You will want to run the server as a daemon, starting at system boot and stopping on shutdown. This package includes an <a href="http://upstart.ubuntu.com">Upstart</a> configuration ready to use, which creates a daemon named <code>mognet</code>. You can run the usual commands to interact with it:</p>
+<ul>
+<li><code>start mognet</code></li>
+<li><code>stop mognet</code></li>
+<li><code>restart mognet</code></li>
+<li><code>status mognet</code></li>
+</ul>
+<p>To install Mognet as an Upstart daemon just copy the <code>mognet.conf</code> file in <code>/etc/init</code>. The server will be started automatically at system boot, and restarted immediatly if it crashes.
+The daemon will print stdout and stderr to <code>/dev/shm/stdout.log</code> and <code>/dev/shm/stderr.log</code>, which are in a temporary filesystem not written to disk. To save them to persistent files, you can use a periodic job for crontab like this one, which copies them to <code>/var/www/log</code> every minute:</p>
+<pre><code>* * * * * cp -af /dev/shm/stdout.log /dev/shm/stderr.log /var/www/log</code></pre>
+<p>By default, the server will listen on port 80 (HTTP) and will not print any log messages (not even errors) except at startup.</p>
+<h3>Interacting with a running server</h3>
+<p>The Mognet server process listens on these standard POSIX signals:</p>
+<ul>
+<li><p><code>HUP (1)</code>: Updates the index file and reloads it in the server, clearing the content cache. Also reloads the configuration. Use this when you update the site contents, HTML templates or configuration (not needed when you update CSS and other static files);</p>
+</li>
+<li><p><code>USR1 (10)</code>: Prints a JSON structure representing the current index and content cache which are stored in-memory by the server. Useful for quick debug;</p>
+</li>
+<li><p><code>USR2 (12)</code>: Prints various info on the running server: version, configuration, memory usage, process id. </p>
+</li>
+</ul>
+<p>If you have redirected the server standard output to a file, of course to see what Mognet says you will have to open that file.</p>
+<h2>Configuration</h2>
+<p>You can change the default configuration by writing a JSON file named <code>config.json</code> in <code>mognet/app/</code>.</p>
+<p>Any variable can be passed to Mognet in this way, even custom variables you can then use in your custom templates. The configuration variables understood by Mognet are:</p>
+<ul>
+<li><p><code>port</code>: (default: 80) Server listening port.</p>
+</li>
+<li><p><code>denyDiskRead</code>: (default: false) If true, no files will be read from disk after the server has started. A request for content which is not already in memory and would require a disk read will fail, and the client will receive an error. Used for debugging.</p>
+</li>
+<li><p><code>verbose</code>: (default: false) If true print log messages to stdout and stderr, otherwise no messages or errors will be printed.</p>
+</li>
+<li><p><code>pageSize</code>: (default: 12) Number of articles displayed on each index page in the default template.</p>
+</li>
+<li><p><code>baseUrl</code>: (default: null) The host and port of the urls served by this server, as seen from the internet. Internal urls will usually be specified in links as absolute paths (like <code>/search</code>), but sometimes a full url is required by templates, for example in social networks metadata. The full url will be the concatenation of this value and an absolute path. Example value: <code>http://example.com</code>.</p>
+</li>
+<li><p><code>user</code>: (default: null) If specified, the server process will run as this user immediatly after binding to the port. Usually you will set this to an unprivileged user, so that the server will start at system boot with root privileges, bind to the default port 80, and then drop privileges and continue running as this user. The value can be a username (string) or uid (number). On Debian/Ubuntu, the first login user you create during installation has uid 1000 and group 1000 by convention, so it should be a safe value to set. This value must be set together with <code>group</code>, otherwise it will have no effect.</p>
+</li>
+<li><p><code>group</code>: (default: null) If specified, the server process will run as this group immediatly after binding to the port. See <code>user</code>.</p>
+</li>
+<li><p><code>googleAnalyticsAccount</code>: (default: null) A Google Analytics account id, used in the default template to enable Google Analytics tracking on the pages. If not set, Google Analytics will not be enabled.</p>
+</li>
+</ul>
+<h3>Examples</h3>
+<p>A <code>config.json</code> with a custom variable:</p>
+<pre><code class="lang-javascript">{
+  &quot;myCustomSetting&quot;: &quot;foo&quot;,
+  &quot;port&quot;: 3000,
+  &quot;denyDiskRead&quot;: false,
+  &quot;verbose&quot;: false,
+  &quot;pageSize&quot;: 12,
+  &quot;baseUrl&quot;: null,
+  &quot;user&quot;: 1000,
+  &quot;group&quot;: 1000,
+  &quot;googleAnalyticsAccount&quot;: null
+}</code></pre>
+<h2>Unit tests</h2>
+<p>Mognet comes with a suite of unit tests written in <a href="https://github.com/visionmedia/mocha">Mocha</a>. Run it with:</p>
+<pre><code class="lang-sh">$ npm test</code></pre>
+<p>from the <code>mognet/app</code> dir.</p>
+<h2>Writing content</h2>
+<p>TODO</p>
+<h2>License</h2>
+<p>Mognet is released under the MIT License. See the <code>LICENSE</code> file.</p>
+
+
+</div><!-- /content -->
+</div>
+
+<footer role="contentinfo">
+  <nav>
+    <ul>
+      <li><a href="https://github.com/psimonazzi/mognet">source code on github</a></li>
+      <li><a href="https://github.com/psimonazzi">author</a></li>
+    </ul>
+  </nav>
+  
+  <small class="vcard">© <a href="/info" class="fn org url" rel="me">Paolo Simonazzi</a><br/>
+  <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#112;&#46;si&#109;&#111;&#110;&#97;&#122;zi&#64;g&#109;&#97;i%6C%2E%6&#51;%6Fm">&#112;&#46;si&#109;&#111;&#110;&#97;&#122;zi&#64;g&#109;&#97;il&#x2E;&#x63;o&#x6D;</a> · <a href="https://github.com/psimonazzi">Github</a> · <a href="https://twitter.com/psimonazzi">Twitter</a></small>
+  <small>Released under the MIT License</small>
+  <small><em>Fatto in Italia con amore &amp; ossessione.</em></small>
+</footer>
+
+<!--{{#cfg.googleAnalyticsAccount}}
+<script>
+  var _gaq=[['_setAccount','{{{cfg.googleAnalyticsAccount}}}'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+{{/cfg.googleAnalyticsAccount}}-->
+
+</body>
+</html>
+
+
