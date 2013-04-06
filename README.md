@@ -2,16 +2,16 @@
 
 Mognet is an obsessively minimal, opinionated web framework for writers who love hacking or hackers who love design. It is written in Javascript for Node.js.
 
-It was created to run the Author’s personal site, but it may also be useful for those who still believe in the Do-It-Yourself Web, and don’t want to build their own web framework from scratch. If you just want Tumblr, this is totally too much work. If you can’t sleep at night if the HTML code on your page isn’t indented beautifully, you may like it.
+It was created to run the Author’s personal site, but it may also be useful for those who still believe in the Do-It-Yourself Web. If you just want Tumblr, this is totally too much work. But if you can’t sleep at night if the HTML code on your page isn’t indented beautifully, you may like it.
 
-Mognet runs as an in-memory, single-threaded server designed to run on cheap hosting services and still capable of withstanding a sudden popularity. It prefers to generate pages once and then serve them from memory without reading the disk ever again, as hard disks are really slow. You can also use it to generate static HTML files, which you may just publish on Google Drive or Dropbox, so you don’t need a web server at all.
+Mognet runs as an in-memory, single-threaded server designed for tiny hosting services but still capable of withstanding a sudden popularity. It prefers to generate pages once and then serve them from memory without reading the disk ever again, as hard disks are really slow. You can also use it to generate static HTML files, which you can just publish on Google Drive or Dropbox, so you don’t need a web server at all.
 
 
 ## Package contents
 
 * The Node.js server. This is Mognet itself.
 
-* A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. [The Mognet page on Github](https://psimonazzi.github.com/mognet) is based on this. This design will also be used at the Author’s personal site when it is ready.
+* A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. [The Mognet page on Github](https://psimonazzi.github.io/mognet) is based on this. This design will also be used at the Author’s personal site.
 
 * Deployment scripts. Used to deploy Mognet to the live server, start and stop it. They are written for a Debian-like Linux system, but nothing too specific; you should easily be able to use them in other environments. It’s very basic stuff, and if you want to do things your way you can just ignore them.
 
@@ -84,7 +84,7 @@ After this you will have the following structure on your filesystem:
 
     + /var/www/
     |
-    +-- log/ (server log files: stdout.log for standard messages and stderr.log for errors)
+    +-- log/ (server log files)
     |
     +-- mognet/ (a symlink to the currently used mognet-X.Y.Z dir)
     |
@@ -125,7 +125,7 @@ You will want to run the server as a daemon, starting at system boot and stoppin
 * ``status mognet``
 
 To install Mognet as an Upstart daemon just copy the ``mognet.conf`` file in ``/etc/init``. The server will be started automatically at system boot, and restarted immediatly if it crashes.
-The daemon will print stdout and stderr to ``/dev/shm/stdout.log`` and ``/dev/shm/stderr.log``, which are in a temporary filesystem not written to disk. To save them to persistent files, you can use a periodic job for crontab like this one, which copies them to ``/var/www/log``:
+The daemon will print stdout and stderr to ``/dev/shm/stdout.log`` and ``/dev/shm/stderr.log``, which are in a temporary filesystem not written to disk. To save them to persistent files, you can use a periodic job for crontab like this one, which copies them to ``/var/www/log`` every minute:
 
     * * * * * cp -af /dev/shm/stdout.log /dev/shm/stderr.log /var/www/log
 
