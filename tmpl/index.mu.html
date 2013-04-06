@@ -73,9 +73,9 @@
 <header>
   <div class="logo"><a href="/" title="Paolo Simonazzi">℘</a></div><!-- ☆ ℘ ∴ ◈ , ♚ ✪ ✦ -->
   <nav role="navigation">
-    <ul>
-      <li><a href="/info">info</a></li>
-      <li><a href="/search">ricerca</a>{{#hiSpec}}
+    <ul role="menubar">
+      <li role="menuitem"><a href="/info">info</a></li>
+      <li role="menuitem"><a href="/search">ricerca</a>{{#hiSpec}}
       <div class="floating" id="search-menu">
         <div>
           <!--<form action="/" method="get">
@@ -86,22 +86,22 @@
 
           {{#menu}}
           <h2>Categorie</h2>
-          <ul class="menu cf">
+          <ul role="menu" class="menu cf">
             {{#tags}}
-            <li><a href="/search/{{{href}}}">{{name}}</a></li>
+            <li role="menuitem"><a href="/search/{{{href}}}">{{name}}</a></li>
             {{/tags}}
             {{#tagsOverflow}}
-            <li><a href="/search" class="continue">archivio</a></li>
+            <li role="menuitem"><a href="/search" class="continue">archivio</a></li>
             {{/tagsOverflow}}
           </ul>
           
           <h2>Date</h2>
-          <ul class="menu cf">
+          <ul role="menu" class="menu cf">
             {{#dates}}
-            <li><a href="/search/{{{href}}}">{{name}}</a></li>
+            <li role="menuitem"><a href="/search/{{{href}}}">{{name}}</a></li>
             {{/dates}}
             {{#datesOverflow}}
-            <li><a href="/search" class="continue">archivio</a></li>
+            <li role="menuitem"><a href="/search" class="continue">archivio</a></li>
             {{/datesOverflow}}
           </ul>
           {{/menu}}
@@ -110,7 +110,7 @@
       </div>
       {{/hiSpec}}</li>
       <!--<li><a href="/fav" id="fav">&#x2605;<sup></sup></a></li>-->
-      <li><a href="/colophon">colophon</a></li>
+      <li role="menuitem"><a href="/colophon">colophon</a></li>
     </ul>
   </nav>
 </header>
