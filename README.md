@@ -11,7 +11,7 @@ Mognet runs as an in-memory, single-threaded server designed for tiny hosting se
 
 * The Node.js server. This is Mognet itself.
 
-* A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. [The Mognet page on Github](https://psimonazzi.github.io/mognet) is based on this. This design will also be used at the Author’s personal site.
+* A template for the web pages done in HTML5 & CSS3. It features a fluid & responsive layout, an obsessive care for typographic details and absolutely no image files. [The Mognet page on Github](http://psimonazzi.github.io/mognet) is based on this. This design will also be used at the Author’s personal site.
 
 * Deployment scripts. Used to deploy Mognet to the live server, start and stop it. They are written for a Debian-like Linux system, but nothing too specific; you should easily be able to use them in other environments. It’s very basic stuff, and if you want to do things your way you can just ignore them.
 
