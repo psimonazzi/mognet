@@ -91,10 +91,13 @@ crawler.on('end', function(count) {
   });
   //console.log(util.inspect(Σ.index, false, null, true));
   console.log("\n------[ Result ]------".grey);
-  console.log("Indexed %s files on %s in %s",
-              Object.keys(Σ.index.id).length.toString().green.bold,
-              count.toString().green,
-              (((new Date().getTime() - τ0) / 1000).toFixed(3) + "s").blue.bold);
+  if (Σ.index.id)
+    console.log("Indexed %s files on %s in %s",
+                Object.keys(Σ.index.id).length.toString().green.bold,
+                count.toString().green,
+                (((new Date().getTime() - τ0) / 1000).toFixed(3) + "s").blue.bold);
+  else
+    console.log("No files indexed");
 });
 
 
