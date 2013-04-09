@@ -220,6 +220,8 @@ function indexReviver(k, v) {
 Indexer.prototype.loadSync = function loadSync() {
   try {
     Σ.index = utils.loadJSONSync(this.path + this.file, indexReviver);
+    if (!Σ.index['id'])
+      Σ.index = this.EMPTY_INDEX();
   }
   catch (err) {
     Σ.index = this.EMPTY_INDEX();
@@ -238,6 +240,8 @@ Indexer.prototype.load = function load(done) {
   utils.loadJSON(this.path + this.file, function(err, data) {
     if (!err) {
       Σ.index = data;
+      if (!Σ.index['id'])
+        Σ.index = this.EMPTY_INDEX();
     }
     else {
       Σ.index = this.EMPTY_INDEX();

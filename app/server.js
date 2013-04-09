@@ -71,7 +71,7 @@ console.log('Loading index from disk...');
 var indexer = Indexer.createIndexer();
 indexer.loadSync();
 
-if (Object.keys(Σ.index['id']).length == 0) {
+if (!Σ.index['id'] || Object.keys(Σ.index['id']).length == 0) {
   console.error('ERROR: No index found. Maybe create a new index with bin/update.js then reload');
   // do not die, just serve what we can: static files and special routes with dedicated handlers
 }
