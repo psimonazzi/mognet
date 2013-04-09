@@ -221,7 +221,11 @@ Indexer.prototype.loadSync = function loadSync() {
   try {
     Σ.index = utils.loadJSONSync(this.path + this.file, indexReviver);
     if (!Σ.index['id'])
-      Σ.index = this.EMPTY_INDEX();
+      Σ.index.id = this.EMPTY_INDEX().id;
+    if (!Σ.index['tag'])
+      Σ.index.tag = this.EMPTY_INDEX().tag;
+    if (!Σ.index['time'])
+      Σ.index.time = this.EMPTY_INDEX().time;
   }
   catch (err) {
     Σ.index = this.EMPTY_INDEX();
@@ -237,14 +241,19 @@ Indexer.prototype.loadSync = function loadSync() {
  * @api public
  */
 Indexer.prototype.load = function load(done) {
+  var self = this;
   utils.loadJSON(this.path + this.file, function(err, data) {
     if (!err) {
       Σ.index = data;
       if (!Σ.index['id'])
-        Σ.index = this.EMPTY_INDEX();
+        Σ.index.id = self.EMPTY_INDEX().id;
+      if (!Σ.index['tag'])
+        Σ.index.tag = self.EMPTY_INDEX().tag;
+      if (!Σ.index['time'])
+        Σ.index.time = self.EMPTY_INDEX().time;
     }
     else {
-      Σ.index = this.EMPTY_INDEX();
+      Σ.index = self.EMPTY_INDEX();
     }
     done(err);
   }, indexReviver);
@@ -259,7 +268,10 @@ Indexer.prototype.load = function load(done) {
  * @api public
  */
 Indexer.prototype.save = function(done) {
-  if (!require("fs").statSync(this.path))
+  try {
+    require("fs").statSync(this.path);
+  } catch (ex) {
     require("fs").mkdirSync(this.path);
+  }
   utils.saveJSON(this.path + this.file, Σ.index, done);
 };
