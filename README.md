@@ -24,7 +24,7 @@ Mognet runs as an in-memory, single-threaded server designed for tiny hosting se
 $ git clone https://github.com/psimonazzi/mognet.git
 $ mkdir res static
 $ cd mognet/app
-$ npm install mognet
+$ npm install
 $ cd ..
 $ sudo cp mognet.conf /etc/init
 $ ./deploy.sh
@@ -38,7 +38,7 @@ You must have [Git](http://git-scm.com) and [Node.js](http://nodejs.org) install
 
 ```sh
 $ cd mognet/app
-$ npm install mognet
+$ npm install
 ```
 
 This will download all needed Node.js modules. Mognet follows convention over configuration, so it just works and you don’t need to configure anything. Ha! (But seriously, see below for some config options.)
