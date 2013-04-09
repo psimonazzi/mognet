@@ -255,5 +255,7 @@ Indexer.prototype.load = function load(done) {
  * @api public
  */
 Indexer.prototype.save = function(done) {
+  if (!require("fs").statSync(this.path))
+    require("fs").mkdirSync(this.path);
   utils.saveJSON(this.path + this.file, Σ.index, done);
 };
