@@ -248,6 +248,15 @@ code, kbd, var, samp, tt {
     font-size: 0.8125em;
 }
 
+code {
+    display: inline;
+    padding: 0px 5px;
+}
+
+pre code {
+    padding: 0;
+}
+
 .maxheight {
     max-height: 30em;
 }
@@ -347,6 +356,7 @@ pre, code {
     color: #f3f2ee;
     background: #1a1a1a;
 }
+
 
 /* http://csswizardry.com/type-tips/#tip-03 */
 /*blockquote {
@@ -1051,15 +1061,16 @@ header nav li:hover #search-menu {
 
 
 pre .comment {
+    font-style: italic;
     color: #93a1a1;
 }
 
-pre .constant, pre .integer {
+pre .constant {
     color: #FBDE2D;
 }
 
 pre .storage, pre .selector {
-    color: #bdae9d;
+    color: #f3f2ee;
 }
 
 pre .string {
@@ -1067,7 +1078,12 @@ pre .string {
 }
 
 pre .keyword {
+    font-weight: bold;
     color: #55acf5;
+}
+
+pre .keyword.operator {
+    color: #f3f2ee;
 }
 
 pre .parent {
@@ -1079,9 +1095,13 @@ pre .entity, pre .meta {
 }
 
 pre .support {
-    color: #e5c138;
+    color: #55acf5;
 }
 
+pre .support.tag, pre .support.tag-name {
+    font-weight: bold;
+}  
+
 pre .variable.global, pre .variable.class, pre .variable.instance {
-    color: #bdae9d;
+    color: rgb(147, 161, 161);
 }
