@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Update index and if changed reload it in the server
+# Run as the same user of the mognet daemon
 
 HASH=`cksum < /var/www/mognet/data/index.json`
 /var/www/mognet/app/bin/update.js >/dev/null
