@@ -88,18 +88,18 @@ crawler.on('end', function(count) {
   indexer.save(function(err) {
     if (err)
       throw err;
+    //console.log(util.inspect(Σ.index, false, null, true));
+    console.log("\n------[ Result ]------".grey);
+    if (Σ.index.id)
+      console.log("Indexed %s files on %s in %s",
+                  Object.keys(Σ.index.id).length.toString().green.bold,
+                  count.toString().green,
+                  (((new Date().getTime() - τ0) / 1000).toFixed(3) + "s").blue.bold);
+    else
+      console.log("No files indexed");
+    process.exit();
   });
-  //console.log(util.inspect(Σ.index, false, null, true));
-  console.log("\n------[ Result ]------".grey);
-  if (Σ.index.id)
-    console.log("Indexed %s files on %s in %s",
-                Object.keys(Σ.index.id).length.toString().green.bold,
-                count.toString().green,
-                (((new Date().getTime() - τ0) / 1000).toFixed(3) + "s").blue.bold);
-  else
-    console.log("No files indexed");
 });
-
 
 if (filename) {
   // index only the specified file
