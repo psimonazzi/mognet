@@ -19,16 +19,16 @@ var http = require('http');
 var connect = require('connect');
 var child_process = require('child_process');
 
-var Σ = require(__dirname + '/lib/state');
-var router = require(__dirname + '/lib/router');
-var Indexer = require(__dirname + '/lib/indexer');
-var utils = require(__dirname + '/lib/utils');
-var logger = require(__dirname + '/lib/logger');
+var Σ = require('./lib/state');
+var router = require('./lib/router');
+var Indexer = require('./lib/indexer');
+var utils = require('./lib/utils');
+var logger = require('./lib/logger');
 
 var port = process.argv[2] || Σ.cfg.port;
 
 process.on('SIGHUP', function() {
-  console.log('Got SIGHUP. Rebuilding/reloading index and config & clearing cache...');
+  console.log('Got SIGHUP. Rebuilding index, reloading config & clearing cache...');
   Σ.compiled_templates = {};
   Σ.renders = {};
   Σ.cfg = Σ.loadConfig();
@@ -148,7 +148,8 @@ var app = connect()
             }
           }
           res.setHeader('content-length', len);
-          res.end(resource);
+          res.write(resource); //??? dramatic performance improvement over res.end(resource);
+          res.end();
         });
       })
       .listen(port, function() {

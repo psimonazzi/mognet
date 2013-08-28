@@ -3,9 +3,9 @@ var path = require('path');
 var util = require('util');
 var mustache = require('mustache');
 
-var logger = require('../lib/logger');
-var utils = require('../lib/utils');
-var Σ = require('../lib/state');
+var logger = require('./logger');
+var utils = require('./utils');
+var Σ = require('./state');
 
 
 /**

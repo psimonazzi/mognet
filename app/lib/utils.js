@@ -46,7 +46,7 @@ exports.saveJSON = function saveJSON(filename, obj, done) {
  * Implemented with a simple flat version: http://groups.google.com/group/nodejs-dev/browse_thread/thread/41cfc3a2d2e4bcd9?pli=1.
  * This is about the same as Connect.merge(). Good enough & Just works.
  *
- * @param {Object} a Object to extend
+ * @param {Object} a Object to extend. Can be null/empty
  * @param {Object} b Object with which to extend 'a'
  *
  * @return {Object} The extended object
@@ -54,6 +54,8 @@ exports.saveJSON = function saveJSON(filename, obj, done) {
  * @api public
  */
 exports.extend = function extend(a, b) {
+  if (!a)
+    a = {};
   if (b) {
     for (var x in b)
       a[x] = b[x];

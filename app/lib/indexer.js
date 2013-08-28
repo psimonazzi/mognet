@@ -3,8 +3,8 @@ var path = require('path');
 var EventEmitter = require('events').EventEmitter;
 require('colors');
 
-var utils = require('../lib/utils');
-var Σ = require('../lib/state');
+var utils = require('./utils');
+var Σ = require('./state');
 
 module.exports.createIndexer = function createIndexer() { return new Indexer(); };
 

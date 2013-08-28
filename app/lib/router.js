@@ -1,11 +1,11 @@
 var util = require('util');
 var url = require('url');
 
-var logger = require('../lib/logger');
-var utils = require('../lib/utils');
-var renderer = require('../lib/renderer');
-var handlers = require('../lib/handlers');
-var Σ = require('../lib/state');
+var logger = require('./logger');
+var utils = require('./utils');
+var renderer = require('./renderer');
+var handlers = require('./handlers');
+var Σ = require('./state');
 
 
 /**
