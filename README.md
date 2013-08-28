@@ -117,14 +117,14 @@ or
 $ PORT=3000 node server.js
 ```
 
-You will want to run the server as a daemon, starting at system boot and stopping on shutdown. This package includes an [Upstart](http://upstart.ubuntu.com) configuration ready to use, which creates a daemon named ``mognet``. You can run the usual commands to interact with it:
+You will want to run the server as a daemon, starting at system boot and stopping on shutdown. This package includes an [Upstart](http://upstart.ubuntu.com) configuration ready to use, which creates a daemon named ``mognet``. You can use the standard incantations to interact with it:
 
 * ``start mognet``
 * ``stop mognet``
 * ``restart mognet``
 * ``status mognet``
 
-To install Mognet as an Upstart daemon just copy the ``mognet.conf`` file in ``/etc/init``. The server will be started automatically at system boot, and restarted immediatly if it crashes.
+To install Mognet as an Upstart daemon just copy the ``mognet.conf`` file in ``/etc/init``. The server will be started automatically at system boot, and restarted immediatly if it crashes (but it will give up after a reasonable amount of retries).
 The daemon will print stdout and stderr to ``/dev/shm/stdout.log`` and ``/dev/shm/stderr.log``, which are in a temporary filesystem not written to disk. To save them to persistent files, you can use a periodic job for crontab like this one, which copies them to ``/var/www/log`` every minute:
 
     * * * * * cp -af /dev/shm/stdout.log /dev/shm/stderr.log /var/www/log
@@ -138,9 +138,11 @@ The Mognet server process listens on these standard POSIX signals:
 
 * ``HUP (1)``: Updates the index file and reloads it in the server, clearing the content cache. Also reloads the configuration. Use this when you update the site contents, HTML templates or configuration (not needed when you update CSS and other static files);
 
-* ``USR1 (10)``: Prints a JSON structure representing the current index and content cache which are stored in-memory by the server. Useful for quick debug;
+* ``USR1 (10)``: Prints a JSON structure representing the current contents stored in-memory by the server. Useful for quick debugging;
 
 * ``USR2 (12)``: Prints various info on the running server: version, configuration, memory usage, process id. 
+
+The process PID for the currently running server is stored in ``/var/run/mognet.pid`` by default.
 
 If you have redirected the server standard output to a file, of course to see what Mognet says you will have to open that file.
 
