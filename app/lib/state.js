@@ -25,35 +25,22 @@ function CONFIG_DEFAULTS() {
 
 
 /**
- * Load config (sync) from a file in JSON format and/or from environment variables.
- * Filename is 'config.json'.
- * If the file is not found, it is created with the default values, or the values set in environment variables.
- *
- * Any property found in environment variables will override the value set in the file.
- * Environment variables are named with prefix 'MOGNET_' and the uppercased property name with '_' instead of camelCase, eg. 'pageSize' becomes 'MOGNET_PAGE_SIZE'. An exception is the port variable, which can be set as MOGNET_PORT or PORT.
+ * Load config from hardcoded defaults, possibly overriding values with those
+ * in a file named 'config.json', if the file is found.
  *
  * @return {Object} The config object. If there was an error returns a hardcoded default config (see sources)
  *
  * @api private
  */
 function loadConfig() {
-  // first get defaults
   var cfg = CONFIG_DEFAULTS();
 
-  // then try to override with config file
-  var filename = require('path').normalize(__dirname + '/../config.json');
+  // Could just require('../config.json'), but we want to be able to reload the file at any time
   try {
-    var raw = require('fs').readFileSync(filename);
+    var json = require('./utils').loadJSONSync(__dirname + '/../config.json');
+    cfg = require('./utils').extend(cfg, json);
   } catch (err) {
-    var noCfgFile = true;
+    require('./logger').w('Cannot load config. %s', err);
   }
-  if (!noCfgFile) {
-    try {
-      cfg = JSON.parse(raw);
-    } catch (err) {
-      require('../lib/logger').e('Cannot load config. %s', err);
-    }
-  }
-
   return cfg;
 }
