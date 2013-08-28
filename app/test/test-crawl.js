@@ -123,6 +123,19 @@ describe('crawler', function() {
       assert.equal(true, doc['doc']);
     });
 
+    it('should extract a document from a file name, setting it as secret', function() {
+      var mtime = new Date().getTime();
+      var doc = crawler.fromFile("_hello-world.html", { 'mtime': mtime, 'ctime': mtime }, {});
+      assert.equal("hello-world", doc['id']);
+      assert.equal(mtime, doc['timestamp']);
+      assert.equal(true, doc['secret']);
+
+      doc = crawler.fromFile("_doc_hello-world.html", { 'mtime': mtime, 'ctime': mtime }, {});
+      assert.equal("hello-world", doc['id']);
+      assert.equal(mtime, doc['timestamp']);
+      assert.equal(true, doc['secret']);
+      assert.equal(true, doc['doc']);
+    });
 
     it('should extract a document from a file contents and metadata', function() {
       var TITLE = "Hello, World";

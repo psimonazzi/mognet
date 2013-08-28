@@ -15,9 +15,9 @@ require('colors').setTheme({
   error: 'red'
 });
 
-var utils = require('../lib/utils');
-var txt = require('../lib/txt');
-var Σ = require('../lib/state');
+var utils = require('./utils');
+var txt = require('./txt');
+var Σ = require('./state');
 
 // Instead of:
 // module.exports.Crawler = Crawler;
@@ -173,6 +173,8 @@ Crawler.prototype.slug = function slug(title) {
  *
  * - 'id': a slug created from the whole file name without extension, or the last part if the file name also contains a timestamp. If the filename contains a '_' char, it and all preceding characters are ignored when creating the slug, So one could use the first part of the filename for tagging/sorting on filesystem. As a special case, if the filename starts with 'doc_', the 'doc' field is also set to true.
  *
+ * - 'secret': if the file name starts with the char '_', the char is removed and the 'secret' flag is set.
+ *
  * @param {string} file Full filename
  * @param {Object} stat Stat data for file.
  * @param {Object} doc Possibly empty partial document to be overridden
@@ -187,6 +189,11 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
   doc['modified'] = stat.mtime;
 
   var name = path.basename(file);
+  if (/^_/.exec(name)) {
+    doc['secret'] = true;
+    name = name.substring(1);
+  }
+
   var match = /^(\d{8})_(.+?)\.[^.]+$/.exec(name);//var match = /^(\d{8})_(.+?)\.html$/.exec(name);
   if (match) {
     if (match[1]) {
@@ -232,7 +239,7 @@ Crawler.prototype.fromFile = function(file, stat, doc) {
  *
  * - 'title': content of the <title> element or first Markdown title
  *
- * -'id': slug created from the title, if undefined. This field is NOT overwritten if it was already set
+ * - 'id': slug created from the title, if undefined. This field is NOT overwritten if it was already set
  *
  * - 'content': file content without doctype, HTML comments, <meta>, <title> and first <script> element
 
@@ -333,7 +340,7 @@ Crawler.prototype.fromContent = function(s, doc) {
  * Create a partial document from a file metadata, overriding any existing field of the passed document.
  * Metadata takes precedence over any other way to set attributes.
  *
- * Dates are specified as strings in format 'yyyy/mm/dd hh:mm' or in standard JSON serialized format, i.e. 'yyyy-mm-ddThh:mm:ss.sssZ'.
+ * Dates are specified as strings in format 'yyyy/mm/dd hh:mm' or in standard JSON serialized format, i.e. 'yyyy-mm-ddThh:mm:ss.sssZ' (replace Z with +0100 or some other timezone).
  *
  * This function returns the final instance of a document. If any field is still undefined after parsing metadata, and has no default value, it is set by heuristics if possible.
  *
