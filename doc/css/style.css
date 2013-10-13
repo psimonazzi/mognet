@@ -205,8 +205,13 @@ h2, .blip p, .rel a, .filter {
     font-size: 1.618em;
 }
 
+.blip p {
+    line-height: 1.236em;
+}
+
 h3 {
     font-size: 1.412em;
+    line-height: 1.6814em;
 }
 
 .content ul, .content ol, .rel, blockquote, pre {
