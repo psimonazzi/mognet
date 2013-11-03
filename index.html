@@ -45,7 +45,7 @@
 <body class="doc">
 
 <header>
-  <div class="logo logotype"><a href="/" title="Mognet">mognet</a></div><!-- ☆ ℘ ∴ ◈ , ♚ ✪ ✦ -->
+  <div class="logo logotype"><a href="/" title="Mognet">mognet</a></div>
   <nav role="navigation">
     <ul>
       <li><a href="https://github.com/psimonazzi/mognet">source code on github</a></li>
@@ -57,7 +57,6 @@
 <h1>Mognet — Obsessively minimal, opinionated web framework for Node.js</h1>
 
 <div class="content">
-
 
 <p>Mognet is an obsessively minimal, opinionated web framework for writers who love hacking or hackers who love design. It is written in Javascript for Node.js.</p>
 <p>It was created to run the Author’s personal site, but it may also be useful for those who still believe in the Do-It-Yourself Web. If you just want Tumblr, this is totally too much work. But if you can’t sleep at night if the HTML code on your page isn’t indented beautifully, you may like it.</p>
@@ -138,14 +137,14 @@ $ npm install</code></pre>
 <pre><code class="lang-sh">$ node server.js 3000</code></pre>
 <p>or</p>
 <pre><code class="lang-sh">$ PORT=3000 node server.js</code></pre>
-<p>You will want to run the server as a daemon, starting at system boot and stopping on shutdown. This package includes an <a href="http://upstart.ubuntu.com">Upstart</a> configuration ready to use, which creates a daemon named <code>mognet</code>. You can run the usual commands to interact with it:</p>
+<p>You will want to run the server as a daemon, starting at system boot and stopping on shutdown. This package includes an <a href="http://upstart.ubuntu.com">Upstart</a> configuration ready to use, which creates a daemon named <code>mognet</code>. You can use the standard incantations to interact with it:</p>
 <ul>
 <li><code>start mognet</code></li>
 <li><code>stop mognet</code></li>
 <li><code>restart mognet</code></li>
 <li><code>status mognet</code></li>
 </ul>
-<p>To install Mognet as an Upstart daemon just copy the <code>mognet.conf</code> file in <code>/etc/init</code>. The server will be started automatically at system boot, and restarted immediatly if it crashes.
+<p>To install Mognet as an Upstart daemon just copy the <code>mognet.conf</code> file in <code>/etc/init</code>. The server will be started automatically at system boot, and restarted immediatly if it crashes (but it will give up after a reasonable amount of retries).
 The daemon will print stdout and stderr to <code>/dev/shm/stdout.log</code> and <code>/dev/shm/stderr.log</code>, which are in a temporary filesystem not written to disk. To save them to persistent files, you can use a periodic job for crontab like this one, which copies them to <code>/var/www/log</code> every minute:</p>
 <pre><code>* * * * * cp -af /dev/shm/stdout.log /dev/shm/stderr.log /var/www/log</code></pre>
 <p>By default, the server will listen on port 80 (HTTP) and will not print any log messages (not even errors) except at startup.</p>
@@ -154,11 +153,12 @@ The daemon will print stdout and stderr to <code>/dev/shm/stdout.log</code> and 
 <ul>
 <li><p><code>HUP (1)</code>: Updates the index file and reloads it in the server, clearing the content cache. Also reloads the configuration. Use this when you update the site contents, HTML templates or configuration (not needed when you update CSS and other static files);</p>
 </li>
-<li><p><code>USR1 (10)</code>: Prints a JSON structure representing the current index and content cache which are stored in-memory by the server. Useful for quick debug;</p>
+<li><p><code>USR1 (10)</code>: Prints a JSON structure representing the current contents stored in-memory by the server. Useful for quick debugging;</p>
 </li>
 <li><p><code>USR2 (12)</code>: Prints various info on the running server: version, configuration, memory usage, process id. </p>
 </li>
 </ul>
+<p>The process PID for the currently running server is stored in <code>/var/run/mognet.pid</code> by default.</p>
 <p>If you have redirected the server standard output to a file, of course to see what Mognet says you will have to open that file.</p>
 <h2>Configuration</h2>
 <p>You can change the default configuration by writing a JSON file named <code>config.json</code> in <code>mognet/app/</code>.</p>
@@ -203,7 +203,6 @@ The daemon will print stdout and stderr to <code>/dev/shm/stdout.log</code> and 
 <h2>License</h2>
 <p>Mognet is released under the MIT License. See the <code>LICENSE</code> file.</p>
 
-
 </div><!-- /content -->
 </div>
 
@@ -220,16 +219,8 @@ The daemon will print stdout and stderr to <code>/dev/shm/stdout.log</code> and 
   <small><em>Fatto in Italia con amore &amp; ossessione.</em></small>
 </footer>
 
-<!--{{#cfg.googleAnalyticsAccount}}
-<script>
-  var _gaq=[['_setAccount','{{{cfg.googleAnalyticsAccount}}}'],['_trackPageview']];
-  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-  s.parentNode.insertBefore(g,s)}(document,'script'));
-</script>
-{{/cfg.googleAnalyticsAccount}}-->
-
 </body>
 </html>
+
 
 
