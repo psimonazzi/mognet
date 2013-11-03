@@ -16,7 +16,7 @@ var indexer = Indexer.createIndexer();
 indexer.loadSync();
 //indexer.sort();
 
-var help, res, special, all, contextOnly, infoOnly;
+var help, res, special, all, contextOnly, infoOnly, medium;
 if (process.argv.length > 2) {
   if (process.argv[2] == '-h')
     help = true;
@@ -32,13 +32,17 @@ if (process.argv.length > 2) {
       res = process.argv[3];
     infoOnly = true;
   }
-  else if (!process.argv[2].match(/^-/))
+  else if (!process.argv[2].match(/^-/)) {
     res = process.argv[2];
+    if (process.argv.length > 3)
+      medium = process.argv[3];
+  }
 }
 
 if (help || (!res && !special && !all && !infoOnly && !contextOnly)) {
   console.log('USAGE:');
   console.log('%s <document id>    ' + 'Render the document or handler to stdout'.grey, process.argv[1]);
+  console.log('%s <document id> <medium> ' + 'Render the document or handler to stdout wth the specified medium (template)'.grey, process.argv[1]);
   console.log('%s -c               ' + 'Print the index data, i.e. the context for all documents'.grey, process.argv[1]);
   console.log('%s -c <document id> ' + 'Print only the document or handler context'.grey, process.argv[1]);
   console.log('%s -i               ' + 'Print info on all indexed documents'.grey, process.argv[1]);
@@ -81,7 +85,12 @@ else if (res) {
   }
   else {
     // render resource from an index document
-    router.getResource(req, router.parse(req), function(err, resource) {
+    var route = router.parse(req);
+    if (medium) {
+      // use specified medium (part of the template filename)
+      route.medium = medium;
+    }
+    router.getResource(req, route, function(err, resource) {
       if (err) {
         console.error(err);
         console.log('Available documents in the index (%d): ', Object.keys(Σ.index.id).length);
