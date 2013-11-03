@@ -196,7 +196,7 @@ describe('router', function() {
       });
     });
 
-    it('should return 403 for secret documents', function(done) {
+    /*it('should return 403 for secret documents', function(done) {
       Σ.cfg.verbose = false; // prevent log messages
       Σ.index['id'] = {};
       Σ.renders = {};
@@ -208,6 +208,21 @@ describe('router', function() {
       router.getResource(req7, router.parse(req7), function(err, resource) {
         assert.equal(403, err.status);
         done();
+      });
+    });*/
+    it('should return secret documents if requested by direct url', function(done) {
+      Σ.cfg.verbose = false; // prevent log messages
+      Σ.index['id'] = {};
+      Σ.renders = {};
+      Σ.compiled_templates = {};
+      // First build an index
+      var indexer = require('../lib/indexer').createIndexer();
+      indexer.add(doc2);
+
+      router.getResource(req7, router.parse(req7), function(err, resource) {
+        assert.ifError(err);
+        assert.notEqual('', resource);
+        done(err);
       });
     });
 

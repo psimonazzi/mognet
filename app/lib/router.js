@@ -286,13 +286,13 @@ exports.context = function context(route, req) {
     doc = Σ.index.id[route.url];
   }
 
-  // If the document was found but is flagged 'secret', return Forbidden
-  if (doc && doc.secret) {
+  // If the document was found but is flagged 'secret', return Forbidden?
+  /*if (doc && doc.secret) {
     var errSecret = new Error();
     errSecret.status = 403;
     logger.w('403 Denied request %s for secret document %s', route.url, doc.id);
     return errSecret;//throw errSecret;
-  }
+  }*/
 
   // Any special data required by the template associated to this route must be provided by a handler.
   // This includes any context not provided by the doc itself (if any), such as dynamic content.

@@ -51,7 +51,7 @@ var DEFAULTS = function() {
     'tag': [],
     'rel': [], // related ids
     'blip': false, // special format for short articles
-    'secret': false, // not shown in archives
+    'secret': false, // indexed but not shown
     'doc': false // document or article
   };
 };
